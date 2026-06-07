@@ -1,0 +1,23 @@
+{
+  "name": "izaho — messenger",
+  "short_name": "izaho",
+  "start_url": "../index.html",
+  "display": "standalone",
+  "background_color": "#0b0f1c",
+  "theme_color": "#00cec9",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%236c5ce7'/%3E%3Cpath d='M136 76c0-18-12-30-28-30s-28 12-28 30c0 10 4 18 10 24l-2 10 12-6c4 2 8 2 12 2 16 0 28-12 28-28z' fill='%23fff'/%3E%3Ccircle cx='108' cy='76' r='4' fill='%236c5ce7'/%3E%3Ccircle cx='120' cy='76' r='4' fill='%236c5ce7'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='80' fill='%236c5ce7'/%3E%3Cpath d='M360 190c0-45-30-75-70-75s-70 30-70 75c0 25 10 45 25 60l-5 25 30-15c10 5 20 5 30 5 40 0 70-30 70-75z' fill='%23fff'/%3E%3Ccircle cx='290' cy='190' r='10' fill='%236c5ce7'/%3E%3Ccircle cx='310' cy='190' r='10' fill='%236c5ce7'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

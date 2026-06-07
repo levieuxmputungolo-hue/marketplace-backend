@@ -1,0 +1,19 @@
+{
+  "name": "easy-market-functions",
+  "description": "Firebase Cloud Functions for easy-market MongoDB backend",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "deploy": "firebase deploy --only functions"
+  },
+  "engines": {
+    "node": "20"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.18.2",
+    "firebase-admin": "^12.0.0",
+    "firebase-functions": "^5.0.0",
+    "mongodb": "^6.5.0"
+  },
+  "private": true
+}

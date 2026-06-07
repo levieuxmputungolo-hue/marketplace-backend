@@ -1,0 +1,1488 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#FF6A00" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="easy-market" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="application-name" content="easy-market" />
+  <link rel="apple-touch-icon" href="./assets/icon-192.svg" />
+  <link rel="icon" type="image/svg+xml" href="./assets/icon-192.svg" />
+  <title>easy-market — Navigation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="./assets/style.css" />
+  <link rel="manifest" href="./assets/manifest.json" />
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/12.13.0/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/12.13.0/firebase-auth-compat.js"></script>
+  <script defer src="./assets/firebase-config.js"></script>
+  <script defer src="./assets/app.js"></script>
+  <style>
+    :root {
+      --alibaba: #FF6A00;
+      --alibaba-dark: #E65C00;
+      --alibaba-light: #FF8C38;
+      --alibaba-glow: rgba(255, 106, 0, 0.3);
+      --alibaba-soft: rgba(255, 106, 0, 0.08);
+      --navy: #0f0f1a;
+      --navy2: #1a1a2e;
+      --navy3: #16213e;
+    }
+
+    * { box-sizing: border-box; }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 12px 12px 60px;
+    }
+
+    /* ─── HEADER ─── */
+    .alibaba-header {
+      background: linear-gradient(135deg, rgba(255, 106, 0, 0.12), rgba(255, 106, 0, 0.04));
+      border: 1px solid rgba(255, 106, 0, 0.25);
+      border-radius: 18px;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      box-shadow: 0 8px 32px rgba(255, 106, 0, 0.08);
+    }
+
+    .alibaba-brand { display: flex; align-items: center; gap: 10px; }
+
+    .alibaba-logo {
+      width: 36px; height: 36px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--alibaba), var(--alibaba-dark));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 14px; color: #fff;
+      box-shadow: 0 4px 16px var(--alibaba-glow);
+    }
+
+    .alibaba-title { font-size: 20px; font-weight: 900; letter-spacing: -0.3px; color: #fff; margin: 0; }
+    .alibaba-title span { color: var(--alibaba); }
+
+    .alibaba-search {
+      flex: 1; min-width: 180px; max-width: 400px; display: flex; gap: 0;
+    }
+
+    .alibaba-search input {
+      flex: 1; margin: 0; padding: 9px 14px;
+      border-radius: 12px 0 0 12px;
+      border: 2px solid rgba(255, 106, 0, 0.35); border-right: none;
+      background: rgba(255, 255, 255, 0.06); color: #fff; font-size: 13px;
+      outline: none; transition: border-color 0.2s;
+    }
+    .alibaba-search input:focus { border-color: var(--alibaba); box-shadow: 0 0 0 3px var(--alibaba-glow); }
+    .alibaba-search input::placeholder { color: rgba(255, 255, 255, 0.35); }
+    .alibaba-search button {
+      margin: 0; width: auto; padding: 9px 16px;
+      border-radius: 0 12px 12px 0;
+      border: 2px solid var(--alibaba);
+      background: linear-gradient(135deg, var(--alibaba), var(--alibaba-dark));
+      color: #fff; font-weight: 800; font-size: 14px; cursor: pointer;
+      transition: all 0.2s; flex-shrink: 0;
+    }
+    .alibaba-search button:hover { background: linear-gradient(135deg, var(--alibaba-light), var(--alibaba)); box-shadow: 0 4px 20px var(--alibaba-glow); }
+
+    .hero-actions { display: flex; align-items: center; gap: 8px; }
+
+    /* ─── NAV ─── */
+    .alibaba-nav {
+      display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 12px;
+      padding: 4px; background: rgba(255, 255, 255, 0.03);
+      border-radius: 14px; border: 1px solid rgba(255, 106, 0, 0.12);
+    }
+    .alibaba-nav .navBtn {
+      flex: 1; min-width: 70px; padding: 9px 10px; border-radius: 12px;
+      border: none; background: transparent;
+      color: rgba(255, 255, 255, 0.45);
+      font-weight: 700; font-size: 12px; cursor: pointer;
+      transition: all 0.2s; font-family: inherit; text-align: center;
+    }
+    .alibaba-nav .navBtn:hover { color: #fff; background: rgba(255, 106, 0, 0.08); }
+    .alibaba-nav .navBtn[data-active="true"] {
+      color: #fff;
+      background: linear-gradient(135deg, rgba(255, 106, 0, 0.2), rgba(255, 106, 0, 0.1));
+      box-shadow: 0 0 0 1px rgba(255, 106, 0, 0.4), 0 4px 16px rgba(255, 106, 0, 0.12);
+    }
+
+    /* ─── SECTIONS ─── */
+    .section { display: none; }
+    .section[data-active="true"] { display: block; }
+    .section .card { margin-top: 0; }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+      border: 1px solid rgba(255, 106, 0, 0.15); border-radius: 18px;
+      padding: 16px; box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+      position: relative; overflow: hidden;
+      transition: box-shadow 0.3s cubic-bezier(0.2, 0, 0, 1), transform 0.3s cubic-bezier(0.2, 0, 0, 1);
+    }
+    .card:hover {
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+    }
+    .card:before {
+      content: ""; position: absolute; inset: -2px;
+      background: radial-gradient(600px 240px at 0% 0%, rgba(255, 106, 0, 0.2), transparent 55%);
+      opacity: 0.5; pointer-events: none;
+    }
+    .card > * { position: relative; }
+
+    /* ─── ALIBABA PANELS ─── */
+    .al-panel {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 106, 0, 0.1);
+      border-radius: 14px; padding: 14px; margin-bottom: 12px;
+    }
+    .al-panel:last-child { margin-bottom: 0; }
+
+    .al-panel-header {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+    }
+    .al-panel-header .al-icon {
+      width: 32px; height: 32px; border-radius: 10px;
+      background: var(--alibaba-soft);
+      border: 1px solid rgba(255, 106, 0, 0.2);
+      display: flex; align-items: center; justify-content: center; font-size: 15px;
+    }
+    .al-panel-header h3 {
+      margin: 0; font-size: 14px; font-weight: 800;
+    }
+    .al-panel-header .al-badge {
+      margin-left: auto; font-size: 11px; padding: 3px 10px;
+      border-radius: 999px; background: var(--alibaba-soft);
+      color: var(--alibaba-light); font-weight: 700;
+    }
+
+    /* ─── STATS ─── */
+    .al-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+      margin-top: 6px;
+    }
+    .al-stat {
+      background: var(--alibaba-soft); border-radius: 14px;
+      padding: 14px; text-align: center;
+      border: 1px solid rgba(255, 106, 0, 0.1);
+    }
+    .al-stat .num { font-size: 22px; font-weight: 900; color: var(--alibaba-light); }
+    .al-stat .lbl { font-size: 11px; color: rgba(255, 255, 255, 0.5); margin-top: 2px; font-weight: 600; }
+
+    /* ─── CATEGORY GRID ─── */
+    .al-cats {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+      margin-top: 10px;
+    }
+    .al-cat {
+      background: var(--alibaba-soft); border-radius: 14px;
+      padding: 12px 8px; text-align: center;
+      border: 1px solid rgba(255, 106, 0, 0.08);
+      transition: all 0.2s; cursor: pointer;
+    }
+    .al-cat:hover { background: rgba(255, 106, 0, 0.15); transform: translateY(-2px); }
+    .al-cat .ico { font-size: 22px; }
+    .al-cat .nm { font-size: 11px; font-weight: 700; margin-top: 4px; }
+
+    /* ─── PROFILE AVATAR ─── */
+    .al-avatar {
+      width: 48px; height: 48px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--alibaba), var(--alibaba-dark));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; font-weight: 900; color: #fff;
+      box-shadow: 0 4px 20px var(--alibaba-glow);
+    }
+
+    .al-profile-row {
+      display: flex; align-items: center; gap: 14px;
+    }
+
+    /* ─── FORMS ─── */
+    input, select, textarea {
+      width: 100%; padding: 10px 14px; margin-top: 6px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 106, 0, 0.15);
+      background: rgba(255, 255, 255, 0.04); color: #fff;
+      outline: none; transition: all 0.2s;
+      font-family: inherit; font-size: 13px;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--alibaba);
+      box-shadow: 0 0 0 3px var(--alibaba-glow);
+    }
+
+    label {
+      display: block; margin-top: 8px;
+      font-weight: 700; color: rgba(255, 255, 255, 0.8); font-size: 12px;
+      text-transform: uppercase; letter-spacing: 0.3px;
+    }
+
+    h2 {
+      margin: 0 0 8px; font-size: 15px; font-weight: 900;
+    }
+
+    .muted { color: rgba(255, 255, 255, 0.4); margin-top: 6px; font-size: 13px; }
+    .mt-1 { margin-top: 8px; }
+    .mt-2 { margin-top: 14px; }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 106, 0, 0.3), transparent);
+      margin: 12px 0;
+    }
+
+    .flex { display: flex; }
+    .flex-gap { gap: 8px; }
+
+    .row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    }
+    @media (max-width: 860px) { .row { grid-template-columns: 1fr; } }
+
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 10px; border-radius: 999px;
+      font-size: 11px; font-weight: 700;
+    }
+    .status-badge.active {
+      background: rgba(255, 106, 0, 0.15); color: var(--alibaba-light);
+      border: 1px solid rgba(255, 106, 0, 0.3);
+    }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 7px 12px; border-radius: 999px;
+      background: rgba(255, 106, 0, 0.1);
+      border: 1px solid rgba(255, 106, 0, 0.3);
+      font-weight: 800; color: #fff; font-size: 12px;
+    }
+    .badge .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--alibaba);
+      box-shadow: 0 0 0 3px var(--alibaba-glow);
+    }
+
+    .card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; margin-bottom: 8px;
+    }
+    .card-header h2 { margin: 0; }
+
+    pre {
+      background: rgba(0, 0, 0, 0.35); padding: 12px;
+      border-radius: 12px; overflow: auto;
+      border: 1px solid rgba(255, 106, 0, 0.12);
+    }
+
+    /* ─── BUTTONS ─── */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 6px; padding: 10px 16px; border-radius: 12px;
+      border: none; font-weight: 800; font-size: 13px;
+      cursor: pointer; transition: all 0.2s; font-family: inherit;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--alibaba), var(--alibaba-dark));
+      color: #fff; border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, var(--alibaba-light), var(--alibaba));
+      transform: translateY(-1px); box-shadow: 0 8px 24px var(--alibaba-glow);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      color: rgba(255, 255, 255, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-1px); }
+    .btn-ghost {
+      background: transparent; color: rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .btn-ghost:hover { background: rgba(255, 255, 255, 0.04); color: #fff; }
+    .btn-accent {
+      background: linear-gradient(135deg, var(--alibaba), var(--alibaba-dark));
+      color: #fff;
+    }
+    .btn-accent:hover {
+      background: linear-gradient(135deg, var(--alibaba-light), var(--alibaba));
+      transform: translateY(-1px);
+    }
+    .btn-sm { padding: 7px 12px; font-size: 12px; border-radius: 10px; }
+    .btn-block { width: 100%; }
+    .btn:active { transform: translateY(0px) scale(0.98); }
+
+    /* ─── PRODUCT GRID ─── */
+    .productsGrid {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px;
+    }
+    @media (max-width: 1000px) { .productsGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 620px) { .productsGrid { grid-template-columns: 1fr; } }
+
+    .productCard, .cartItem {
+      border-radius: 14px; border: 1px solid rgba(255, 106, 0, 0.15);
+      background: rgba(255, 255, 255, 0.04); overflow: hidden;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.25);
+      transform: translateZ(0);
+      transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), border-color 0.2s ease, box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1);
+    }
+    .productCard:hover, .cartItem:hover {
+      transform: translateY(-4px) scale(1.01);
+      border-color: rgba(255, 106, 0, 0.5);
+      box-shadow: 0 20px 60px rgba(255, 106, 0, 0.15);
+    }
+    .productCard:active, .cartItem:active {
+      transform: scale(0.97);
+    }
+
+    .productImg {
+      height: 130px; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(180deg, rgba(255, 106, 0, 0.08), rgba(255, 255, 255, 0.02));
+    }
+    .productImg img { width: 100%; height: 100%; object-fit: cover; opacity: 0.95; }
+    .imgPlaceholder {
+      width: 68px; height: 68px; border-radius: 16px;
+      background: rgba(255, 106, 0, 0.08);
+      border: 1px dashed rgba(255, 106, 0, 0.35);
+    }
+
+    .productBody { padding: 10px 10px 12px; }
+    .productTitle { font-weight: 800; font-size: 13px; line-height: 1.25; height: 32px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .productPrice { margin-top: 6px; font-weight: 900; color: var(--alibaba-light); font-size: 14px; }
+
+    .productBtn {
+      margin-top: 8px; width: 100%; padding: 9px 10px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--alibaba), var(--alibaba-dark));
+      border: none; color: #fff; font-weight: 800; font-size: 12px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .productBtn:hover { background: linear-gradient(135deg, var(--alibaba-light), var(--alibaba)); transform: translateY(-1px); box-shadow: 0 8px 24px var(--alibaba-glow); }
+
+    /* ─── CART ─── */
+    .cartHeader {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; margin-bottom: 10px;
+    }
+    .cartTitle { display: flex; align-items: center; gap: 10px; }
+    .cartIcon {
+      width: 38px; height: 38px; border-radius: 12px;
+      background: rgba(255, 106, 0, 0.1);
+      border: 1px solid rgba(255, 106, 0, 0.3);
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .qtyPill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 10px; border-radius: 999px;
+      background: rgba(255, 106, 0, 0.08);
+      border: 1px solid rgba(255, 106, 0, 0.3);
+      font-weight: 900; font-size: 12px;
+    }
+    .qtyPill strong { color: var(--alibaba-light); font-size: 13px; }
+
+    .cartList {
+      margin-top: 10px; display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;
+    }
+    @media (max-width: 760px) { .cartList { grid-template-columns: 1fr; } }
+
+    .cartItem {
+      border-radius: 14px; border: 1px solid rgba(255, 106, 0, 0.15);
+      background: rgba(255, 255, 255, 0.04); overflow: hidden;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.18);
+    }
+    .cartItemImg { height: 100px; display: flex; align-items: center; justify-content: center; background: linear-gradient(180deg, rgba(255, 106, 0, 0.08), rgba(255, 255, 255, 0.02)); }
+    .cartItemImg img { width: 100%; height: 100%; object-fit: cover; opacity: 0.95; }
+    .cartItemBody { padding: 10px 10px 12px; }
+    .cartItemTitle { font-weight: 800; font-size: 13px; line-height: 1.25; height: 32px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .cartItemPrice { margin-top: 6px; font-weight: 900; color: var(--alibaba-light); font-size: 13px; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+    .cartItemTotal { margin-top: 4px; font-size: 11px; color: rgba(255, 255, 255, 0.65); }
+
+    .notif-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 600px) { .notif-row { grid-template-columns: 1fr; } }
+
+    /* ─── FLUTTER INSPIRED ANIMATIONS ─── */
+    @keyframes dotPulse {
+      0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes shimmerSlide {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .flutter-shimmer {
+      position: relative; overflow: hidden;
+    }
+    .flutter-shimmer::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      animation: shimmerSlide 1.5s infinite;
+    }
+
+    .flutter-card {
+      transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1), border-color 0.2s ease;
+    }
+    .flutter-card:hover {
+      transform: translateY(-2px) scale(1.01);
+      box-shadow: 0 12px 40px rgba(255, 106, 0, 0.15);
+      border-color: rgba(255, 106, 0, 0.4);
+    }
+    .flutter-card:active {
+      transform: scale(0.98);
+    }
+
+    .flutter-ripple {
+      position: relative; overflow: hidden;
+    }
+    .flutter-ripple::after {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255,106,0,0.3) 0%, transparent 60%);
+      opacity: 0; transition: opacity 0.3s; pointer-events: none;
+    }
+    .flutter-ripple:active::after {
+      opacity: 1; transition: opacity 0s;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .flutter-fade-in {
+      animation: fadeInUp 0.3s cubic-bezier(0.2, 0, 0, 1) both;
+    }
+
+    .flutter-fade-in:nth-child(1) { animation-delay: 0ms; }
+    .flutter-fade-in:nth-child(2) { animation-delay: 50ms; }
+    .flutter-fade-in:nth-child(3) { animation-delay: 100ms; }
+    .flutter-fade-in:nth-child(4) { animation-delay: 150ms; }
+    .flutter-fade-in:nth-child(5) { animation-delay: 200ms; }
+    .flutter-fade-in:nth-child(6) { animation-delay: 250ms; }
+
+    @keyframes flutterPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255, 106, 0, 0.4); }
+      50% { box-shadow: 0 0 0 8px rgba(255, 106, 0, 0); }
+    }
+    .flutter-pulse {
+      animation: flutterPulse 2s infinite;
+    }
+
+    .flutter-elevated {
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3), 0 8px 24px rgba(255,106,0,0.08);
+      transition: box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1);
+    }
+    .flutter-elevated:hover {
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4), 0 12px 40px rgba(255,106,0,0.15);
+    }
+
+    /* ─── ALIBABA NOTIF TABS ─── */
+    .al-notif-filter {
+      display: flex; gap: 6px; margin-bottom: 12px;
+    }
+    .al-notif-filter span {
+      padding: 5px 14px; border-radius: 999px; font-size: 12px; font-weight: 700;
+      background: rgba(255, 255, 255, 0.03); color: rgba(255, 255, 255, 0.4);
+      cursor: pointer; transition: all 0.2s; border: 1px solid transparent;
+    }
+    .al-notif-filter span:hover { color: #fff; background: var(--alibaba-soft); }
+    .al-notif-filter span.active { background: var(--alibaba-soft); color: var(--alibaba-light); border-color: rgba(255, 106, 0, 0.3); }
+
+    /* ─── CARTE MAP ─── */
+    .map-card {
+      border-radius: 14px; overflow: hidden;
+      border: 1px solid rgba(255, 106, 0, 0.15);
+    }
+    #map { height: 320px; border-radius: 12px; z-index: 1; position: relative; }
+
+    /* ─── SEARCH BAR TOOL ─── */
+    .al-search-bar {
+      display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px;
+    }
+    @media (max-width: 720px) { .al-search-bar { grid-template-columns: 1fr; } }
+
+    .al-search-bar-2 {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    }
+    @media (max-width: 720px) { .al-search-bar-2 { grid-template-columns: 1fr; } }
+
+    /* ─── RESPONSIVE GENERAL ─── */
+    @media (max-width: 768px) {
+      .wrap { padding: 10px 10px 60px; }
+      .alibaba-header { padding: 10px 12px; }
+      .alibaba-title { font-size: 17px; }
+      .alibaba-logo { width: 32px; height: 32px; font-size: 12px; }
+      .alibaba-search { max-width: 100%; }
+      .alibaba-search input { font-size: 12px; padding: 7px 10px; }
+      .alibaba-search button { font-size: 12px; padding: 7px 12px; }
+      .alibaba-nav .navBtn { font-size: 11px; padding: 7px 6px; min-width: 55px; }
+      .card { padding: 12px; border-radius: 14px; }
+      .al-stats { gap: 6px; }
+      .al-stat { padding: 10px 6px; }
+      .al-stat .num { font-size: 18px; }
+      .al-cats { gap: 6px; }
+      .al-notif-filter span { font-size: 11px; padding: 4px 10px; }
+      #map { height: 250px; }
+      .productImg { height: 110px; }
+    }
+
+    @media (max-width: 600px) {
+      .alibaba-header { gap: 8px; }
+      .hero-actions .badge { font-size: 10px; padding: 4px 8px; }
+      .hero-actions .badge .dot { width: 5px; height: 5px; }
+      .al-stats { grid-template-columns: repeat(2, 1fr); }
+      .al-cats { grid-template-columns: repeat(3, 1fr); }
+      .al-cat { padding: 10px 4px; }
+      .al-cat .ico { font-size: 18px; }
+      .al-cat .nm { font-size: 10px; }
+      .productsGrid { gap: 8px; }
+      .productBody { padding: 8px 8px 10px; }
+      .productTitle { font-size: 12px; height: 28px; }
+      .productPrice { font-size: 12px; }
+      .cartItemImg { height: 90px; }
+      .cartItemBody { padding: 8px 8px 10px; }
+      .al-panel-header h3 { font-size: 13px; }
+      .gps-fab { width: 44px; height: 44px; font-size: 17px; bottom: 16px; right: 16px; }
+      #btnFullscreen { width: 34px; height: 34px; font-size: 16px; top: 10px; right: 10px; }
+    }
+
+    @media (max-width: 420px) {
+      .wrap { padding: 8px 8px 50px; }
+      .alibaba-nav .navBtn { font-size: 10px; padding: 6px 4px; min-width: 44px; }
+      .al-stats { grid-template-columns: repeat(2, 1fr); gap: 4px; }
+      .al-stat { padding: 8px 4px; border-radius: 10px; }
+      .al-stat .num { font-size: 16px; }
+      .al-stat .lbl { font-size: 9px; }
+      .al-cats { grid-template-columns: repeat(2, 1fr); gap: 4px; }
+      .card { padding: 10px; border-radius: 12px; }
+      .row { gap: 6px; }
+      #map { height: 200px; }
+      .productImg { height: 90px; }
+      .al-panel { padding: 10px; }
+    }
+
+    @media (min-width: 1200px) {
+      .wrap { max-width: 1200px; padding: 16px 24px 60px; }
+      .productsGrid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      #map { height: 380px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- Header -->
+    <div class="alibaba-header">
+      <div class="alibaba-brand">
+        <div class="alibaba-logo">E</div>
+        <h1 class="alibaba-title">easy <span>market</span></h1>
+      </div>
+      <div class="alibaba-search">
+        <input id="globalSearch" type="text" placeholder="Rechercher produits, vendeurs..." />
+        <button onclick="doSearchProducts()">🔍</button>
+      </div>
+      <div class="hero-actions">
+        <div class="badge" style="margin:0"><span class="dot"></span>Navigation</div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="alibaba-nav" role="tablist">
+      <button class="navBtn" data-target="accueil" data-active="true" type="button">Accueil</button>
+      <button class="navBtn" data-target="auth" type="button">Compte</button>
+      <button class="navBtn" data-target="notifications" type="button">Notifications</button>
+      <button class="navBtn" data-target="localisation" type="button">📍 Localisation</button>
+      <button class="navBtn" data-target="catalogue" type="button">Catalogue</button>
+      <button class="navBtn" data-target="panier" type="button">Panier</button>
+      <button class="navBtn" data-target="mongo" type="button" style="background:linear-gradient(135deg,rgba(34,197,94,0.15),rgba(34,197,94,0.05));border-color:rgba(34,197,94,0.3)">🍃 MongoDB</button>
+      <button class="navBtn" data-target="flutter-pro" type="button" style="background:linear-gradient(135deg,rgba(255,106,0,0.15),rgba(255,106,0,0.05));border-color:rgba(255,106,0,0.3)">⚡ Flutter Pro</button>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════ -->
+    <!-- ACCUEIL  (Alibaba Homepage)                          -->
+    <!-- ════════════════════════════════════════════════════════ -->
+    <section class="section" data-section="accueil" data-active="true">
+      <div class="card">
+        <!-- Hero Banner -->
+        <div style="background:linear-gradient(135deg,rgba(255,106,0,0.12),rgba(255,106,0,0.03));border-radius:16px;padding:20px 18px;margin-bottom:14px;text-align:center;border:1px solid rgba(255,106,0,0.1);">
+          <div style="font-size:36px;margin-bottom:6px">🛒</div>
+          <h2 style="margin:0;font-size:20px">easy-market</h2>
+          <p style="color:rgba(255,255,255,0.45);margin:4px 0 0;font-size:13px">Plateforme marketplace connectée</p>
+        </div>
+
+        <!-- Statistiques -->
+        <div class="al-stats">
+          <div class="al-stat"><div class="num">12</div><div class="lbl">Produits</div></div>
+          <div class="al-stat"><div class="num">8</div><div class="lbl">Vendeurs</div></div>
+          <div class="al-stat"><div class="num">45</div><div class="lbl">Commandes</div></div>
+        </div>
+
+        <!-- Catégories rapides -->
+        <div class="al-cats">
+          <div class="al-cat" onclick="showSection('catalogue')"><div class="ico">🛍️</div><div class="nm">Catalogue</div></div>
+          <div class="al-cat" onclick="showSection('panier')"><div class="ico">🛒</div><div class="nm">Panier</div></div>
+          <div class="al-cat" onclick="showSection('localisation')"><div class="ico">📍</div><div class="nm">Localisation</div></div>
+          <div class="al-cat" onclick="showSection('auth')"><div class="ico">👤</div><div class="nm">Mon Compte</div></div>
+        </div>
+
+        <!-- Top ventes -->
+        <div class="divider"></div>
+        <div class="al-panel-header">
+          <div class="al-icon">🔥</div>
+          <h3>Top ventes</h3>
+          <span class="al-badge">Populaire</span>
+        </div>
+        <div class="productsGrid" id="topSalesGrid">
+          <div class="productCard flutter-fade-in" style="border-color:rgba(255,106,0,0.35)">
+            <div class="productImg"><img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=200&fit=crop" alt="" loading="lazy" /></div>
+            <div class="productBody">
+              <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px">
+                <span style="color:#fbbf24;font-size:12px">★★★★★</span>
+                <span style="font-size:11px;color:rgba(255,255,255,0.3)">(128)</span>
+              </div>
+              <div class="productTitle">Nike Air Max</div>
+              <div class="productPrice">120 $</div>
+              <button class="productBtn flutter-ripple" onclick="fillCart(1)">Ajouter</button>
+            </div>
+          </div>
+          <div class="productCard flutter-fade-in" style="border-color:rgba(255,106,0,0.35)">
+            <div class="productImg"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=200&fit=crop" alt="" loading="lazy" /></div>
+            <div class="productBody">
+              <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px">
+                <span style="color:#fbbf24;font-size:12px">★★★★½</span>
+                <span style="font-size:11px;color:rgba(255,255,255,0.3)">(96)</span>
+              </div>
+              <div class="productTitle">Casque Bose QC45</div>
+              <div class="productPrice">299 $</div>
+              <button class="productBtn flutter-ripple" onclick="fillCart(2)">Ajouter</button>
+            </div>
+          </div>
+          <div class="productCard flutter-fade-in" style="border-color:rgba(255,106,0,0.35)">
+            <div class="productImg"><img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=300&h=200&fit=crop" alt="" loading="lazy" /></div>
+            <div class="productBody">
+              <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px">
+                <span style="color:#fbbf24;font-size:12px">★★★★☆</span>
+                <span style="font-size:11px;color:rgba(255,255,255,0.3)">(72)</span>
+              </div>
+              <div class="productTitle">Air Jordan 1</div>
+              <div class="productPrice">180 $</div>
+              <button class="productBtn flutter-ripple" onclick="fillCart(6)">Ajouter</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Astuces -->
+        <div style="background:rgba(255,106,0,0.06);border-radius:12px;padding:12px;border:1px solid rgba(255,106,0,0.08)">
+          <p style="margin:0;font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6">
+            💡 Astuce : dans <strong style="color:var(--alibaba-light)">Catalogue</strong>, cliquez sur <em style="color:var(--alibaba-light)">Ajouter</em> pour pré-remplir votre produit dans <strong style="color:var(--alibaba-light)">Panier</strong>.
+            <br>Paiement simulé via <code style="background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:6px">/subscriptions/webhook</code>
+          </p>
+          <div style="margin-top:10px;border-top:1px solid rgba(255,106,0,0.1);padding-top:10px;text-align:center">
+            <a href="guide/index.html" style="color:var(--alibaba-light);font-size:12px;font-weight:700;text-decoration:none">📖 Guide d'utilisation complet →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════ -->
+    <!-- COMPTE  (Alibaba Account Dashboard)                   -->
+    <!-- ════════════════════════════════════════════════════════ -->
+    <section class="section" data-section="auth">
+      <div class="card">
+        <!-- Profil / Avatar -->
+        <div class="al-panel">
+          <div class="al-profile-row">
+            <div class="al-avatar">U</div>
+            <div style="flex:1">
+              <div style="font-weight:800;font-size:15px">Mon Compte</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.4)">Gérez votre profil et vos paramètres</div>
+            </div>
+            <span class="status-badge active">Client</span>
+          </div>
+        </div>
+
+        <!-- Authentification MongoDB -->
+        <div class="al-panel" style="border-color:rgba(34,197,94,0.2)">
+          <div class="al-panel-header">
+            <div class="al-icon" style="background:rgba(34,197,94,0.1)">🍃</div>
+            <h3>Authentification MongoDB</h3>
+            <span class="al-badge" style="color:#22c55e;background:rgba(34,197,94,0.08)">Nouveau</span>
+          </div>
+          <div class="row">
+            <div><label>Email *</label><input id="email" placeholder="demo@marketplace.com" /></div>
+            <div><label>Nom *</label><input id="name" placeholder="Jean Dupont" /></div>
+          </div>
+          <div class="row">
+            <div><label>Téléphone</label><input id="phone" placeholder="+243XXXXXXXXX" /></div>
+            <div><label>Mot de passe * (min 6 car.)</label><input id="password" type="password" placeholder="••••••" /></div>
+          </div>
+          <div class="flex flex-gap mt-2">
+            <button class="btn btn-primary" id="btn-register" onclick="register()" style="background:linear-gradient(135deg,#22c55e,#16a34a);border-color:#22c55e"><span class="spinner"></span><span class="btn-text">Créer un compte</span></button>
+            <button class="btn btn-secondary" id="btn-login" onclick="login()"><span class="spinner"></span><span class="btn-text">Connexion</span></button>
+          </div>
+          <div class="row mt-2" style="gap:6px;grid-template-columns:1fr 1fr 1fr">
+            <div style="background:rgba(34,197,94,0.06);border-radius:8px;padding:6px;text-align:center;font-size:10px;color:rgba(255,255,255,0.5)">
+              <div style="font-size:16px;margin-bottom:2px">📦</div>
+              Acheter des produits
+            </div>
+            <div style="background:rgba(34,197,94,0.06);border-radius:8px;padding:6px;text-align:center;font-size:10px;color:rgba(255,255,255,0.5)">
+              <div style="font-size:16px;margin-bottom:2px">📋</div>
+              Gérer ses commandes
+            </div>
+            <div style="background:rgba(34,197,94,0.06);border-radius:8px;padding:6px;text-align:center;font-size:10px;color:rgba(255,255,255,0.5)">
+              <div style="font-size:16px;margin-bottom:2px">👤</div>
+              Profil utilisateur
+            </div>
+          </div>
+        </div>
+
+        <!-- Rôle -->
+        <div class="al-panel">
+          <div class="al-panel-header">
+            <div class="al-icon">👤</div>
+            <h3>Rôle</h3>
+          </div>
+          <div class="flex flex-gap">
+            <select id="role" style="flex:1">
+              <option value="client">Client</option>
+              <option value="vendor">Vendeur</option>
+            </select>
+            <button class="btn btn-primary" id="btn-role" onclick="selectRole()" style="flex-shrink:0;margin-top:6px"><span class="spinner"></span><span class="btn-text">Valider</span></button>
+          </div>
+          <div class="row mt-1" style="gap:6px;grid-template-columns:1fr 1fr">
+            <div style="background:rgba(59,130,246,0.06);border-radius:8px;padding:6px;text-align:center;font-size:10px;color:rgba(255,255,255,0.5)">
+              <div style="font-size:16px;margin-bottom:2px">👤</div>
+              Client : achète et commande
+            </div>
+            <div style="background:rgba(245,158,11,0.06);border-radius:8px;padding:6px;text-align:center;font-size:10px;color:rgba(255,255,255,0.5)">
+              <div style="font-size:16px;margin-bottom:2px">🏪</div>
+              Vendeur : publie et vend
+            </div>
+          </div>
+        </div>
+
+        <!-- Profil vendeur -->
+        <div class="al-panel">
+          <div class="al-panel-header">
+            <div class="al-icon">🏪</div>
+            <h3>Profil vendeur</h3>
+          </div>
+          <div class="row">
+            <div><label>Nom complet</label><input id="full_name" placeholder="Identité" /></div>
+            <div><label>National ID</label><input id="national_id" placeholder="N° ID" /></div>
+          </div>
+          <div class="row">
+            <div><label>Ville</label><input id="city" placeholder="Kinshasa" /></div>
+            <div><label>Activité</label><input id="activity" placeholder="chaussures" /></div>
+          </div>
+          <label>WhatsApp</label>
+          <input id="whatsapp_number" placeholder="+225XXXXXXXX" />
+          <button class="btn btn-primary mt-2" id="btn-vendor" onclick="saveVendorProfile()"><span class="spinner"></span><span class="btn-text">Enregistrer</span></button>
+        </div>
+
+        <!-- Abonnement vendeur -->
+        <div class="al-panel" style="border-color:rgba(255,106,0,0.25)">
+          <div class="al-panel-header">
+            <div class="al-icon" style="background:rgba(255,106,0,0.2)">💳</div>
+            <h3>Abonnement vendeur <span style="font-size:11px;color:var(--alibaba-light);font-weight:400">(obligatoire)</span></h3>
+            <span class="al-badge">Vendeur</span>
+          </div>
+          <div style="background:rgba(255,106,0,0.06);border-radius:10px;padding:10px;margin-bottom:10px;border:1px solid rgba(255,106,0,0.08)">
+            <p style="margin:0;font-size:12px;color:rgba(255,255,255,0.6);line-height:1.5">
+              🆕 <strong style="color:var(--alibaba-light)">Période d'essai :</strong> les nouveaux vendeurs peuvent vendre pendant <strong style="color:#fff">14 jours</strong> sans abonnement.<br>
+              Après cette période, un abonnement est requis pour continuer à vendre.
+            </p>
+          </div>
+          <div class="flex flex-gap">
+            <select id="method" style="flex:1">
+              <option value="simulated">Simulé</option>
+              <option value="orange_money">Orange Money</option>
+              <option value="mpesa">M-Pesa</option>
+              <option value="airtel_money">Airtel Money</option>
+            </select>
+            <button class="btn btn-primary" id="btn-subscription" onclick="createSubscription()" style="flex-shrink:0;margin-top:6px"><span class="spinner"></span><span class="btn-text">Payer</span></button>
+          </div>
+          <div class="flex flex-gap mt-1">
+            <input id="provider_reference" readonly placeholder="Référence" style="flex:1" />
+            <button class="btn btn-secondary" id="btn-webhook" onclick="simulateWebhook()" style="flex-shrink:0;margin-top:6px"><span class="spinner"></span><span class="btn-text">Webhook</span></button>
+          </div>
+        </div>
+
+        <!-- Produit -->
+        <div class="al-panel">
+          <div class="al-panel-header">
+            <div class="al-icon">📦</div>
+            <h3>Produit (vendeur)</h3>
+          </div>
+          <div class="row">
+            <div><label>Nom</label><input id="prod_name" placeholder="iPhone 15" /></div>
+            <div><label>Prix ($)</label><input id="prod_price" type="number" placeholder="999" /></div>
+          </div>
+          <div class="row">
+            <div><label>Description</label><input id="prod_desc" placeholder="256 Go, neuf" /></div>
+            <div><label>URL image</label><input id="prod_image" placeholder="https://..." /></div>
+          </div>
+          <button class="btn btn-primary mt-1" id="btn-create-product" onclick="createProduct()"><span class="spinner"></span><span class="btn-text">Publier</span></button>
+        </div>
+
+        <!-- Article -->
+        <div class="al-panel">
+          <div class="al-panel-header">
+            <div class="al-icon">📝</div>
+            <h3>Article (vendeur)</h3>
+          </div>
+          <div class="row">
+            <div><label>Titre</label><input id="article_title" placeholder="Titre" /></div>
+            <div><label>Contenu</label><input id="article_content" placeholder="Description" /></div>
+          </div>
+          <button class="btn btn-primary mt-1" id="btn-article" onclick="createArticle()"><span class="spinner"></span><span class="btn-text">Publier</span></button>
+        </div>
+
+        <!-- Message -->
+        <div class="al-panel">
+          <div class="al-panel-header">
+            <div class="al-icon">✉️</div>
+            <h3>Message (client)</h3>
+          </div>
+          <div class="row">
+            <div><label>Article ID</label><input id="article_id" readonly placeholder="ID" /></div>
+            <div><label>Message</label><input id="message_content" placeholder="Bonjour..." /></div>
+          </div>
+          <button class="btn btn-primary mt-1" id="btn-message" onclick="sendMessage()"><span class="spinner"></span><span class="btn-text">Envoyer</span></button>
+          <div class="flex flex-gap mt-2">
+            <button class="btn btn-secondary btn-sm" onclick="loadInbox()">📥 Inbox</button>
+            <button class="btn btn-secondary btn-sm" onclick="loadOutbox()">📤 Outbox</button>
+          </div>
+        </div>
+
+        <!-- Token -->
+        <div class="al-panel">
+          <div class="al-panel-header">
+            <div class="al-icon">🔐</div>
+            <h3>Token</h3>
+          </div>
+          <input id="token" readonly />
+          <pre id="out" class="mt-1"></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════ -->
+    <!-- NOTIFICATIONS  (Alibaba Notification Center)          -->
+    <!-- ════════════════════════════════════════════════════════ -->
+    <section class="section" data-section="notifications">
+      <div class="card">
+        <div class="al-panel-header" style="margin-bottom:14px">
+          <div class="al-icon">🔔</div>
+          <h3>Centre de notifications</h3>
+          <span class="al-badge">Test</span>
+        </div>
+
+        <!-- Filtres -->
+        <div class="al-notif-filter">
+          <span class="active">Toutes</span>
+          <span>Messages</span>
+          <span>Commandes</span>
+          <span>Paiements</span>
+          <span>Système</span>
+        </div>
+
+        <div class="al-panel" style="background:rgba(255,106,0,0.05);border-color:rgba(255,106,0,0.1)">
+          <div class="row">
+            <div><label>Type</label>
+              <select id="notif_type">
+                <option value="message">Message</option>
+                <option value="order">Commande</option>
+                <option value="payment">Paiement</option>
+                <option value="system">Système</option>
+              </select>
+            </div>
+            <div><label>Priorité</label>
+              <select id="notif_priority">
+                <option value="low">Basse</option>
+                <option value="normal" selected>Normale</option>
+                <option value="high">Haute</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div><label>Titre</label><input id="notif_title" placeholder="Nouveau message" /></div>
+            <div><label>Contenu</label><input id="notif_body" placeholder="Un client vous a contacté" /></div>
+          </div>
+          <div class="flex flex-gap mt-2">
+            <button class="btn btn-secondary btn-sm" onclick="requestNotifPerm()">🔔 Activer</button>
+            <button class="btn btn-primary btn-sm" onclick="sendTestNotification()">📨 Tester</button>
+          </div>
+        </div>
+
+        <p style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:10px;text-align:center">
+          Les notifications push seront affichées ici
+        </p>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════ -->
+    <!-- LOCALISATION  (Alibaba Map & Nearby)                  -->
+    <!-- ════════════════════════════════════════════════════════ -->
+    <section class="section" data-section="localisation">
+      <div class="card">
+        <div class="al-panel-header">
+          <div class="al-icon">📍</div>
+          <h3>Localisation GPS</h3>
+          <span class="al-badge">Trouver</span>
+        </div>
+
+        <!-- GPS Controls -->
+        <div class="al-panel">
+          <div class="row">
+            <div><label>Latitude</label><input id="gps_lat" readonly placeholder="Attente GPS..." /></div>
+            <div><label>Longitude</label><input id="gps_lng" readonly placeholder="Attente GPS..." /></div>
+          </div>
+          <div class="flex flex-gap mt-2">
+            <button class="btn btn-primary" id="btn-locate" onclick="locateMe()"><span class="spinner"></span><span class="btn-text">📍 Me localiser</span></button>
+            <button class="btn btn-secondary btn-sm" onclick="loadMyLocation()">🔄 Recharger</button>
+          </div>
+          <div id="gps_status" class="mt-1 muted" style="font-size:12px"></div>
+        </div>
+
+        <!-- Map -->
+        <div class="al-panel">
+          <div class="flex flex-gap" style="align-items:center;justify-content:space-between;margin-bottom:8px">
+            <h3 style="margin:0;font-size:14px">🗺️ Carte OpenStreetMap</h3>
+            <button class="btn btn-accent btn-sm" onclick="viewMap()">🗺️ Ouvrir</button>
+          </div>
+          <div class="map-card">
+            <div id="map"></div>
+          </div>
+          <div id="map_info" class="mt-1 muted" style="font-size:12px"></div>
+        </div>
+
+        <!-- Vendeurs à proximité -->
+        <div class="al-panel">
+          <div class="al-panel-header">
+            <div class="al-icon">🏪</div>
+            <h3>Vendeurs à proximité</h3>
+          </div>
+          <p class="muted" style="font-size:12px;margin-bottom:8px">Trouvez les vendeurs autour de vous</p>
+          <div class="row">
+            <div><label>Latitude</label><input id="nearby_lat" placeholder="Latitude" /></div>
+            <div><label>Longitude</label><input id="nearby_lng" placeholder="Longitude" /></div>
+          </div>
+          <div class="row">
+            <div><label>Rayon (km)</label><input id="nearby_radius" value="50" type="number" min="1" /></div>
+            <div style="display:flex;align-items:flex-end;gap:6px">
+              <button class="btn btn-primary btn-sm" onclick="searchNearbyVendors()">🔍 Rechercher</button>
+              <button class="btn btn-secondary btn-sm" onclick="showAllVendorsOnMap()">📍 Voir</button>
+            </div>
+          </div>
+          <div class="productsGrid mt-2" id="nearby_out" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════ -->
+    <!-- CATALOGUE  (Alibaba Product Listing)                  -->
+    <!-- ════════════════════════════════════════════════════════ -->
+    <section class="section" data-section="catalogue">
+      <div class="card">
+        <div class="al-panel-header">
+          <div class="al-icon">🛍️</div>
+          <h3>Catalogue produits</h3>
+          <span class="status-badge active" id="catalogCount">15 produits</span>
+        </div>
+
+        <!-- Search & Filter Bar -->
+        <div class="al-panel">
+          <div class="al-search-bar">
+            <div><label>Recherche</label><input id="search_q" placeholder="iphone, chaussures..." /></div>
+            <div><label>Vendeur ID</label><input id="search_vendor" placeholder="ex: 1" /></div>
+            <div style="display:flex;align-items:flex-end;gap:6px">
+              <button class="btn btn-primary btn-sm" onclick="doSearchProducts()" style="flex:1">🔍 Rechercher</button>
+              <button class="btn btn-secondary btn-sm" id="btn-seed" onclick="seedCatalog()"><span class="spinner"></span><span class="btn-text">Remplir</span></button>
+            </div>
+          </div>
+          <div class="al-search-bar-2 mt-1">
+            <div><label>Prix min ($)</label><input id="search_min_price" placeholder="10" /></div>
+            <div><label>Prix max ($)</label><input id="search_max_price" placeholder="1000" /></div>
+          </div>
+        </div>
+
+        <!-- Tri rapide -->
+        <div class="al-notif-filter" style="margin-top:8px;margin-bottom:0">
+          <span class="active" onclick="sortProducts('all',this)">Tous</span>
+          <span onclick="sortProducts('popular',this)">🔥 Populaires</span>
+          <span onclick="sortProducts('bestseller',this)">⭐ Meilleures ventes</span>
+          <span onclick="sortProducts('price-asc',this)">💰 Prix ↑</span>
+          <span onclick="sortProducts('price-desc',this)">💰 Prix ↓</span>
+        </div>
+
+        <div class="productsGrid mt-2" id="products_out" aria-live="polite">
+          <div class="productCard flutter-fade-in">
+            <div class="productImg"><img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=200&fit=crop" alt="" loading="lazy" /></div>
+            <div class="productBody">
+              <div class="productTitle">Nike Air Max</div>
+              <div class="productPrice">120 $</div>
+              <button class="productBtn flutter-ripple" onclick="fillCart(1)">Ajouter</button>
+            </div>
+          </div>
+          <div class="productCard flutter-fade-in">
+            <div class="productImg"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=200&fit=crop" alt="" loading="lazy" /></div>
+            <div class="productBody">
+              <div class="productTitle">Casque Bose QC45</div>
+              <div class="productPrice">299 $</div>
+              <button class="productBtn flutter-ripple" onclick="fillCart(2)">Ajouter</button>
+            </div>
+          </div>
+          <div class="productCard flutter-fade-in">
+            <div class="productImg"><img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=200&fit=crop" alt="" loading="lazy" /></div>
+            <div class="productBody">
+              <div class="productTitle">Montre connectée</div>
+              <div class="productPrice">89 $</div>
+              <button class="productBtn flutter-ripple" onclick="fillCart(3)">Ajouter</button>
+            </div>
+          </div>
+          <div class="productCard flutter-fade-in">
+            <div class="productImg"><img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=300&h=200&fit=crop" alt="" loading="lazy" /></div>
+            <div class="productBody">
+              <div class="productTitle">Appareil photo Sony</div>
+              <div class="productPrice">450 $</div>
+              <button class="productBtn flutter-ripple" onclick="fillCart(4)">Ajouter</button>
+            </div>
+          </div>
+          <div class="productCard flutter-fade-in">
+            <div class="productImg"><img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=300&h=200&fit=crop" alt="" loading="lazy" /></div>
+            <div class="productBody">
+              <div class="productTitle">Parfum Chanel</div>
+              <div class="productPrice">95 $</div>
+              <button class="productBtn flutter-ripple" onclick="fillCart(5)">Ajouter</button>
+            </div>
+          </div>
+          <div class="productCard flutter-fade-in">
+            <div class="productImg"><img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=300&h=200&fit=crop" alt="" loading="lazy" /></div>
+            <div class="productBody">
+              <div class="productTitle">Air Jordan 1</div>
+              <div class="productPrice">180 $</div>
+              <button class="productBtn flutter-ripple" onclick="fillCart(6)">Ajouter</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════ -->
+    <!-- PANIER  (Alibaba Shopping Cart)                      -->
+    <!-- ════════════════════════════════════════════════════════ -->
+    <section class="section" data-section="panier">
+      <div class="card">
+        <!-- Cart Header -->
+        <div class="cartHeader">
+          <div class="cartTitle">
+            <div class="cartIcon"><img src="./assets/cart-icon.svg" alt="" style="width:20px;height:20px" /></div>
+            <div>
+              <h3 style="margin:0;font-size:15px;font-weight:900">Panier</h3>
+              <div class="muted" id="cartMeta" style="margin-top:2px;font-size:12px">Ajoute des articles</div>
+            </div>
+          </div>
+          <div class="qtyPill"><span>Qté</span><strong id="cartQtyBadge">0</strong></div>
+        </div>
+
+        <!-- Add Item -->
+        <div class="al-panel">
+          <div class="row">
+            <div><label>Date</label><input id="order_date" type="date" /></div>
+            <div><label>Produit ID</label><input id="cart_product_id" placeholder="id" /></div>
+          </div>
+          <div class="row">
+            <div><label>Quantité</label><input id="cart_qty" value="1" /></div>
+            <div style="display:flex;align-items:flex-end;gap:8px">
+              <button class="btn btn-primary" id="btn-cart-add" onclick="cartAdd()" style="flex:1"><span class="spinner"></span><span class="btn-text">Ajouter</span></button>
+              <button class="btn btn-ghost btn-sm" onclick="loadCart()">Voir</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Checkout -->
+        <button class="btn btn-primary btn-block" id="btn-checkout" onclick="checkout()"><span class="spinner"></span><span class="btn-text">🛒 Checkout</span></button>
+
+        <!-- Cart Items -->
+        <div class="cartList mt-2" id="cart_list" aria-live="polite"></div>
+        <pre id="cart_out" style="display:none" class="mt-2"></pre>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════ -->
+    <!-- MONGODB  (Mongo-Powered Marketplace)                  -->
+    <!-- ════════════════════════════════════════════════════════ -->
+    <section class="section" data-section="mongo">
+      <div class="card">
+        <div class="al-panel-header">
+          <div class="al-icon" style="background:rgba(34,197,94,0.1);border-color:rgba(34,197,94,0.2)">🍃</div>
+          <h3>Marketplace MongoDB</h3>
+          <span class="al-badge" style="color:#22c55e;background:rgba(34,197,94,0.08)">Nouveau</span>
+        </div>
+
+        <!-- Connexion/Inscription -->
+        <div class="al-panel" style="border-color:rgba(34,197,94,0.15)">
+          <div class="al-panel-header">
+            <div class="al-icon" style="background:rgba(34,197,94,0.1)">🔑</div>
+            <h3>Connexion MongoDB</h3>
+          </div>
+          <div class="row">
+            <div><label>Email</label><input id="mongoEmail" placeholder="demo@marketplace.com" /></div>
+            <div><label>Mot de passe</label><input id="mongoPassword" type="password" placeholder="demo123" /></div>
+          </div>
+          <div class="row">
+            <div><label>Nom (inscription)</label><input id="mongoName" placeholder="Votre nom" /></div>
+            <div style="display:flex;align-items:flex-end;gap:6px">
+              <button class="btn btn-primary btn-sm" onclick="loginMongo()" style="background:linear-gradient(135deg,#22c55e,#16a34a);border-color:#22c55e">Connexion</button>
+              <button class="btn btn-secondary btn-sm" onclick="registerMongo()">Inscription</button>
+            </div>
+          </div>
+          <div id="mongoUserInfo" class="muted mt-1" style="font-size:12px"></div>
+          <input id="mongoUserId" type="hidden" />
+        </div>
+
+        <!-- Catégories -->
+        <div class="al-panel">
+          <div class="al-panel-header">
+            <div class="al-icon" style="background:rgba(34,197,94,0.1)">📁</div>
+            <h3>Catégories</h3>
+            <span class="al-badge" id="mongoCatCount"></span>
+          </div>
+          <div class="al-cats" id="mongoCategories">
+            <div class="al-cat"><div class="ico">⏳</div><div class="nm">Chargement...</div></div>
+          </div>
+        </div>
+
+        <!-- Produits -->
+        <div class="al-panel">
+          <div class="al-panel-header">
+            <div class="al-icon" style="background:rgba(34,197,94,0.1)">📦</div>
+            <h3 id="mongoSectionTitle">Produits</h3>
+          </div>
+          <div class="productsGrid" id="mongoProducts">
+            <div class="productCard"><div class="productBody"><div class="muted">Connectez-vous pour voir les produits</div></div></div>
+          </div>
+        </div>
+
+        <!-- Passer commande -->
+        <div class="al-panel" style="border-color:rgba(34,197,94,0.15)">
+          <div class="al-panel-header">
+            <div class="al-icon" style="background:rgba(34,197,94,0.1)">🛒</div>
+            <h3>Commande rapide</h3>
+          </div>
+          <div class="row">
+            <div><label>Produit ID</label><input id="mongoOrderProduct" placeholder="collez le _id" /></div>
+            <div><label>Quantité</label><input id="mongoOrderQty" value="1" /></div>
+          </div>
+          <div class="flex flex-gap mt-1">
+            <button class="btn btn-primary btn-sm" onclick="placeMongoOrder()" style="background:linear-gradient(135deg,#22c55e,#16a34a);border-color:#22c55e">Passer commande</button>
+            <button class="btn btn-secondary btn-sm" onclick="loadMongoOrders()">📋 Mes commandes</button>
+          </div>
+          <div id="mongoOrdersList" class="mt-2"></div>
+          <pre id="mongoOrderResult" class="mt-1"></pre>
+        </div>
+
+        <p class="muted" style="font-size:11px;text-align:center;margin-top:8px">
+          🍃 MongoDB — Données persistantes via Cloud Function + MongoDB Atlas
+        </p>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════ -->
+    <!-- FLUTTER PRO  (Flutter-Powered Marketplace)            -->
+    <!-- ════════════════════════════════════════════════════════ -->
+    <section class="section" data-section="flutter-pro">
+      <div class="card" style="padding:0;overflow:hidden;border-color:rgba(255,106,0,0.3);background:linear-gradient(180deg,rgba(255,106,0,0.04),rgba(0,0,0,0.3))">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(255,106,0,0.06);border-bottom:1px solid rgba(255,106,0,0.12)">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:20px">⚡</span>
+            <span style="font-weight:900;font-size:15px">Marketplace <span style="color:var(--alibaba-light)">Flutter</span></span>
+          </div>
+          <span class="badge" style="margin:0;background:rgba(255,106,0,0.15)"><span class="dot"></span>Pro</span>
+        </div>
+        <div style="position:relative;width:100%;height:calc(100vh - 260px);min-height:500px;background:#0a0f0e">
+          <iframe id="flutterFrame" src="./flutter-app/index.html" style="width:100%;height:100%;border:none;border-radius:0" allow="geolocation;camera;microphone" loading="lazy"></iframe>
+          <div id="flutterLoading" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#0a0f0e;z-index:10;flex-direction:column;gap:16px;transition:opacity 0.5s">
+            <div class="flutter-shimmer" style="width:48px;height:48px;border-radius:16px;background:linear-gradient(135deg,var(--alibaba),var(--alibaba-dark))"></div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.5);font-weight:600">Chargement Flutter...</div>
+            <div style="display:flex;gap:6px">
+              <span class="loading-dot" style="width:8px;height:8px;border-radius:50%;background:var(--alibaba-light);animation:dotPulse 1.4s infinite"></span>
+              <span class="loading-dot" style="width:8px;height:8px;border-radius:50%;background:var(--alibaba-light);animation:dotPulse 1.4s 0.2s infinite"></span>
+              <span class="loading-dot" style="width:8px;height:8px;border-radius:50%;background:var(--alibaba-light);animation:dotPulse 1.4s 0.4s infinite"></span>
+            </div>
+          </div>
+        </div>
+        <script>
+          var flutterFrame = document.getElementById('flutterFrame');
+          flutterFrame.addEventListener('load', function() {
+            var loading = document.getElementById('flutterLoading');
+            if (loading) {
+              loading.style.opacity = '0';
+              setTimeout(function(){ loading.style.display = 'none'; }, 500);
+            }
+            try {
+              flutterFrame.contentWindow.postMessage({
+                type: 'auth',
+                token: getToken(),
+                apiBase: API_BASE
+              }, '*');
+            } catch(e) {}
+          });
+          window.addEventListener('message', function(e) {
+            if (e.data && e.data.type === 'flutter-ready') {
+              try {
+                flutterFrame.contentWindow.postMessage({
+                  type: 'auth',
+                  token: getToken(),
+                  apiBase: API_BASE
+                }, '*');
+              } catch(ex) {}
+            }
+          });
+        </script>
+      </div>
+    </section>
+  </div>
+
+  <!-- Fullscreen -->
+  <button id="btnFullscreen" onclick="toggleFullscreen()" title="Plein écran" aria-label="Plein écran">⛶</button>
+
+  <!-- GPS FAB -->
+  <button class="gps-fab" id="fab-gps" onclick="fabLocate()" title="Me localiser" aria-label="GPS">
+    <span class="spinner"></span>
+    <span class="fab-icon">📍</span>
+  </button>
+
+  <canvas id="marketBg"></canvas>
+
+  <style>
+    #marketBg{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;pointer-events:none}
+    body > *:not(#marketBg){position:relative;z-index:1}
+    #btnFullscreen{position:fixed;top:14px;right:14px;z-index:100;width:40px;height:40px;border-radius:12px;border:1px solid rgba(255,106,0,.2);background:rgba(0,0,0,.5);backdrop-filter:blur(8px);color:rgba(255,255,255,.7);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s}
+    #btnFullscreen:hover{background:rgba(255,106,0,.2);color:#fff;border-color:rgba(255,106,0,.4);transform:scale(1.05)}
+    .gps-fab{position:fixed;bottom:24px;right:24px;z-index:100;width:52px;height:52px;border-radius:16px;border:1px solid rgba(255,106,0,.25);background:linear-gradient(135deg,rgba(255,106,0,.2),rgba(255,106,0,.08));backdrop-filter:blur(12px);color:rgba(255,255,255,.8);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s;box-shadow:0 8px 32px rgba(255,106,0,.15)}
+    .gps-fab:hover{background:linear-gradient(135deg,rgba(255,106,0,.35),rgba(255,106,0,.15));color:#fff;border-color:rgba(255,106,0,.5);transform:translateY(-2px);box-shadow:0 12px 40px rgba(255,106,0,.2)}
+    .gps-fab .spinner{position:absolute;opacity:0;transition:opacity .2s}
+    .gps-fab.loading .spinner{opacity:1}
+    .gps-fab.loading .fab-icon{opacity:0}
+  </style>
+
+  <script>
+    const navBtns = Array.from(document.querySelectorAll('.navBtn'));
+    const sections = Array.from(document.querySelectorAll('.section'));
+    const notifFilters = document.querySelectorAll('.al-notif-filter span');
+
+    function showSection(target) {
+      sections.forEach(s => s.setAttribute('data-active', s.getAttribute('data-section') === target ? 'true' : 'false'));
+      navBtns.forEach(b => b.setAttribute('data-active', b.getAttribute('data-target') === target ? 'true' : 'false'));
+      if (target === 'panier') initDate();
+    }
+
+    navBtns.forEach(b => b.addEventListener('click', () => showSection(b.getAttribute('data-target'))));
+
+    // Notification filter tabs
+    notifFilters.forEach(function(el) {
+      el.addEventListener('click', function() {
+        notifFilters.forEach(function(f) { f.classList.remove('active'); });
+        this.classList.add('active');
+      });
+    });
+
+    function initDate() {
+      const el = document.getElementById('order_date');
+      if (!el || el.value) return;
+      el.value = new Date().toISOString().slice(0, 10);
+    }
+
+    showSection('accueil');
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(function() {});
+    }
+
+    function fabLocate() {
+      const fab = document.getElementById('fab-gps');
+      fab.classList.add('loading');
+      locateMe().finally(function() { fab.classList.remove('loading'); });
+    }
+
+    function toggleFullscreen(){
+      if(!document.fullscreenElement){document.documentElement.requestFullscreen()}
+      else{document.exitFullscreen()}
+    }
+    document.addEventListener('fullscreenchange',function(){
+      var b=document.getElementById('btnFullscreen');
+      if(document.fullscreenElement)b.textContent='✕';else b.textContent='⛶';
+    });
+
+    function sortProducts(mode, el) {
+      var container = document.getElementById('products_out');
+      var items = Array.from(container.children);
+      var allFilters = document.querySelectorAll('.al-notif-filter span');
+
+      allFilters.forEach(function(f) { f.classList.remove('active'); });
+      if (el) el.classList.add('active');
+
+      if (mode === 'all') {
+        items.sort(function(a, b) { return Array.from(container.children).indexOf(a) - Array.from(container.children).indexOf(b); });
+        items.forEach(function(item) { container.appendChild(item); });
+        return;
+      }
+
+      if (mode === 'price-asc' || mode === 'price-desc') {
+        items.sort(function(a, b) {
+          var pa = parseFloat((a.querySelector('.productPrice') || a.querySelector('.cartItemPrice'))?.textContent) || 0;
+          var pb = parseFloat((b.querySelector('.productPrice') || b.querySelector('.cartItemPrice'))?.textContent) || 0;
+          return mode === 'price-asc' ? pa - pb : pb - pa;
+        });
+      } else {
+        items.sort(function(a, b) {
+          var ra = parseInt((a.querySelector('[style*="color:#fbbf24"]')?.parentElement?.querySelector('[style*="color:rgba(255,255,255,0.3)"]')?.textContent || '').replace(/[()]/g,'')) || 0;
+          var rb = parseInt((b.querySelector('[style*="color:#fbbf24"]')?.parentElement?.querySelector('[style*="color:rgba(255,255,255,0.3)"]')?.textContent || '').replace(/[()]/g,'')) || 0;
+          return rb - ra;
+        });
+      }
+
+      items.forEach(function(item) { container.appendChild(item); });
+    }
+
+    document.getElementById('globalSearch').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        var q = document.getElementById('search_q');
+        if (q) q.value = this.value;
+        showSection('catalogue');
+        doSearchProducts();
+      }
+    });
+  </script>
+
+  <script>
+  // ─── MARCHÉ ANIMÉ : 3 TYPES D'ACHETEURS ───
+  (function(){
+    var c=document.getElementById('marketBg');if(!c)return;
+    var x=c.getContext('2d');var W,H;
+
+    function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight}
+    resize();window.addEventListener('resize',resize);
+
+    function sky(){
+      var g=x.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,'#070814');g.addColorStop(0.4,'#0b1020');
+      g.addColorStop(0.7,'#120e20');g.addColorStop(1,'#1a0e1a');
+      x.fillStyle=g;x.fillRect(0,0,W,H);
+    }
+
+    function moon(){
+      var mx=W*0.8,my=50;
+      x.fillStyle='rgba(200,180,255,0.04)';x.beginPath();x.arc(mx,my,60,0,Math.PI*2);x.fill();
+      x.fillStyle='rgba(200,180,255,0.08)';x.beginPath();x.arc(mx,my,35,0,Math.PI*2);x.fill();
+      x.fillStyle='rgba(220,210,255,0.15)';x.beginPath();x.arc(mx,my,18,0,Math.PI*2);x.fill();
+    }
+
+    function ground(){
+      var g=x.createLinearGradient(0,H-70,0,H);
+      g.addColorStop(0,'rgba(40,30,20,0.5)');g.addColorStop(0.5,'rgba(30,20,15,0.7)');
+      g.addColorStop(1,'rgba(10,8,12,0.9)');x.fillStyle=g;x.fillRect(0,H-70,W,70);
+    }
+
+    var stalls=[];
+    for(var i=0;i<10;i++)stalls.push({x:Math.random()*W,w:50+Math.random()*70,h:50+Math.random()*30,rH:20+Math.random()*15,c:'hsl('+(30+Math.random()*20)+','+(40+Math.random()*40)+'%,'+(35+Math.random()*20)+'%)',rc:'hsl('+(250+Math.random()*40)+','+(40+Math.random()*30)+'%,'+(20+Math.random()*15)+'%)',it:Math.floor(2+Math.random()*4)});
+
+    function drawStalls(){
+      for(var i=0;i<stalls.length;i++){
+        var s=stalls[i],sy=H-70;
+        x.strokeStyle='rgba(80,60,40,0.3)';x.lineWidth=2;
+        x.beginPath();x.moveTo(s.x,sy);x.lineTo(s.x,sy-s.h);x.stroke();
+        x.beginPath();x.moveTo(s.x+s.w,sy);x.lineTo(s.x+s.w,sy-s.h);x.stroke();
+        x.fillStyle=s.c;x.shadowColor='rgba(139,92,246,0.1)';x.shadowBlur=8;
+        x.fillRect(s.x-2,sy-14,s.w+4,6);x.shadowBlur=0;
+        x.fillStyle=s.rc;x.beginPath();x.moveTo(s.x-12,sy-s.h);
+        x.lineTo(s.x+s.w/2,sy-s.h-s.rH);x.lineTo(s.x+s.w+12,sy-s.h);x.closePath();x.fill();
+        for(var j=0;j<s.it;j++){
+          var px=s.x+10+j*((s.w-20)/(s.it-1||1)),hue=(i*37+j*73)%360;
+          x.fillStyle='hsl('+hue+',70%,55%)';x.shadowColor=x.fillStyle;x.shadowBlur=4;
+          x.beginPath();x.arc(px,sy-9,4,0,Math.PI*2);x.fill();x.shadowBlur=0;
+        }
+      }
+    }
+
+    var wlk=[];
+    function spawnW(){wlk.push({x:W+20,y:H-65-Math.random()*30,w:8+Math.random()*4,h:22+Math.random()*8,sp:0.4+Math.random()*0.6,col:'hsl('+(Math.random()*360)+',30%,'+(30+Math.random()*30)+'%)',ap:Math.random()*6,bg:Math.random()>0.6})}
+    function drawWlk(){
+      for(var i=wlk.length-1;i>=0;i--){
+        var p=wlk[i];p.x-=p.sp;p.ap+=0.08;var py=p.y;
+        x.fillStyle=p.col;x.fillRect(p.x-p.w/4,py-p.h,p.w/2,p.h);
+        x.beginPath();x.arc(p.x,py-p.h-6,5,0,Math.PI*2);x.fill();
+        var ls=Math.sin(p.ap*2)*3;x.strokeStyle=p.col;x.lineWidth=1.5;
+        x.beginPath();x.moveTo(p.x-2,py);x.lineTo(p.x-4+ls,py+10);x.stroke();
+        x.beginPath();x.moveTo(p.x+2,py);x.lineTo(p.x+4-ls,py+10);x.stroke();
+        var as=Math.sin(p.ap)*5;
+        x.beginPath();x.moveTo(p.x-p.w/4,py-p.h*0.6);x.lineTo(p.x-p.w/4-5+as,py-p.h*0.3);x.stroke();
+        x.beginPath();x.moveTo(p.x+p.w/4,py-p.h*0.6);x.lineTo(p.x+p.w/4+5-as,py-p.h*0.3);x.stroke();
+        if(p.bg){x.fillStyle='#8B4513';x.fillRect(p.x+p.w/4+1,py-p.h*0.5,6,8);x.strokeStyle='#654321';x.lineWidth=1;x.beginPath();x.moveTo(p.x+p.w/4+1,py-p.h*0.5);x.lineTo(p.x+p.w/4+4,py-p.h*0.7);x.stroke()}
+        if(p.x<-30)wlk.splice(i,1);
+      }
+    }
+
+    var brw=[];
+    function spawnB(){
+      var st=stalls[Math.floor(Math.random()*stalls.length)];
+      brw.push({x:st.x+st.w/2-10+Math.random()*20,y:H-65-Math.random()*20,w:8+Math.random()*4,h:22+Math.random()*8,col:'hsl('+(Math.random()*360)+',30%,'+(35+Math.random()*25)+'%)',st:120+Math.random()*200,t:0});
+    }
+    function drawBrw(){
+      for(var i=brw.length-1;i>=0;i--){
+        var p=brw[i];p.t++;var py=p.y,bend=0;
+        if(p.t>30&&p.t<p.st-30)bend=Math.sin(p.t*0.05)*4;
+        x.fillStyle=p.col;x.save();x.translate(p.x,py);x.rotate(bend*0.02);
+        x.fillRect(-p.w/4,-p.h,p.w/2,p.h);x.beginPath();x.arc(0,-p.h-6,5,0,Math.PI*2);x.fill();x.restore();
+        x.strokeStyle=p.col;x.lineWidth=1.5;
+        x.beginPath();x.moveTo(p.x-p.w/4,py-p.h*0.6);x.lineTo(p.x-p.w/4-12,py-p.h*0.4);x.stroke();
+        if(p.t>p.st)brw.splice(i,1);
+      }
+    }
+
+    var lvr=[];
+    function spawnL(){lvr.push({x:-30,y:H-65-Math.random()*30,w:9+Math.random()*4,h:24+Math.random()*8,sp:0.3+Math.random()*0.5,col:'hsl('+(Math.random()*360)+',30%,'+(30+Math.random()*25)+'%)',ap:Math.random()*6,bg:Math.floor(1+Math.random()*3)})}
+    function drawLvr(){
+      for(var i=lvr.length-1;i>=0;i--){
+        var p=lvr[i];p.x+=p.sp;p.ap+=0.06;var py=p.y;
+        x.fillStyle=p.col;x.fillRect(p.x-p.w/4,py-p.h,p.w/2,p.h);
+        x.beginPath();x.arc(p.x,py-p.h-6,5,0,Math.PI*2);x.fill();
+        var ls=Math.sin(p.ap*2)*3;x.strokeStyle=p.col;x.lineWidth=1.5;
+        x.beginPath();x.moveTo(p.x-2,py);x.lineTo(p.x-4+ls,py+10);x.stroke();
+        x.beginPath();x.moveTo(p.x+2,py);x.lineTo(p.x+4-ls,py+10);x.stroke();
+        var as=Math.sin(p.ap)*4;
+        x.beginPath();x.moveTo(p.x-p.w/4,py-p.h*0.6);x.lineTo(p.x-p.w/4-5+as,py-p.h*0.3);x.stroke();
+        x.beginPath();x.moveTo(p.x+p.w/4,py-p.h*0.6);x.lineTo(p.x+p.w/4+5-as,py-p.h*0.3);x.stroke();
+        for(var j=0;j<p.bg;j++){var bx=p.x+p.w/4+2+j*4,by=py-p.h*0.4-j*6;x.fillStyle='#8B4513';x.fillRect(bx,by,5,7);x.strokeStyle='#654321';x.lineWidth=0.5;x.beginPath();x.moveTo(bx,by);x.lineTo(bx+2,by-2);x.stroke()}
+        if(p.x>W+30)lvr.splice(i,1);
+      }
+    }
+
+    var fr=0;
+    function loop(){
+      fr++;
+      sky();moon();ground();drawStalls();
+      if(fr%40===0)spawnW();
+      if(fr%120===0&&brw.length<5)spawnB();
+      if(fr%150===0)spawnL();
+      drawWlk();drawBrw();drawLvr();
+      requestAnimationFrame(loop);
+    }
+    loop();
+  })();
+  </script>
+</body>
+</html>

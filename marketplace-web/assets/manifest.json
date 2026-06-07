@@ -1,0 +1,25 @@
+{
+  "name": "easy-market",
+  "short_name": "easy-market",
+  "description": "Votre marché digital en ligne — Achetez et vendez facilement",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0f0f1a",
+  "theme_color": "#FF6A00",
+  "orientation": "portrait-primary",
+  "categories": ["shopping", "business", "lifestyle"],
+  "lang": "fr-FR",
+  "icons": [
+    { "src": "icon-192.svg", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable" }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot.svg",
+      "sizes": "1080x1920",
+      "type": "image/svg+xml",
+      "form_factor": "narrow",
+      "label": "Accueil easy-market"
+    }
+  ]
+}

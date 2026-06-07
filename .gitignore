@@ -1,0 +1,10 @@
+node_modules/
+functions/node_modules/
+payza/backend/__pycache__/
+payza/backend/app/__pycache__/
+*.pyc
+__pycache__/
+.env
+*.log
+*.db
+.DS_Store

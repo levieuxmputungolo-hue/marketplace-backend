@@ -1,0 +1,902 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#075e54" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate" />
+  <title>izaho — messenger</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="./assets/style.css?v=2" />
+  <link rel="manifest" href="./assets/manifest.json" />
+  <script defer src="./assets/firebase-config.js"></script>
+  <script defer src="./assets/app.js?_=refresh_2024"></script>
+</head>
+<body>
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- ÉCRAN D'AUTHENTIFICATION                               -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div id="authScreen" class="screen active">
+    <div class="auth-wrap">
+      <div class="auth-logo">
+        <div class="auth-logo-icon">
+          <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:36px;height:36px">
+            <rect x="4" y="4" width="52" height="52" rx="14" fill="white" fill-opacity="0.15"/>
+            <path d="M44 22c0-6.075-5.925-11-14-11s-14 4.925-14 11c0 3.418 1.74 6.47 4.48 8.57l-1.27 4.24 4.99-2.5C25.98 33.06 28.42 33 30 33c8.075 0 14-4.925 14-11z" fill="white" fill-opacity="0.95"/>
+            <circle cx="22" cy="22" r="1.5" fill="#0b0f1c"/>
+            <circle cx="30" cy="22" r="1.5" fill="#0b0f1c"/>
+            <circle cx="38" cy="22" r="1.5" fill="#0b0f1c"/>
+          </svg>
+        </div>
+        <h1>izaho</h1>
+        <p class="auth-tagline" data-i18n="authTagline">Votre réseau privé</p>
+      </div>
+
+      <!-- ÉTAPE 1 : INSCRIPTION OU CONNEXION -->
+      <div id="authChoice">
+        <div class="auth-card">
+          <h2 data-i18n="authWelcome">Bienvenue sur izaho</h2>
+          <p class="auth-hint" data-i18n="authChoiceHint">Choisissez votre pays et recevez un identifiant unique.</p>
+
+          <!-- Pays -->
+          <label style="font-size:12px;color:var(--text-muted);font-weight:600;display:block;margin-bottom:4px" data-i18n="authCountryLabel">Votre pays</label>
+          <select id="authCountry" class="settings-select" style="width:100%;margin-bottom:12px">
+            <option value="33">France 🇫🇷 (+33)</option>
+            <option value="261" selected>Madagascar 🇲🇬 (+261)</option>
+            <option value="1">Canada 🇨🇦 (+1)</option>
+            <option value="32">Belgique 🇧🇪 (+32)</option>
+            <option value="41">Suisse 🇨🇭 (+41)</option>
+            <option value="243">Congo RDC 🇨🇩 (+243)</option>
+            <option value="225">Côte d'Ivoire 🇨🇮 (+225)</option>
+            <option value="221">Sénégal 🇸🇳 (+221)</option>
+            <option value="237">Cameroun 🇨🇲 (+237)</option>
+            <option value="212">Maroc 🇲🇦 (+212)</option>
+            <option value="213">Algérie 🇩🇿 (+213)</option>
+            <option value="216">Tunisie 🇹🇳 (+216)</option>
+            <option value="223">Mali 🇲🇱 (+223)</option>
+            <option value="227">Niger 🇳🇪 (+227)</option>
+            <option value="226">Burkina Faso 🇧🇫 (+226)</option>
+            <option value="229">Bénin 🇧🇯 (+229)</option>
+            <option value="228">Togo 🇹🇬 (+228)</option>
+            <option value="224">Guinée 🇬🇳 (+224)</option>
+            <option value="250">Rwanda 🇷🇼 (+250)</option>
+            <option value="257">Burundi 🇧🇮 (+257)</option>
+            <option value="254">Kenya 🇰🇪 (+254)</option>
+            <option value="255">Tanzanie 🇹🇿 (+255)</option>
+            <option value="256">Ouganda 🇺🇬 (+256)</option>
+            <option value="251">Éthiopie 🇪🇹 (+251)</option>
+            <option value="27">Afrique du Sud 🇿🇦 (+27)</option>
+            <option value="244">Angola 🇦🇴 (+244)</option>
+            <option value="258">Mozambique 🇲🇿 (+258)</option>
+            <option value="49">Allemagne 🇩🇪 (+49)</option>
+            <option value="44">Royaume-Uni 🇬🇧 (+44)</option>
+            <option value="39">Italie 🇮🇹 (+39)</option>
+            <option value="34">Espagne 🇪🇸 (+34)</option>
+            <option value="351">Portugal 🇵🇹 (+351)</option>
+            <option value="31">Pays-Bas 🇳🇱 (+31)</option>
+            <option value="46">Suède 🇸🇪 (+46)</option>
+            <option value="47">Norvège 🇳🇴 (+47)</option>
+            <option value="45">Danemark 🇩🇰 (+45)</option>
+            <option value="358">Finlande 🇫🇮 (+358)</option>
+            <option value="48">Pologne 🇵🇱 (+48)</option>
+            <option value="30">Grèce 🇬🇷 (+30)</option>
+            <option value="90">Turquie 🇹🇷 (+90)</option>
+            <option value="7">Russie 🇷🇺 (+7)</option>
+            <option value="86">Chine 🇨🇳 (+86)</option>
+            <option value="81">Japon 🇯🇵 (+81)</option>
+            <option value="82">Corée du Sud 🇰🇷 (+82)</option>
+            <option value="91">Inde 🇮🇳 (+91)</option>
+            <option value="55">Brésil 🇧🇷 (+55)</option>
+            <option value="52">Mexique 🇲🇽 (+52)</option>
+            <option value="54">Argentine 🇦🇷 (+54)</option>
+            <option value="56">Chili 🇨🇱 (+56)</option>
+            <option value="61">Australie 🇦🇺 (+61)</option>
+            <option value="64">Nouvelle-Zélande 🇳🇿 (+64)</option>
+            <option value="971">Émirats Arabes Unis 🇦🇪 (+971)</option>
+            <option value="966">Arabie Saoudite 🇸🇦 (+966)</option>
+            <option value="962">Jordanie 🇯🇴 (+962)</option>
+            <option value="20">Égypte 🇪🇬 (+20)</option>
+            <option value="234">Nigeria 🇳🇬 (+234)</option>
+            <option value="233">Ghana 🇬🇭 (+233)</option>
+          </select>
+
+          <!-- Nouveau : Gmail -->
+          <div style="margin-bottom:12px">
+            <label style="font-size:12px;color:var(--text-muted);font-weight:600;display:block;margin-bottom:4px" data-i18n="authNewLabel">Nouveau ? Entrez votre Gmail</label>
+            <div class="phone-input">
+              <span class="phone-prefix"><i class="fas fa-envelope"></i></span>
+              <input id="authGmail" type="email" placeholder="votre@gmail.com" autocomplete="email" />
+            </div>
+            <button class="btn btn-primary btn-block mt-1" onclick="registerGmail()" data-i18n="authCreateBtn">Créer mon identifiant</button>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:12px;margin:8px 0;color:var(--text-muted);font-size:12px">
+            <span style="flex:1;height:1px;background:var(--border)"></span>
+            <span data-i18n="authOr">ou</span>
+            <span style="flex:1;height:1px;background:var(--border)"></span>
+          </div>
+
+          <!-- Retour : ID complet -->
+          <div>
+            <label style="font-size:12px;color:var(--text-muted);font-weight:600;display:block;margin-bottom:4px" data-i18n="authReturnLabel">Déjà un identifiant ?</label>
+            <div class="phone-input" style="flex-direction:column;gap:6px;background:transparent;border:none">
+              <div style="display:flex;gap:6px;width:100%">
+                <select id="loginCountry" class="settings-select" style="flex:0 0 100px;min-width:0">
+                  <option value="33">🇫🇷 +33</option>
+                  <option value="261" selected>🇲🇬 +261</option>
+                  <option value="1">🇨🇦 +1</option>
+                  <option value="243">🇨🇩 +243</option>
+                  <option value="225">🇨🇮 +225</option>
+                  <option value="212">🇲🇦 +212</option>
+                  <option value="32">🇧🇪 +32</option>
+                  <option value="41">🇨🇭 +41</option>
+                  <option value="49">🇩🇪 +49</option>
+                  <option value="44">🇬🇧 +44</option>
+                  <option value="39">🇮🇹 +39</option>
+                  <option value="34">🇪🇸 +34</option>
+                  <option value="90">🇹🇷 +90</option>
+                  <option value="86">🇨🇳 +86</option>
+                  <option value="81">🇯🇵 +81</option>
+                  <option value="91">🇮🇳 +91</option>
+                  <option value="27">🇿🇦 +27</option>
+                  <option value="20">🇪🇬 +20</option>
+                  <option value="234">🇳🇬 +234</option>
+                  <option value="55">🇧🇷 +55</option>
+                </select>
+                <input id="authId" type="text" placeholder="0 0 0 0 0" maxlength="5" inputmode="numeric" pattern="[0-9]*" autocomplete="off" style="flex:1;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:20px;letter-spacing:6px;font-weight:800;outline:none;font-family:monospace;padding:10px" />
+              </div>
+            </div>
+            <button class="btn btn-primary btn-block mt-1" onclick="loginWithId()" data-i18n="authLoginBtn">Se connecter</button>
+          </div>
+
+          <!-- Accès libre -->
+          <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+            <button class="btn btn-ghost btn-block" onclick="enterDemoMode()">
+              <i class="fas fa-rocket"></i> Accès libre
+            </button>
+            <p style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:6px" data-i18n="authGuestHint">Mode invité · données locales uniquement</p>
+          </div>
+
+          <p id="authError" class="auth-error"></p>
+        </div>
+      </div>
+
+      <!-- ÉTAPE 2 : IDENTIFIANT GÉNÉRÉ -->
+      <div id="authShowId" style="display:none">
+        <div class="auth-card" style="text-align:center">
+          <div style="font-size:48px;margin-bottom:8px"><i class="fas fa-check-circle" style="color:var(--primary-to)"></i></div>
+          <h2 data-i18n="authIdCreated">Identifiant créé</h2>
+          <p class="auth-hint" data-i18n="authIdSaved">Enregistré sur votre compte Gmail</p>
+          <div style="background:var(--surface);border-radius:16px;padding:24px;margin:16px 0;border:2px dashed var(--primary-from)">
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px" data-i18n="authYourId">Votre identifiant unique</div>
+            <div id="newUserIdDisplay" style="font-size:32px;font-weight:900;letter-spacing:6px;color:var(--text);font-family:monospace">+33 00785</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:6px" data-i18n="authShareHint">Partagez cet identifiant pour être contacté</div>
+          </div>
+          <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px" data-i18n="authGmailNote">Un email de confirmation a été envoyé à <strong id="authGmailDisplay"></strong></p>
+          <button class="btn btn-primary btn-block" onclick="showNameStep()" data-i18n="authContinue">Continuer →</button>
+        </div>
+      </div>
+
+      <!-- ÉTAPE 3 : CHOISIR SON NOM -->
+      <div id="authNameStep" style="display:none">
+        <div class="auth-card">
+          <h2 data-i18n="authNameTitle">Choisissez votre nom</h2>
+          <p class="auth-hint" data-i18n="authNameHint">Ce nom sera visible par vos contacts</p>
+          <input id="authName" type="text" placeholder="Votre prénom ou pseudo" style="width:100%;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:15px;outline:none;font-family:inherit;margin:8px 0;transition:border-color 0.3s" maxlength="30" />
+          <button class="btn btn-primary btn-block" onclick="completeRegistration()" data-i18n="authStartBtn">Rejoindre izaho</button>
+          <p class="auth-back" onclick="resetAuth()" data-i18n="authBack">← Retour</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- APPLICATION PRINCIPALE                                 -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div id="appScreen" class="screen">
+    <!-- Header -->
+    <div class="app-header">
+      <div class="header-left">
+        <span class="app-title" data-i18n="appTitle">izaho</span>
+      </div>
+      <div class="header-right">
+        <button class="header-btn" onclick="showInvitations()" title="Invitations" id="inviteBtn" style="position:relative">
+          <i class="fas fa-user-plus"></i>
+          <span id="inviteBadge" class="badge" style="display:none">0</span>
+        </button>
+        <button class="header-btn" onclick="showView('profile')" title="Profil" data-i18n-title="headerProfile"><i class="fas fa-user-circle"></i></button>
+      </div>
+    </div>
+
+    <!-- VUE : CHATS -->
+    <div id="viewChats" class="view active">
+      <div class="search-bar">
+        <i class="fas fa-search"></i>
+        <input id="chatSearch" type="text" data-i18n="searchChats" placeholder="Rechercher un chat..." oninput="filterChats(this.value)" />
+      </div>
+      <div class="list" id="chatList"></div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="bottom-nav">
+      <button class="nav-item active" onclick="showView('chats')" data-view="chats">
+        <i class="fas fa-comment-dots"></i><span data-i18n="navChats">Chats</span>
+      </button>
+      <button class="nav-item" onclick="showView('contacts')" data-view="contacts">
+        <i class="fas fa-address-book"></i><span data-i18n="navContacts">Contacts</span>
+      </button>
+      <button class="nav-item" onclick="showView('status')" data-view="status">
+        <i class="fas fa-circle"></i><span data-i18n="navStatus">Statut</span>
+      </button>
+      <button class="nav-item" onclick="showView('calls')" data-view="calls">
+        <i class="fas fa-phone"></i><span data-i18n="navCalls">Appels</span>
+      </button>
+      <button class="nav-item" onclick="showView('community')" data-view="community">
+        <i class="fas fa-globe"></i><span data-i18n="navCommunity">Communauté</span>
+      </button>
+    </div>
+
+    <!-- VUE : CONTACTS -->
+    <div id="viewContacts" class="view">
+      <div class="section-header">
+        <h2>Contacts</h2>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-sm btn-primary" onclick="showAddContact()"><i class="fas fa-plus"></i> Ajouter</button>
+          <button class="btn btn-sm btn-primary" onclick="showCreateGroup()"><i class="fas fa-users"></i> Groupe</button>
+        </div>
+      </div>
+      <div class="list" id="contactList"></div>
+      <div id="addContactPanel" class="add-contact-panel" style="display:none">
+        <div class="phone-input" style="margin-top:8px;flex-direction:column;gap:6px;background:transparent;border:none">
+          <div style="display:flex;gap:6px;width:100%">
+            <select id="contactCountry" class="settings-select" style="flex:0 0 100px;min-width:0">
+              <option value="33">🇫🇷 +33</option>
+              <option value="261" selected>🇲🇬 +261</option>
+              <option value="1">🇨🇦 +1</option>
+              <option value="243">🇨🇩 +243</option>
+              <option value="225">🇨🇮 +225</option>
+              <option value="212">🇲🇦 +212</option>
+            </select>
+            <input id="contactId" type="text" placeholder="0 0 0 0 0" maxlength="5" inputmode="numeric" pattern="[0-9]*" style="flex:1;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:16px;letter-spacing:4px;font-weight:700;outline:none;font-family:monospace;padding:10px" />
+          </div>
+        </div>
+        <input id="contactName" type="text" placeholder="Nom du contact" style="margin-top:8px" />
+        <button class="btn btn-primary btn-block mt-1" onclick="addContact()">Ajouter</button>
+        <button class="btn btn-ghost btn-block mt-1" onclick="hideAddContact()">Annuler</button>
+      </div>
+
+      <!-- Créer un groupe -->
+      <div id="createGroupPanel" class="add-contact-panel" style="display:none">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <i class="fas fa-users" style="color:var(--primary-to);font-size:18px"></i>
+          <span style="font-weight:700;font-size:15px">Nouveau groupe</span>
+        </div>
+        <input id="groupNameInput" type="text" placeholder="Nom du groupe" style="margin-bottom:8px" maxlength="30" />
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">Ajouter des membres (par ID):</div>
+        <div style="display:flex;gap:6px;margin-bottom:6px">
+          <select id="groupCountry" class="settings-select" style="flex:0 0 90px;min-width:0">
+            <option value="33">🇫🇷 +33</option>
+            <option value="261" selected>🇲🇬 +261</option>
+            <option value="1">🇨🇦 +1</option>
+            <option value="243">🇨🇩 +243</option>
+            <option value="225">🇨🇮 +225</option>
+            <option value="212">🇲🇦 +212</option>
+          </select>
+          <input id="groupMemberId" type="text" placeholder="0 0 0 0 0" maxlength="5" inputmode="numeric" pattern="[0-9]*" style="flex:1;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:14px;letter-spacing:3px;font-weight:600;outline:none;font-family:monospace;padding:8px" />
+          <button class="btn btn-sm btn-primary" onclick="addGroupMember()"><i class="fas fa-plus"></i></button>
+        </div>
+        <div id="groupMembersList" style="font-size:13px;color:var(--text-muted);min-height:20px;margin-bottom:8px"></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary btn-block" onclick="createGroup()"><i class="fas fa-check"></i> Créer</button>
+          <button class="btn btn-ghost" onclick="hideCreateGroup()">Annuler</button>
+        </div>
+      </div>
+    </div>
+
+      <!-- VUE : STATUT -->
+      <div id="viewStatus" class="view">
+        <div class="section-header">
+          <h2>Statuts</h2>
+          <button class="btn btn-sm btn-primary" onclick="showPostStatus()"><i class="fas fa-plus"></i> Mon statut</button>
+        </div>
+        <div class="status-list" id="statusList"></div>
+        <div id="postStatusPanel" class="add-contact-panel" style="display:none">
+          <textarea id="statusText" placeholder="Quoi de neuf ?" rows="3"></textarea>
+          <div class="flex flex-gap mt-1">
+            <button class="btn btn-primary" onclick="postStatus()"><i class="fas fa-image"></i> Publier</button>
+            <button class="btn btn-ghost" onclick="hidePostStatus()">Annuler</button>
+          </div>
+        </div>
+        <!-- Voir un statut -->
+        <div id="viewStatusOverlay" class="status-overlay" style="display:none" onclick="closeStatusView()">
+          <div class="status-viewer" onclick="event.stopPropagation()">
+            <div class="status-viewer-header">
+              <div class="status-viewer-avatar" id="statusViewerAvatar">U</div>
+              <div>
+                <div class="status-viewer-name" id="statusViewerName">Utilisateur</div>
+                <div class="status-viewer-time" id="statusViewerTime">à l'instant</div>
+              </div>
+            </div>
+            <div class="status-viewer-content" id="statusViewerContent">
+              <p id="statusViewerText"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VUE : APPELS -->
+      <div id="viewCalls" class="view">
+        <div class="section-header">
+          <h2 data-i18n="callsTitle">📞 Appels</h2>
+        </div>
+        <div id="callsList" style="padding:0 16px">
+          <div style="padding:40px 20px;text-align:center;color:var(--text-muted);font-size:14px" id="callsEmpty">
+            <i class="fas fa-phone" style="font-size:32px;display:block;margin-bottom:12px;opacity:.4"></i>
+            Aucun appel
+          </div>
+        </div>
+      </div>
+        <div class="nearby-info" id="nearbyInfo">
+          <i class="fas fa-map-marker-alt"></i>
+          <span id="nearbyStatus">Recherche des utilisateurs à proximité...</span>
+        </div>
+        <div id="nearbyMap" class="nearby-map">
+          <canvas id="nearbyCanvas" width="340" height="300"></canvas>
+        </div>
+        <div class="nearby-list" id="nearbyList"></div>
+      </div>
+
+      <!-- VUE : COMMUNAUTÉ -->
+      <div id="viewCommunity" class="view">
+        <div class="section-header">
+          <h2>Communauté</h2>
+          <button class="btn btn-sm btn-primary" onclick="createCommunity()"><i class="fas fa-plus"></i> Nouvelle</button>
+        </div>
+        <div class="community-banner">
+          <i class="fas fa-globe" style="font-size:24px;color:var(--primary-to)"></i>
+          <div>
+            <div style="font-weight:700;font-size:15px">Communautés izaho</div>
+            <div style="font-size:12px;color:var(--text-muted)">Rejoignez ou créez des communautés ouvertes</div>
+          </div>
+        </div>
+        <div class="list" id="communityList"></div>
+      </div>
+
+      <!-- VUE : PROFIL -->
+      <div id="viewProfile" class="view">
+        <div class="section-header"><h2>Profil</h2></div>
+        <div class="profile-card">
+          <div class="profile-avatar" id="profileAvatar" onclick="document.getElementById('profilePhotoInput').click()">
+            <span id="profileAvatarText">U</span>
+            <img id="profileAvatarImg" style="display:none" />
+            <div class="profile-avatar-overlay"><i class="fas fa-camera"></i></div>
+          </div>
+          <input type="file" id="profilePhotoInput" accept="image/*" style="display:none" onchange="uploadProfilePhoto(event)" />
+          <input id="profileName" type="text" placeholder="Votre nom" />
+          <p class="profile-phone" id="profilePhone">+261 00 00 00 00</p>
+          <button class="btn btn-primary btn-block" onclick="updateProfile()">Enregistrer</button>
+          <div style="margin-top:16px">
+            <div class="section-header" style="padding:8px 0"><h2 style="font-size:15px">Bloqués</h2></div>
+            <div id="blockedList" style="font-size:13px;color:var(--text-muted);text-align:center;padding:12px">Aucun contact bloqué</div>
+          </div>
+          <button class="btn btn-ghost btn-block mt-2" onclick="showView('settings')"><i class="fas fa-cog"></i> Paramètres</button>
+          <button class="btn btn-ghost btn-block mt-1" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
+        </div>
+      </div>
+
+    <!-- VUE : PARAMÈTRES -->
+    <div id="viewSettings" class="view">
+      <div class="section-header">
+        <button class="header-btn" onclick="showView('profile')"><i class="fas fa-arrow-left"></i></button>
+        <h2 data-i18n="settingsTitle">Paramètres</h2>
+        <div></div>
+      </div>
+
+      <div class="settings-scroll">
+        <!-- Chiffrement & Sécurité -->
+        <div class="settings-section">
+          <div class="settings-section-title"><i class="fas fa-shield-alt"></i> <span data-i18n="secTitle">Chiffrement &amp; Sécurité</span></div>
+          <div class="settings-section-body">
+            <div class="settings-banner">
+              <i class="fas fa-lock"></i>
+              <span data-i18n="secBanner">Tous vos messages sont protégés par un <strong>chiffrement de bout en bout</strong>. Seul·e·s vous et votre interlocuteur·rice pouvez les lire.</span>
+            </div>
+            <div class="settings-row">
+              <span data-i18n="secCode">Code de sécurité</span>
+              <span class="settings-badge" id="securCodeBadge" onclick="showSecurityCode()"><span data-i18n="secCodeShow">Afficher</span> <i class="fas fa-chevron-right" style="font-size:10px"></i></span>
+            </div>
+            <div class="settings-row">
+              <div><span data-i18n="secAlert">Notifications de sécurité</span><span class="settings-hint" data-i18n="secAlertHint">Alerte si un contact change de clé</span></div>
+              <label class="switch"><input type="checkbox" id="settingSecAlert" onchange="saveSetting('secAlert',this.checked)" /><span class="slider"></span></label>
+            </div>
+            <div class="settings-row">
+              <div><span data-i18n="secAppLock">Verrouillage de l'app</span><span class="settings-hint" data-i18n="secAppLockHint">Code PIN ou empreinte pour ouvrir izaho</span></div>
+              <label class="switch"><input type="checkbox" id="settingAppLock" onchange="toggleAppLock(this.checked)" /><span class="slider"></span></label>
+            </div>
+            <div id="lockOptions" class="lock-options" style="display:none">
+              <div class="settings-row">
+                <span data-i18n="lockType">Type</span>
+                <select class="settings-select" id="lockType" onchange="onLockTypeChange(this.value)">
+                  <option value="pin" data-i18n="lockPin">Code PIN</option>
+                  <option value="password" data-i18n="lockPassword">Mot de passe</option>
+                  <option value="pattern" data-i18n="lockPattern">Schéma</option>
+                  <option value="biometric" data-i18n="lockBiometric">Biométrie</option>
+                </select>
+              </div>
+              <div class="settings-row" id="lockSetupRow">
+                <span id="lockSetupLabel" data-i18n="lockSetup">Configurer</span>
+                <button class="btn btn-sm btn-primary" onclick="showLockSetup()" id="lockSetupBtn">
+                  <i class="fas fa-plus"></i> <span data-i18n="lockSetupBtn">Définir</span>
+                </button>
+              </div>
+              <div class="settings-row" id="lockChangeRow" style="display:none">
+                <span data-i18n="lockModify">Modifier</span>
+                <button class="btn btn-sm btn-ghost" onclick="showLockSetup(true)">
+                  <i class="fas fa-pen"></i> <span data-i18n="lockModifyBtn">Changer</span>
+                </button>
+              </div>
+              <p id="lockInfo" class="lock-info" style="font-size:12px;color:var(--text-muted);padding:6px 18px 12px;text-align:center"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Confidentialité -->
+        <div class="settings-section">
+          <div class="settings-section-title"><i class="fas fa-user-secret"></i> <span data-i18n="privTitle">Confidentialité</span></div>
+          <div class="settings-section-body">
+            <div class="settings-row">
+              <span data-i18n="privLastSeen">Dernière vue</span>
+              <select class="settings-select" id="settingLastSeen" onchange="saveSetting('lastSeen',this.value)">
+                <option value="everyone" data-i18n="optEveryone">Tout le monde</option>
+                <option value="contacts" data-i18n="optContacts">Mes contacts</option>
+                <option value="nobody" data-i18n="optNobody">Personne</option>
+              </select>
+            </div>
+            <div class="settings-row">
+              <span data-i18n="privProfilePhoto">Photo de profil</span>
+              <select class="settings-select" id="settingProfilePhoto" onchange="saveSetting('profilePhoto',this.value)">
+                <option value="everyone" data-i18n="optEveryone">Tout le monde</option>
+                <option value="contacts" data-i18n="optContacts">Mes contacts</option>
+                <option value="nobody" data-i18n="optNobody">Personne</option>
+              </select>
+            </div>
+            <div class="settings-row">
+              <span data-i18n="privStatus">Statut</span>
+              <select class="settings-select" id="settingStatus" onchange="saveSetting('status',this.value)">
+                <option value="everyone" data-i18n="optEveryone">Tout le monde</option>
+                <option value="contacts" data-i18n="optContacts">Mes contacts</option>
+                <option value="nobody" data-i18n="optNobody">Personne</option>
+              </select>
+            </div>
+            <div class="settings-row">
+              <div><span data-i18n="privReadReceipts">Accusés de lecture</span><span class="settings-hint" data-i18n="privReadReceiptsHint">Les autres verront quand vous lisez leurs messages</span></div>
+              <label class="switch"><input type="checkbox" id="settingReadReceipts" onchange="saveSetting('readReceipts',this.checked)" /><span class="slider"></span></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Messages -->
+        <div class="settings-section">
+          <div class="settings-section-title"><i class="fas fa-comment-dots"></i> <span data-i18n="msgTitle">Messages</span></div>
+          <div class="settings-section-body">
+            <div class="settings-row">
+              <span data-i18n="msgEphemeral">Messages éphémères</span>
+              <label class="switch"><input type="checkbox" id="settingEphemeral" onchange="saveSetting('ephemeral',this.checked)" /><span class="slider"></span></label>
+            </div>
+            <div class="settings-row" id="ephemeralDurationRow" style="display:none">
+              <span data-i18n="msgDuration">Durée</span>
+              <select class="settings-select" id="settingEphemeralDuration" onchange="saveSetting('ephemeralDuration',this.value)">
+                <option value="24h" data-i18n="dur24h">24 heures</option>
+                <option value="7d" data-i18n="dur7d">7 jours</option>
+                <option value="90d" data-i18n="dur90d">90 jours</option>
+              </select>
+            </div>
+            <div class="settings-row">
+              <div><span data-i18n="msgAutoDL">Téléchargement auto des médias</span><span class="settings-hint" data-i18n="msgAutoDLHint">Images et vidéos en Wi-Fi</span></div>
+              <label class="switch"><input type="checkbox" id="settingAutoDownload" onchange="saveSetting('autoDownload',this.checked)" /><span class="slider"></span></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fond d'écran conversation -->
+        <div class="settings-section">
+          <div class="settings-section-title"><i class="fas fa-image"></i> <span data-i18n="wallpaperTitle">Fond d'écran</span></div>
+          <div class="settings-section-body">
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:8px 0">
+              <div class="wallpaper-option active" data-wall="default" onclick="setWallpaper('default',this)" style="background:var(--bg-chat);border:2px solid var(--primary-to);border-radius:10px;height:60px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text-muted)">Défaut</div>
+              <div class="wallpaper-option" data-wall="grad1" onclick="setWallpaper('grad1',this)" style="background:linear-gradient(135deg,#0b0f1c,#1a1a3e);border-radius:10px;height:60px;cursor:pointer"></div>
+              <div class="wallpaper-option" data-wall="grad2" onclick="setWallpaper('grad2',this)" style="background:linear-gradient(135deg,#0f0c29,#302b63);border-radius:10px;height:60px;cursor:pointer"></div>
+              <div class="wallpaper-option" data-wall="grad3" onclick="setWallpaper('grad3',this)" style="background:linear-gradient(135deg,#1a0a2e,#16213e);border-radius:10px;height:60px;cursor:pointer"></div>
+              <div class="wallpaper-option" data-wall="grad4" onclick="setWallpaper('grad4',this)" style="background:linear-gradient(135deg,#0d1b2a,#1b2838);border-radius:10px;height:60px;cursor:pointer"></div>
+              <div class="wallpaper-option" data-wall="grad5" onclick="setWallpaper('grad5',this)" style="background:linear-gradient(135deg,#1c0a0a,#2d1b1b);border-radius:10px;height:60px;cursor:pointer"></div>
+              <div class="wallpaper-option" data-wall="pattern1" onclick="setWallpaper('pattern1',this)" style="background:var(--bg-chat);background-image:radial-gradient(circle,rgba(108,92,231,.15) 1px,transparent 1px);background-size:20px 20px;border-radius:10px;height:60px;cursor:pointer"></div>
+              <div class="wallpaper-option" data-wall="pattern2" onclick="setWallpaper('pattern2',this)" style="background:var(--bg-chat);background-image:repeating-linear-gradient(0deg,transparent,transparent 20px,rgba(0,206,201,.08) 20px,rgba(0,206,201,.08) 21px);border-radius:10px;height:60px;cursor:pointer"></div>
+              <div class="wallpaper-option" data-wall="pattern3" onclick="setWallpaper('pattern3',this)" style="background:var(--bg-chat);background-image:linear-gradient(45deg,rgba(108,92,231,.08) 25%,transparent 25%,transparent 75%,rgba(108,92,231,.08) 75%),linear-gradient(45deg,rgba(108,92,231,.08) 25%,transparent 25%,transparent 75%,rgba(108,92,231,.08) 75%);background-size:40px 40px;background-position:0 0,20px 20px;border-radius:10px;height:60px;cursor:pointer"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Compte -->
+        <div class="settings-section">
+          <div class="settings-section-title"><i class="fas fa-user-circle"></i> <span data-i18n="accountTitle">Compte</span></div>
+          <div class="settings-section-body">
+            <div class="settings-row">
+              <span data-i18n="accountNotif">Notifications</span>
+              <label class="switch"><input type="checkbox" id="settingNotifications" onchange="saveSetting('notifications',this.checked)" /><span class="slider"></span></label>
+            </div>
+            <div class="settings-row">
+              <span data-i18n="accountTheme">Thème</span>
+              <span class="settings-badge"><span data-i18n="themeDark">Sombre</span> <i class="fas fa-moon"></i></span>
+            </div>
+            <div class="settings-row">
+              <span data-i18n="settingsLang">Langue</span>
+              <select class="settings-select" id="settingLanguage" onchange="saveSetting('language',this.value)">
+                <option value="fr">Français</option>
+                <option value="mg">Malagasy</option>
+                <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="pt">Português</option>
+                <option value="it">Italiano</option>
+                <option value="de">Deutsch</option>
+                <option value="nl">Nederlands</option>
+                <option value="sw">Kiswahili</option>
+                <option value="tr">Türkçe</option>
+                <option value="ru">Русский</option>
+                <option value="ar">العربية</option>
+                <option value="hi">हिन्दी</option>
+                <option value="zh">中文</option>
+                <option value="ja">日本語</option>
+              </select>
+            </div>
+            <div class="settings-row">
+              <span data-i18n="accountVersion">Version</span>
+              <span class="settings-badge">izaho v2.0</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+  <!-- Creator Panel (admin caché) -->
+  <div id="creatorPanel" class="status-overlay" style="display:none" onclick="hideCreatorPanel()">
+    <div class="status-viewer" onclick="event.stopPropagation()" style="max-height:85vh;display:flex;flex-direction:column">
+      <div class="status-viewer-header">
+        <div class="status-viewer-avatar"><i class="fas fa-crown"></i></div>
+        <div>
+          <div class="status-viewer-name">⚡ Panneau Créateur</div>
+          <div class="status-viewer-time" id="creatorPanelStatus">izaho v2.0 · Protégé</div>
+        </div>
+        <button class="header-btn" onclick="hideCreatorPanel()" style="margin-left:auto"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="status-viewer-content" style="flex-direction:column;gap:10px;padding:12px 16px;min-height:auto;overflow-y:auto;font-size:13px">
+
+        <!-- Protection Status -->
+        <div class="settings-section">
+          <div class="settings-section-title" style="font-size:13px"><i class="fas fa-shield-haltered"></i> Protection</div>
+          <div class="settings-section-body" style="font-size:12px">
+            <div class="settings-row"><span>Domain binding</span><span id="crDomainStatus" class="settings-badge">✓</span></div>
+            <div class="settings-row"><span>Intégrité fonctions</span><span id="crIntegrityStatus" class="settings-badge">✓</span></div>
+            <div class="settings-row"><span>Protection active</span><span id="crProtectionStatus" class="settings-badge">✅ Active</span></div>
+          </div>
+        </div>
+
+        <!-- Kill Switch -->
+        <div class="settings-section">
+          <div class="settings-section-title" style="font-size:13px"><i class="fas fa-skull"></i> Kill Switch</div>
+          <div class="settings-section-body" style="font-size:12px">
+            <div class="settings-row" style="flex-direction:column;align-items:stretch;gap:6px;padding:10px 12px">
+              <code style="background:var(--bg);padding:10px 12px;border-radius:8px;font-size:13px;border:1px solid var(--border);word-break:break-all">__IZAHO_OVERRIDE()</code>
+              <button class="btn btn-primary btn-block" onclick="copyKillSwitch()" style="font-size:12px;padding:8px">
+                <i class="fas fa-copy"></i> Copier la commande
+              </button>
+              <button class="btn btn-block" onclick="execKillSwitch()" style="font-size:12px;padding:8px;background:var(--accent);color:var(--bg)">
+                <i class="fas fa-bolt"></i> Exécuter maintenant
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TURN / STUN Servers -->
+        <div class="settings-section">
+          <div class="settings-section-title" style="font-size:13px"><i class="fas fa-server"></i> Serveurs TURN/STUN</div>
+          <div class="settings-section-body" style="font-size:12px">
+            <div id="crServerList"></div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="settings-section">
+          <div class="settings-section-title" style="font-size:13px"><i class="fas fa-tools"></i> Actions</div>
+          <div class="settings-section-body" style="font-size:12px">
+            <div class="settings-row" style="flex-wrap:wrap;gap:6px">
+              <button class="btn btn-primary" onclick="crResetProtection()" style="font-size:12px;padding:8px 14px"><i class="fas fa-sync"></i> Reset protection</button>
+              <button class="btn" onclick="crClearProtectedFlag()" style="font-size:12px;padding:8px 14px;border:1px solid var(--border);color:var(--text-muted)"><i class="fas fa-eraser"></i> Effacer flag</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Security code modal -->
+  <div id="securCodeModal" class="status-overlay" style="display:none" onclick="hideSecurityCode()">
+        <div class="status-viewer" onclick="event.stopPropagation()">
+          <div class="status-viewer-header">
+            <div class="status-viewer-avatar"><i class="fas fa-key"></i></div>
+            <div>
+              <div class="status-viewer-name">Code de sécurité</div>
+              <div class="status-viewer-time">Chiffrement de bout en bout</div>
+            </div>
+          </div>
+          <div class="status-viewer-content" style="flex-direction:column;gap:16px;padding:30px 24px">
+            <div style="background:var(--surface);border-radius:12px;padding:20px;text-align:center;word-break:break-all;font-family:monospace;font-size:13px;letter-spacing:1px;border:1px solid var(--border)" id="securCodeDisplay">
+              izaho-4A7F-B2C9-D8E1-F6G3<br>H0I2-J5K7-L9M1-N3P4-Q6R8
+            </div>
+            <p style="font-size:13px;color:var(--text-muted)">Vous pouvez comparer ce code avec votre contact pour vérifier que votre conversation est bien chiffrée de bout en bout.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VUE : CHAT INDIVIDUEL -->
+    <div id="viewChat" class="view" data-chat-id="">
+      <div class="chat-header">
+        <button class="header-btn" onclick="closeChat()"><i class="fas fa-arrow-left"></i></button>
+        <div class="chat-header-info">
+          <div class="chat-header-name" id="chatHeaderName">Contact</div>
+          <div class="chat-header-status" id="chatHeaderStatus">en ligne</div>
+        </div>
+        <div class="chat-header-actions">
+          <button class="header-btn" onclick="startAudioCall()" title="Appel audio"><i class="fas fa-phone"></i></button>
+          <button class="header-btn" onclick="startVideoCall()" title="Appel vidéo"><i class="fas fa-video"></i></button>
+          <button class="header-btn" id="chatBlockBtn" onclick="toggleBlockContact()" title="Bloquer / Débloquer"><i class="fas fa-ban"></i></button>
+        </div>
+      </div>
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="chat-input-bar">
+        <button class="chat-attach-btn" onclick="showAttachMenu()"><i class="fas fa-plus-circle"></i></button>
+        <div id="attachMenu" class="attach-menu" style="display:none">
+          <button onclick="sendPhoto()"><i class="fas fa-image"></i> Photo</button>
+          <button onclick="sendVideo()"><i class="fas fa-video"></i> Vidéo</button>
+          <button onclick="sendVoice()"><i class="fas fa-microphone"></i> Vocal</button>
+        </div>
+        <input id="chatInput" type="text" placeholder="Écrire un message..." onkeydown="if(event.key==='Enter')sendMessage()" />
+        <input type="file" id="chatFileInput" accept="image/*,video/*" style="display:none" onchange="sendFile(event)" />
+        <button class="chat-send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+
+    <!-- PLACEHOLDER DESKTOP (quand aucun chat n'est ouvert) -->
+    <div id="viewDesktopPlaceholder" class="view">
+      <div class="desktop-placeholder">
+        <div class="desktop-placeholder-icon">
+          <div class="auth-logo-icon" style="width:80px;height:80px;margin:0 auto 20px">
+            <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:44px;height:44px">
+              <rect x="4" y="4" width="52" height="52" rx="14" fill="white" fill-opacity="0.15"/>
+              <path d="M44 22c0-6.075-5.925-11-14-11s-14 4.925-14 11c0 3.418 1.74 6.47 4.48 8.57l-1.27 4.24 4.99-2.5C25.98 33.06 28.42 33 30 33c8.075 0 14-4.925 14-11z" fill="white" fill-opacity="0.95"/>
+              <circle cx="22" cy="22" r="1.5" fill="#0b0f1c"/>
+              <circle cx="30" cy="22" r="1.5" fill="#0b0f1c"/>
+              <circle cx="38" cy="22" r="1.5" fill="#0b0f1c"/>
+            </svg>
+          </div>
+        </div>
+        <h2 data-i18n="appTitle">izaho</h2>
+        <p data-i18n="desktopPlaceholder" style="color:var(--text-muted);font-size:14px;max-width:300px;line-height:1.6">Sélectionnez un chat ou démarrez une nouvelle conversation</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- OVERLAY : INVITATIONS                                 -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div id="inviteOverlay" class="status-overlay" style="display:none" onclick="hideInvitations()">
+    <div class="status-viewer" onclick="event.stopPropagation()" style="max-height:80vh;display:flex;flex-direction:column">
+      <div class="status-viewer-header">
+        <div class="status-viewer-avatar"><i class="fas fa-user-plus"></i></div>
+        <div>
+          <div class="status-viewer-name" data-i18n="inviteTitle">Invitations</div>
+          <div class="status-viewer-time" id="inviteCountLabel">0 en attente</div>
+        </div>
+      </div>
+      <div class="status-viewer-content" style="flex-direction:column;gap:8px;padding:16px;min-height:auto;overflow-y:auto" id="inviteList">
+        <p style="color:var(--text-muted);font-size:14px">Aucune invitation</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- OVERLAY : MEMBRES DU GROUPE                           -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div id="groupMembersOverlay" class="status-overlay" style="display:none" onclick="hideGroupMembers()">
+    <div class="status-viewer" onclick="event.stopPropagation()" style="max-height:80vh;display:flex;flex-direction:column">
+      <div class="status-viewer-header">
+        <div class="status-viewer-avatar"><i class="fas fa-users"></i></div>
+        <div>
+          <div class="status-viewer-name" id="groupMembersTitle">Membres</div>
+          <div class="status-viewer-time" id="groupMembersCount">0 membre(s)</div>
+        </div>
+      </div>
+      <div class="status-viewer-content" style="flex-direction:column;gap:6px;padding:12px 16px;min-height:auto;overflow-y:auto" id="groupMembersListOverlay"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- OVERLAY : CONFÉRENCE -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div id="conferenceOverlay" class="status-overlay" style="display:none" onclick="hideConferenceOverlay()">
+    <div class="status-viewer" onclick="event.stopPropagation()" style="max-height:80vh;display:flex;flex-direction:column">
+      <div class="status-viewer-header">
+        <div class="status-viewer-avatar"><i class="fas fa-phone"></i></div>
+        <div>
+          <div class="status-viewer-name" data-i18n="confTitle">📞 Conférence</div>
+          <div class="status-viewer-time" id="conferenceStatus">0 participant(s)</div>
+        </div>
+        <button class="header-btn" onclick="hideConferenceOverlay()" style="margin-left:auto"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="status-viewer-content" style="flex-direction:column;gap:8px;padding:12px 16px;min-height:auto;overflow-y:auto">
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">Hôte : <span id="conferenceHostName">—</span></div>
+        <div id="conferenceParticipantList"></div>
+        <div id="conferenceHostControls" style="display:none;flex-direction:column;gap:6px;margin-top:8px;padding-top:12px;border-top:1px solid var(--border)">
+          <button class="btn btn-primary btn-block" onclick="conferenceAddMember(this.parentElement.parentElement.parentElement.parentElement.dataset.groupId)" style="font-size:12px;padding:8px">
+            <i class="fas fa-user-plus"></i> Ajouter un participant
+          </button>
+          <button class="btn btn-block" onclick="endConference(currentChatId || this.parentElement.parentElement.parentElement.parentElement.dataset.groupId)" style="font-size:12px;padding:8px;background:var(--accent);color:var(--bg)">
+            <i class="fas fa-phone-slash"></i> Terminer la conférence
+          </button>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <button class="btn btn-block" onclick="leaveConference(currentChatId || this.parentElement.parentElement.dataset.groupId)" style="font-size:12px;padding:8px;border:1px solid var(--border)">
+            <i class="fas fa-sign-out-alt"></i> Quitter
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- OVERLAY : APPEL AUDIO/VIDÉO                           -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div id="callOverlay" class="call-overlay" style="display:none">
+    <video id="remoteVideo" class="call-video-remote" autoplay playsinline></video>
+    <video id="localVideo" class="call-video-local" autoplay playsinline muted></video>
+    <div class="call-screen" id="callScreen">
+      <div class="call-avatar" id="callAvatar">U</div>
+      <div class="call-name" id="callName">Contact</div>
+      <div class="call-duration" id="callDuration">00:00</div>
+      <div class="call-status" id="callStatus">Appel en cours...</div>
+      <div class="call-actions">
+        <button class="call-btn call-btn-accept" id="callBtnVideo" onclick="toggleVideo()" style="display:none"><i class="fas fa-video"></i></button>
+        <button class="call-btn call-btn-mute" onclick="toggleMute()"><i class="fas fa-microphone"></i></button>
+        <button class="call-btn call-btn-end" onclick="endCall()"><i class="fas fa-phone-slash"></i></button>
+        <button class="call-btn call-btn-speaker" onclick="toggleSpeaker()"><i class="fas fa-volume-up"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OVERLAY : APPEL ENTRANT -->
+  <div id="incomingOverlay" class="call-overlay" style="display:none">
+    <div class="call-screen">
+      <div class="call-avatar" id="incomingAvatar">U</div>
+      <div class="call-name" id="incomingName">Contact</div>
+      <div class="call-status" id="incomingType">Appel vidéo entrant...</div>
+      <div class="call-actions">
+        <button class="call-btn call-btn-end" onclick="rejectCall()"><i class="fas fa-phone-slash"></i></button>
+        <button class="call-btn call-btn-accept" onclick="answerCall()"><i class="fas fa-phone"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════ -->
+  <!-- OVERLAY : VERROUILLAGE                                -->
+  <!-- ════════════════════════════════════════════════════════ -->
+  <div id="lockScreen" class="call-overlay" style="display:none">
+    <div class="lock-screen-inner">
+      <div class="lock-icon">
+        <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:44px;height:44px">
+          <rect x="4" y="4" width="52" height="52" rx="14" fill="white" fill-opacity="0.15"/>
+          <path d="M44 22c0-6.075-5.925-11-14-11s-14 4.925-14 11c0 3.418 1.74 6.47 4.48 8.57l-1.27 4.24 4.99-2.5C25.98 33.06 28.42 33 30 33c8.075 0 14-4.925 14-11z" fill="white" fill-opacity="0.95"/>
+          <circle cx="22" cy="22" r="1.5" fill="#0b0f1c"/>
+          <circle cx="30" cy="22" r="1.5" fill="#0b0f1c"/>
+          <circle cx="38" cy="22" r="1.5" fill="#0b0f1c"/>
+        </svg>
+      </div>
+      <h2 class="lock-title" data-i18n="lockTitle">izaho verrouillé</h2>
+      <p class="lock-subtitle" id="lockSubtitle" data-i18n="lockSubtitle">Déverrouillez pour accéder</p>
+      <!-- PIN / Password input -->
+      <div id="lockInputArea" style="display:none;width:100%">
+        <div style="display:flex;gap:8px;justify-content:center;margin:16px 0" id="lockPinDots"></div>
+        <input id="lockHiddenInput" type="password" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0" inputmode="numeric" autocomplete="off" />
+        <!-- Numpad -->
+        <div id="lockNumpad" class="lock-numpad" style="display:none">
+          <button class="lock-num-btn" onclick="lockNumpadInput('1')">1</button>
+          <button class="lock-num-btn" onclick="lockNumpadInput('2')">2</button>
+          <button class="lock-num-btn" onclick="lockNumpadInput('3')">3</button>
+          <button class="lock-num-btn" onclick="lockNumpadInput('4')">4</button>
+          <button class="lock-num-btn" onclick="lockNumpadInput('5')">5</button>
+          <button class="lock-num-btn" onclick="lockNumpadInput('6')">6</button>
+          <button class="lock-num-btn" onclick="lockNumpadInput('7')">7</button>
+          <button class="lock-num-btn" onclick="lockNumpadInput('8')">8</button>
+          <button class="lock-num-btn" onclick="lockNumpadInput('9')">9</button>
+          <button class="lock-num-btn lock-num-blank"></button>
+          <button class="lock-num-btn" onclick="lockNumpadInput('0')">0</button>
+          <button class="lock-num-btn" onclick="lockNumpadBackspace()"><i class="fas fa-delete-left"></i></button>
+        </div>
+        <!-- Keyboard input (for password) -->
+        <div id="lockKeyboardArea" style="display:none;width:100%;padding:0 8px">
+          <input id="lockPasswordInput" type="password" class="lock-password-input" placeholder="Mot de passe" autocomplete="off" onkeydown="if(event.key==='Enter')lockSubmitPassword()" />
+          <button class="btn btn-primary btn-block mt-1" onclick="lockSubmitPassword()">
+            <i class="fas fa-check"></i> <span data-i18n="lockUnlock">Déverrouiller</span>
+          </button>
+        </div>
+      </div>
+      <!-- Pattern area -->
+      <div id="lockPatternArea" style="display:none;width:100%">
+        <canvas id="lockPatternCanvas" class="lock-pattern-canvas" width="280" height="280"></canvas>
+        <p id="lockPatternError" class="lock-pattern-error"></p>
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
+          <button class="btn btn-sm btn-ghost" onclick="lockPatternClear()"><i class="fas fa-undo"></i></button>
+        </div>
+      </div>
+      <!-- Biometric area -->
+      <div id="lockBiometricArea" style="display:none;width:100%;text-align:center">
+        <div class="lock-bio-icon"><i class="fas fa-fingerprint"></i></div>
+        <p style="color:var(--text-muted);font-size:13px;margin:8px 0" data-i18n="lockBioHint">Utilisez votre empreinte ou visage</p>
+        <button class="btn btn-primary" onclick="lockBiometricAuth()"><i class="fas fa-shield-alt"></i> <span data-i18n="lockBioBtn">Authentifier</span></button>
+      </div>
+      <p id="lockError" class="lock-error"></p>
+    </div>
+  </div>
+
+  <!-- OVERLAY : CONFIGURATION SCHÉMA -->
+  <div id="patternSetup" class="call-overlay" style="display:none">
+    <div class="lock-screen-inner">
+      <h2 class="lock-title" data-i18n="patternSetupTitle">Dessinez votre schéma</h2>
+      <p class="lock-subtitle" id="patternSetupSubtitle" data-i18n="patternSetupHint">Reliez au moins 4 points</p>
+      <canvas id="patternSetupCanvas" class="lock-pattern-canvas" width="280" height="280"></canvas>
+      <p id="patternSetupError" class="lock-pattern-error"></p>
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:8px">
+        <button class="btn btn-sm btn-ghost" onclick="patternSetupClear()"><i class="fas fa-undo"></i> <span data-i18n="patternRetry">Recommencer</span></button>
+        <button class="btn btn-sm btn-primary" id="patternSetupConfirm" style="display:none" onclick="patternSetupConfirm()"><i class="fas fa-check"></i> <span data-i18n="patternConfirm">Confirmer</span></button>
+      </div>
+      <p class="auth-back" onclick="hidePatternSetup()" style="margin-top:12px" data-i18n="authBack">← Retour</p>
+    </div>
+  </div>
+
+  <!-- OVERLAY : CONFIGURATION PIN -->
+  <div id="pinSetup" class="call-overlay" style="display:none">
+    <div class="lock-screen-inner">
+      <h2 class="lock-title" data-i18n="pinSetupTitle">Définissez votre code PIN</h2>
+      <p class="lock-subtitle" id="pinSetupSubtitle" data-i18n="pinSetupHint">4 à 6 chiffres</p>
+      <div style="display:flex;gap:8px;justify-content:center;margin:16px 0" id="pinSetupDots"></div>
+      <input id="pinSetupHidden" type="password" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0" />
+      <div class="lock-numpad">
+        <button class="lock-num-btn" onclick="pinSetupInput('1')">1</button>
+        <button class="lock-num-btn" onclick="pinSetupInput('2')">2</button>
+        <button class="lock-num-btn" onclick="pinSetupInput('3')">3</button>
+        <button class="lock-num-btn" onclick="pinSetupInput('4')">4</button>
+        <button class="lock-num-btn" onclick="pinSetupInput('5')">5</button>
+        <button class="lock-num-btn" onclick="pinSetupInput('6')">6</button>
+        <button class="lock-num-btn" onclick="pinSetupInput('7')">7</button>
+        <button class="lock-num-btn" onclick="pinSetupInput('8')">8</button>
+        <button class="lock-num-btn" onclick="pinSetupInput('9')">9</button>
+        <button class="lock-num-btn lock-num-blank"></button>
+        <button class="lock-num-btn" onclick="pinSetupInput('0')">0</button>
+        <button class="lock-num-btn" onclick="pinSetupBackspace()"><i class="fas fa-delete-left"></i></button>
+      </div>
+      <p id="pinSetupError" class="lock-error"></p>
+      <p class="auth-back" onclick="hidePinSetup()" style="margin-top:12px" data-i18n="authBack">← Retour</p>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <div class="loading-bar" id="loadingBar"></div>
+</body>
+</html>

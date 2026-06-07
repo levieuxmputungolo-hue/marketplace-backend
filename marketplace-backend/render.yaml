@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: easy-market-mongodb
+    runtime: python
+    repo: https://github.com/votre-compte/easy-market-backend
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn -k uvicorn.workers.UvicornWorker -w 4 app.main:app --bind 0.0.0.0:$PORT
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: PYTHON_VERSION
+        value: 3.11.0

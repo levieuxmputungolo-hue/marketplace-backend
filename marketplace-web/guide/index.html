@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Guide — easy-market</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --alibaba: #FF6A00;
+      --alibaba-dark: #E65C00;
+      --alibaba-light: #FF8C38;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      background: #0f0f1a;
+      color: #e8eaff;
+      min-height: 100vh;
+    }
+    .wrap { max-width: 820px; margin: 0 auto; padding: 30px 20px 80px; }
+
+    h1 { font-size: 28px; font-weight: 900; margin-bottom: 6px; }
+    h1 span { color: var(--alibaba); }
+    .subtitle { color: rgba(255,255,255,0.4); font-size: 14px; margin-bottom: 30px; }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,106,0,0.15);
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 18px 60px rgba(0,0,0,0.45);
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 900;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h2 .badge {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(255,106,0,0.15);
+      color: var(--alibaba-light);
+      font-weight: 700;
+    }
+
+    h3 {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--alibaba-light);
+      margin: 16px 0 8px;
+    }
+
+    p { font-size: 14px; line-height: 1.7; color: rgba(255,255,255,0.7); margin-bottom: 10px; }
+    .muted { color: rgba(255,255,255,0.4); }
+
+    ul, ol { padding-left: 20px; margin: 10px 0; }
+    li { font-size: 14px; line-height: 1.7; color: rgba(255,255,255,0.7); margin-bottom: 6px; }
+    li strong { color: #fff; }
+
+    code {
+      background: rgba(255,255,255,0.06);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 13px;
+      color: var(--alibaba-light);
+    }
+
+    .step {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 16px;
+      padding: 14px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 14px;
+      border: 1px solid rgba(255,106,0,0.08);
+    }
+    .step-num {
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--alibaba), var(--alibaba-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 14px;
+      color: #fff;
+    }
+    .step-body { flex: 1; }
+    .step-body h4 { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      margin: 6px 4px 6px 0;
+    }
+    .tag-client { background: rgba(52,211,153,0.15); color: #34d399; border: 1px solid rgba(52,211,153,0.25); }
+    .tag-vendor { background: rgba(255,106,0,0.15); color: var(--alibaba-light); border: 1px solid rgba(255,106,0,0.3); }
+    .tag-both { background: rgba(139,92,246,0.15); color: #a78bfa; border: 1px solid rgba(139,92,246,0.25); }
+
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(255,106,0,0.3), transparent); margin: 20px 0; }
+
+    .nav-links { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+    .nav-links a {
+      padding: 8px 16px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.6);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+    .nav-links a:hover {
+      background: rgba(255,106,0,0.1);
+      border-color: rgba(255,106,0,0.3);
+      color: #fff;
+    }
+
+    .footer-guide {
+      text-align: center;
+      padding: 20px;
+      color: rgba(255,255,255,0.2);
+      font-size: 12px;
+    }
+    .footer-guide a { color: var(--alibaba-light); text-decoration: none; }
+
+    @media (max-width: 600px) {
+      .wrap { padding: 16px 12px 60px; }
+      h1 { font-size: 22px; }
+      .card { padding: 16px; }
+      .step { flex-direction: column; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+      <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--alibaba),var(--alibaba-dark));display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;box-shadow:0 4px 16px rgba(255,106,0,0.3)">E</div>
+      <h1>easy <span>market</span></h1>
+    </div>
+    <p class="subtitle">Guide d'utilisation — Plateforme marketplace connectée</p>
+
+    <div class="nav-links">
+      <a href="#debut">Démarrage</a>
+      <a href="#compte">Compte</a>
+      <a href="#vendeur">Vendeur</a>
+      <a href="#client">Client</a>
+      <a href="#catalogue">Catalogue</a>
+      <a href="#panier">Panier</a>
+      <a href="#localisation">Localisation</a>
+      <a href="#notifications">Notifications</a>
+    </div>
+
+    <!-- DÉMARRAGE -->
+    <div class="card" id="debut">
+      <h2>🚀 Démarrage <span class="badge">Essentiel</span></h2>
+      <p>easy-market est une marketplace digitale connectée à une API REST. Elle permet aux <strong>vendeurs</strong> de publier des produits et aux <strong>clients</strong> de les acheter.</p>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Ouvrir l'application</h4>
+          <p>Lancez <strong>navigate.html</strong> dans votre navigateur. L'écran d'accueil affiche un marché animé en arrière-plan (canvas) avec la navigation principale en haut.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Barre de recherche globale</h4>
+          <p>En haut, tapez un produit et appuyez sur <strong>Entrée</strong> pour chercher dans le catalogue. La recherche vous amène directement à la section <strong>Catalogue</strong>.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>Navigation par onglets</h4>
+          <p>Six sections disponibles : <strong>Accueil</strong>, <strong>Compte</strong>, <strong>Notifications</strong>, <strong>📍 Localisation</strong>, <strong>Catalogue</strong>, <strong>Panier</strong>.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h4>Plein écran</h4>
+          <p>Cliquez sur le bouton <strong>⛶</strong> en haut à droite pour basculer en plein écran.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPTE -->
+    <div class="card" id="compte">
+      <h2>👤 Créer un compte <span class="badge">Obligatoire</span></h2>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Authentification</h4>
+          <p>Renseignez votre <strong>téléphone</strong>, <strong>nom</strong> et <strong>mot de passe</strong> (min. 6 caractères). Cliquez sur <strong>Créer un compte</strong> ou <strong>Connexion</strong> si vous avez déjà un compte.</p>
+          <p class="muted" style="font-size:13px">Le téléphone sert d'identifiant unique. Exemple : <code>770000000</code></p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Choisir un rôle</h4>
+          <p>Sélectionnez votre rôle :</p>
+          <p><span class="tag tag-client">Client</span> — Achetez des produits sur le marketplace</p>
+          <p><span class="tag tag-vendor">Vendeur</span> — Publiez et vendez vos produits</p>
+          <p>Cliquez sur <strong>Valider</strong> pour confirmer.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>Token d'authentification</h4>
+          <p>Après connexion, un token JWT est généré automatiquement. Il est utilisé pour toutes les requêtes API authentifiées. Vous pouvez le voir dans le champ <strong>Token</strong> en bas de la section Compte.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- VENDEUR -->
+    <div class="card" id="vendeur">
+      <h2>🏪 Devenir vendeur <span class="badge tag-vendor">Vendeur</span></h2>
+
+      <h3>📋 Profil vendeur</h3>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Compléter votre profil</h4>
+          <p>Renseignez : <strong>Nom complet</strong>, <strong>National ID</strong>, <strong>Ville</strong>, <strong>Activité</strong> (ex: chaussures, électronique) et <strong>WhatsApp</strong> (pour être contacté par les clients).</p>
+          <p>Cliquez sur <strong>Enregistrer</strong> pour sauvegarder.</p>
+        </div>
+      </div>
+
+      <h3>📦 Publier un produit</h3>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Créer un produit</h4>
+          <p>Remplissez : <strong>Nom</strong> (ex: iPhone 15), <strong>Prix ($)</strong>, <strong>Description</strong>, <strong>URL image</strong> (optionnelle). Cliquez sur <strong>Publier</strong>.</p>
+        </div>
+      </div>
+
+      <h3>📝 Publier un article</h3>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>Créer un article</h4>
+          <p>Les articles sont des publications qui permettent de démarrer une conversation avec les clients.</p>
+          <p>Remplissez <strong>Titre</strong> et <strong>Contenu</strong>, puis cliquez sur <strong>Publier</strong>.</p>
+        </div>
+      </div>
+
+      <h3>💳 Abonnement vendeur</h3>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h4>Période d'essai et abonnement</h4>
+          <p>🆕 Les <strong>nouveaux vendeurs</strong> peuvent vendre pendant <strong>14 jours</strong> sans abonnement.</p>
+          <p>Après l'essai, un abonnement est requis pour continuer à vendre :</p>
+          <ol>
+            <li>Sélectionnez la <strong>méthode de paiement</strong> (Simulé, Orange Money, M-Pesa, Airtel Money)</li>
+            <li>Cliquez sur <strong>Payer</strong> pour créer l'abonnement</li>
+            <li>Une <strong>référence</strong> est générée</li>
+            <li>Cliquez sur <strong>Webhook</strong> pour simuler le paiement</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLIENT -->
+    <div class="card" id="client">
+      <h2>🛒 Côté client <span class="badge tag-client">Client</span></h2>
+
+      <h3>✉️ Contacter un vendeur</h3>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Messagerie article</h4>
+          <p>Après qu'un vendeur a publié un <strong>article</strong>, vous pouvez envoyer un message :</p>
+          <ol>
+            <li>Récupérez l'<strong>ID de l'article</strong> (généré après publication par le vendeur)</li>
+            <li>Écrivez votre <strong>message</strong></li>
+            <li>Cliquez sur <strong>Envoyer</strong></li>
+          </ol>
+          <p>Utilisez <strong>Inbox</strong> et <strong>Outbox</strong> pour voir vos messages.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATALOGUE -->
+    <div class="card" id="catalogue">
+      <h2>🛍️ Catalogue et recherche <span class="badge tag-both">Client & Vendeur</span></h2>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Rechercher des produits</h4>
+          <p>Utilisez la barre de recherche en haut ou les filtres dans la section <strong>Catalogue</strong> :</p>
+          <ul>
+            <li><strong>Recherche</strong> : mots-clés (ex: iphone, chaussures)</li>
+            <li><strong>Vendeur ID</strong> : filtrer par vendeur spécifique</li>
+            <li><strong>Prix min / max</strong> : filtrer par fourchette de prix</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Trier les résultats</h4>
+          <p>Utilisez les boutons de tri au-dessus des produits :</p>
+          <p><strong>Tous</strong> · <strong>🔥 Populaires</strong> · <strong>⭐ Meilleures ventes</strong> · <strong>💰 Prix ↑</strong> · <strong>💰 Prix ↓</strong></p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>Ajouter au panier</h4>
+          <p>Cliquez sur <strong>Ajouter</strong> sur une carte produit pour le sélectionner dans le panier. Le produit ID est automatiquement pré-rempli.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h4>Remplir le catalogue</h4>
+          <p>Cliquez sur <strong>Remplir</strong> pour générer des produits de démonstration via l'API.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANIER -->
+    <div class="card" id="panier">
+      <h2>🛒 Panier et commande <span class="badge tag-client">Client</span></h2>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Ajouter un produit</h4>
+          <p>Dans la section <strong>Panier</strong>, le produit ID est pré-rempli si vous avez cliqué sur <strong>Ajouter</strong> depuis le catalogue. Vous pouvez aussi le saisir manuellement.</p>
+          <ul>
+            <li><strong>Date</strong> : automatiquement remplie</li>
+            <li><strong>Produit ID</strong> : l'identifiant du produit</li>
+            <li><strong>Quantité</strong> : nombre d'articles</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Checkout</h4>
+          <p>Cliquez sur le bouton <strong>🛒 Checkout</strong> pour passer la commande. Les articles du panier sont envoyés à l'API.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>Voir le panier</h4>
+          <p>Cliquez sur <strong>Voir</strong> pour consulter les articles actuellement dans votre panier.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOCALISATION -->
+    <div class="card" id="localisation">
+      <h2>📍 Localisation et carte <span class="badge tag-both">Client & Vendeur</span></h2>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Me localiser</h4>
+          <p>Cliquez sur <strong>📍 Me localiser</strong> pour obtenir votre position GPS. Les coordonnées (latitude, longitude) sont affichées et enregistrées sur le serveur.</p>
+          <p>Vous pouvez aussi utiliser le bouton <strong>📍</strong> en bas à droite de l'écran (FAB).</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Carte OpenStreetMap</h4>
+          <p>La carte affiche votre position avec un marqueur violet. Cliquez sur <strong>🗺️ Ouvrir</strong> pour centrer la carte sur votre position.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>Vendeurs à proximité</h4>
+          <p>Cherchez les vendeurs autour de vous :</p>
+          <ol>
+            <li>Activez votre position (étape 1)</li>
+            <li>Définissez un <strong>rayon</strong> en kilomètres (défaut: 50 km)</li>
+            <li>Cliquez sur <strong>🔍 Rechercher</strong></li>
+            <li>Les vendeurs apparaissent sur la carte avec des marqueurs jaunes</li>
+            <li>Cliquez sur un vendeur pour voir son itinéraire 🚗</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS -->
+    <div class="card" id="notifications">
+      <h2>🔔 Notifications <span class="badge tag-both">Client & Vendeur</span></h2>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Activer les notifications</h4>
+          <p>Cliquez sur <strong>🔔 Activer</strong> pour demander la permission d'envoyer des notifications push.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Tester une notification</h4>
+          <p>Remplissez le <strong>Type</strong> (Message, Commande, Paiement, Système), la <strong>Priorité</strong>, le <strong>Titre</strong> et le <strong>Contenu</strong>, puis cliquez sur <strong>📨 Tester</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- API / TECHNIQUE -->
+    <div class="card">
+      <h2>⚙️ Informations techniques <span class="badge">Développeur</span></h2>
+
+      <h3>Architecture</h3>
+      <ul>
+        <li><strong>Frontend</strong> : HTML + CSS + JavaScript vanilla, canvas animé en arrière-plan</li>
+        <li><strong>Backend</strong> : API REST sur <code>localhost:8000</code></li>
+        <li><strong>Authentification</strong> : Firebase Auth + tokens JWT</li>
+        <li><strong>Base de données</strong> : gérée par l'API backend</li>
+        <li><strong>Carte</strong> : OpenStreetMap avec Leaflet.js</li>
+        <li><strong>PWA</strong> : Installation sur mobile via manifest.json + service worker</li>
+      </ul>
+
+      <h3>Points de terminaison API utilisés</h3>
+      <ul>
+        <li><code>POST /auth/firebase</code> — Échange token Firebase → JWT</li>
+        <li><code>POST /auth/register-vendor</code> — Inscription vendeur</li>
+        <li><code>POST /role/select</code> — Sélection du rôle</li>
+        <li><code>POST /vendors/register-profile</code> — Profil vendeur</li>
+        <li><code>POST /subscriptions/create</code> — Création abonnement</li>
+        <li><code>POST /subscriptions/webhook</code> — Simulation paiement</li>
+        <li><code>GET /products/search</code> — Recherche produits</li>
+        <li><code>POST /products/create</code> — Création produit</li>
+        <li><code>POST /products/seed</code> — Remplir catalogue</li>
+        <li><code>POST /articles</code> — Création article</li>
+        <li><code>GET /articles/{id}/messages</code> — Messages</li>
+        <li><code>POST /cart/add</code> — Ajouter au panier</li>
+        <li><code>GET /cart</code> — Voir le panier</li>
+        <li><code>POST /orders/checkout</code> — Commander</li>
+        <li><code>POST /location/update</code> — Mettre à jour position</li>
+        <li><code>GET /vendors/nearby</code> — Vendeurs à proximité</li>
+      </ul>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="footer-guide">
+      <p>easy-market — Guide d'utilisation v1.0</p>
+      <p><a href="../navigate.html">← Retour à l'application</a></p>
+    </div>
+  </div>
+</body>
+</html>

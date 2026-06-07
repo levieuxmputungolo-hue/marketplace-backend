@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920">
+  <rect width="1080" height="1920" fill="#0f0f1a"/>
+  <rect x="40" y="60" width="1000" height="180" rx="30" fill="rgba(255,106,0,0.1)" stroke="rgba(255,106,0,0.25)"/>
+  <circle cx="90" cy="150" r="36" fill="#FF6A00"/>
+  <text x="145" y="160" font-family="Inter,sans-serif" font-size="48" font-weight="900" fill="#fff">easy</text>
+  <text x="340" y="160" font-family="Inter,sans-serif" font-size="48" font-weight="900" fill="#FF6A00" letter-spacing="2">market</text>
+  <rect x="480" y="120" width="300" height="60" rx="30" fill="rgba(255,255,255,0.06)" stroke="rgba(255,106,0,0.3)"/>
+  <text x="540" y="160" font-family="Inter,sans-serif" font-size="28" fill="rgba(255,255,255,0.35)">Rechercher...</text>
+  <rect x="780" y="120" width="60" height="60" rx="15" fill="#FF6A00"/>
+  <text x="810" y="160" font-size="30">🔍</text>
+
+  <rect x="40" y="270" width="1000" height="100" rx="20" fill="rgba(255,255,255,0.03)" stroke="rgba(255,106,0,0.1)"/>
+  <text x="80" y="320" font-family="Inter,sans-serif" font-size="28" font-weight="700" fill="rgba(255,255,255,0.5)">Accueil</text>
+  <text x="260" y="320" font-family="Inter,sans-serif" font-size="28" font-weight="700" fill="rgba(255,255,255,0.5)">Compte</text>
+  <text x="450" y="320" font-family="Inter,sans-serif" font-size="28" font-weight="700" fill="#FF6A00">Catalogue</text>
+  <text x="680" y="320" font-family="Inter,sans-serif" font-size="28" font-weight="700" fill="rgba(255,255,255,0.5)">Panier</text>
+
+  <rect x="40" y="410" width="1000" height="340" rx="30" fill="rgba(255,255,255,0.04)" stroke="rgba(255,106,0,0.1)"/>
+  <text x="80" y="480" font-family="Inter,sans-serif" font-size="42" font-weight="900" fill="#fff">Bienvenue</text>
+  <text x="80" y="540" font-family="Inter,sans-serif" font-size="30" fill="rgba(255,255,255,0.4)">Plateforme marketplace connectée</text>
+
+  <rect x="80" y="580" width="280" height="120" rx="20" fill="rgba(255,106,0,0.08)"/>
+  <text x="200" y="630" font-family="Inter,sans-serif" font-size="50" font-weight="900" fill="#FF8C38" text-anchor="middle">12</text>
+  <text x="200" y="670" font-family="Inter,sans-serif" font-size="26" fill="rgba(255,255,255,0.4)" text-anchor="middle">Produits</text>
+
+  <rect x="400" y="580" width="280" height="120" rx="20" fill="rgba(255,106,0,0.08)"/>
+  <text x="540" y="630" font-family="Inter,sans-serif" font-size="50" font-weight="900" fill="#FF8C38" text-anchor="middle">8</text>
+  <text x="540" y="670" font-family="Inter,sans-serif" font-size="26" fill="rgba(255,255,255,0.4)" text-anchor="middle">Vendeurs</text>
+
+  <rect x="720" y="580" width="280" height="120" rx="20" fill="rgba(255,106,0,0.08)"/>
+  <text x="860" y="630" font-family="Inter,sans-serif" font-size="50" font-weight="900" fill="#FF8C38" text-anchor="middle">45</text>
+  <text x="860" y="670" font-family="Inter,sans-serif" font-size="26" fill="rgba(255,255,255,0.4)" text-anchor="middle">Commandes</text>
+
+  <text x="80" y="790" font-family="Inter,sans-serif" font-size="34" font-weight="900" fill="#fff">Top ventes 🔥</text>
+
+  <rect x="40" y="830" width="310" height="360" rx="24" fill="rgba(255,255,255,0.04)" stroke="rgba(255,106,0,0.25)"/>
+  <rect x="40" y="830" width="310" height="180" rx="24" fill="rgba(255,106,0,0.08)"/>
+  <rect x="130" y="880" width="130" height="80" rx="16" fill="rgba(255,106,0,0.15)"/>
+  <text x="195" y="930" font-family="Inter,sans-serif" font-size="24" fill="#fff" text-anchor="middle">👟</text>
+  <text x="80" y="1060" font-family="Inter,sans-serif" font-size="28" font-weight="800" fill="#fff">Nike Air Max</text>
+  <text x="80" y="1110" font-family="Inter,sans-serif" font-size="32" font-weight="900" fill="#FF8C38">120 $</text>
+
+  <rect x="385" y="830" width="310" height="360" rx="24" fill="rgba(255,255,255,0.04)" stroke="rgba(255,106,0,0.25)"/>
+  <rect x="385" y="830" width="310" height="180" rx="24" fill="rgba(255,106,0,0.08)"/>
+  <rect x="475" y="880" width="130" height="80" rx="16" fill="rgba(255,106,0,0.15)"/>
+  <text x="540" y="930" font-family="Inter,sans-serif" font-size="24" fill="#fff" text-anchor="middle">🎧</text>
+  <text x="425" y="1060" font-family="Inter,sans-serif" font-size="28" font-weight="800" fill="#fff">Casque Bose</text>
+  <text x="425" y="1110" font-family="Inter,sans-serif" font-size="32" font-weight="900" fill="#FF8C38">299 $</text>
+
+  <rect x="730" y="830" width="310" height="360" rx="24" fill="rgba(255,255,255,0.04)" stroke="rgba(255,106,0,0.25)"/>
+  <rect x="730" y="830" width="310" height="180" rx="24" fill="rgba(255,106,0,0.08)"/>
+  <rect x="820" y="880" width="130" height="80" rx="16" fill="rgba(255,106,0,0.15)"/>
+  <text x="885" y="930" font-family="Inter,sans-serif" font-size="24" fill="#fff" text-anchor="middle">⌚</text>
+  <text x="770" y="1060" font-family="Inter,sans-serif" font-size="28" font-weight="800" fill="#fff">Montre</text>
+  <text x="770" y="1110" font-family="Inter,sans-serif" font-size="32" font-weight="900" fill="#FF8C38">89 $</text>
+</svg>
