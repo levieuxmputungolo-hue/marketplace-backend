@@ -205,63 +205,302 @@ async function simulateWebhook() {
   } finally { setLoading(btn, false); }
 }
 
-// ===== Articles =====
-async function createArticle() {
-  const btn = document.getElementById('btn-article');
-  setLoading(btn, true);
+// ===== Messaging API (v2 — Conversations) =====
+let currentConvId = null;
+let currentConvPartner = null;
+let msgPollTimer = null;
+
+async function apiMsg(method, path, body) {
+  const userId = document.getElementById('mongoUserId')?.value;
+  if (!userId) { toast({ title: 'Erreur', message: 'Connectez-vous d\'abord', type: 'error' }); throw new Error('Non connecté'); }
+  const opts = { method, headers: { 'Content-Type': 'application/json', 'X-User-Id': userId } };
+  if (body) opts.body = JSON.stringify(body);
+  const url = `${API_BASE}/api/messages${path}${path.includes('?') ? '&' : '?'}user_id=${encodeURIComponent(userId)}`;
+  const res = await fetch(url, opts);
+  let data; try { data = await res.json(); } catch { data = {}; }
+  if (!res.ok) throw new Error(data?.detail || 'Erreur API');
+  return data;
+}
+
+async function loadConversations() {
+  try {
+    const convs = await apiMsg('GET', '/conversations');
+    renderConvList(convs);
+    updateMsgBadge(convs);
+    document.getElementById('convCount').textContent = `${convs.length} conversation${convs.length > 1 ? 's' : ''}`;
+  } catch (e) { console.error('loadConversations:', e); }
+}
+
+function renderConvList(convs) {
+  const list = document.getElementById('convList');
+  if (!list) return;
+  if (!convs || convs.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:40px 16px;color:rgba(255,255,255,.3);font-size:13px">Aucune conversation</div>';
+    return;
+  }
+  list.innerHTML = convs.map(c => {
+    const isActive = currentConvId === c._id;
+    const hasUnread = (c.unread || 0) > 0;
+    const lastMsg = c.last_message || '';
+    const time = formatMsgTime(c.last_message_at);
+    const partnerName = getPartnerName(c);
+    return `<div class="msg-conv-item${isActive ? ' active' : ''}${hasUnread ? ' unread' : ''}" onclick="openConversation('${c._id}')">
+      <div class="msg-avatar">${partnerName.charAt(0).toUpperCase()}</div>
+      <div class="msg-conv-info">
+        <div class="msg-conv-name">${partnerName}</div>
+        <div class="msg-conv-preview">${htmlEsc(lastMsg.slice(0, 50))}</div>
+      </div>
+      <div class="msg-conv-meta">
+        <div class="msg-conv-time">${time}</div>
+        ${hasUnread ? `<div class="msg-conv-badge">${c.unread}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function getPartnerName(conv) {
+  const userId = document.getElementById('mongoUserId')?.value || '';
+  const partnerId = conv.participants?.find(p => p !== userId);
+  const names = conv.participant_names || {};
+  return names[partnerId] || partnerId || 'Utilisateur';
+}
+
+function formatMsgTime(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const now = new Date();
+  const isToday = d.toDateString() === now.toDateString();
+  if (isToday) return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const yesterday = new Date(now); yesterday.setDate(yesterday.getDate() - 1);
+  if (d.toDateString() === yesterday.toDateString()) return 'Hier';
+  return d.toLocaleDateString([], { day: 'numeric', month: 'short' });
+}
+
+function htmlEsc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+async function contactSeller(productId, productName, productPrice, productImage) {
+  const buyerId = document.getElementById('mongoUserId')?.value;
+  const buyerName = document.getElementById('name')?.value || 'Acheteur';
+  if (!buyerId) { toast({ title: 'Erreur', message: 'Connectez-vous d\'abord', type: 'error' }); return; }
+  try {
+    const products = await mongoGet(`/api/products/?limit=50`);
+    const product = (Array.isArray(products) ? products : []).find(p => p._id === productId);
+    const sellerName = product?.seller_name || 'Vendeur';
+    const sellerId = product?.seller_id || product?.author_id || '';
+    // Clean price
+    const cleanPrice = product?.price != null ? Number(product.price) : null;
+    // Create or get conversation via direct fetch (apiMsg adds user_id query param)
+    const userId = document.getElementById('mongoUserId')?.value;
+    const res = await fetch(`${API_BASE}/api/messages/conversations`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-User-Id': userId },
+      body: JSON.stringify({
+        buyer_id: buyerId, seller_id: sellerId || 'vendor',
+        buyer_name: buyerName, seller_name: sellerName,
+        product_id: productId, product_name: productName || product?.name,
+        product_price: cleanPrice, product_image: productImage || product?.image,
+      })
+    });
+    const conv = await res.json();
+    if (!res.ok) throw new Error(conv.detail || 'Erreur');
+    showSection('messagerie');
+    setTimeout(() => openConversation(conv._id), 300);
+    toast({ title: 'Conversation ouverte', message: `Contact avec ${sellerName}`, type: 'success' });
+  } catch (e) { toast({ title: 'Erreur', message: String(e), type: 'error' }); }
+}
+
+async function openConversation(convId) {
+  currentConvId = convId;
+  document.getElementById('chatEmpty').style.display = 'none';
+  document.getElementById('chatActive').style.display = 'flex';
+  document.getElementById('msgEvaluate').style.display = 'none';
+  try {
+    const conv = await apiMsg('GET', `/conversations/${convId}`);
+    const userId = document.getElementById('mongoUserId')?.value || '';
+    currentConvPartner = conv.participants?.find(p => p !== userId);
+    const partnerName = getPartnerName(conv);
+    document.getElementById('chatPartnerName').textContent = partnerName;
+    document.getElementById('chatPartnerStatus').textContent = 'en ligne';
+    document.getElementById('chatPartnerAvatar').textContent = partnerName.charAt(0).toUpperCase();
+    // Product card
+    const pc = document.getElementById('msgProductCard');
+    if (conv.product_id && conv.product_name) {
+      pc.style.display = 'flex';
+      document.getElementById('msgProductName').textContent = conv.product_name;
+      document.getElementById('msgProductPrice').textContent = conv.product_price ? `${Number(conv.product_price).toLocaleString()} $` : '';
+      document.getElementById('msgProductImg').src = conv.product_image || '';
+      pc.dataset.productId = conv.product_id;
+    } else { pc.style.display = 'none'; }
+    // Quick replies (seller)
+    const qr = document.getElementById('msgQuickReplies');
+    qr.style.display = conv.participants?.indexOf(userId) === 1 ? 'flex' : 'none';
+    qr.dataset.sellerId = currentConvPartner;
+    // Mark as read
+    apiMsg('POST', `/${convId}/read`, { user_id: userId }).catch(() => {});
+    // Load messages
+    await loadMessages(convId);
+    // Update conv list highlight
+    document.querySelectorAll('.msg-conv-item').forEach(el => el.classList.remove('active'));
+    const activeItem = document.querySelector(`.msg-conv-item[onclick*="'${convId}'"]`);
+    if (activeItem) activeItem.classList.add('active');
+    // Mark conversation as read locally
+    loadConversations();
+  } catch (e) { toast({ title: 'Erreur', message: String(e), type: 'error' }); }
+}
+
+async function loadMessages(convId) {
+  try {
+    const msgs = await apiMsg('GET', `/${convId}?limit=50`);
+    renderMessages(msgs);
+    const container = document.getElementById('msgMessages');
+    container.scrollTop = container.scrollHeight;
+    // Welcome message if first user message
+    if (msgs.length === 1 && msgs[0].type === 'welcome') {
+      // Show evaluate after first user response
+    }
+  } catch (e) { console.error('loadMessages:', e); }
+}
+
+function renderMessages(msgs) {
+  const container = document.getElementById('msgMessages');
+  const userId = document.getElementById('mongoUserId')?.value || '';
+  if (!container) return;
+  if (!msgs || msgs.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,.3);font-size:13px">Aucun message</div>';
+    return;
+  }
+  let html = '';
+  let lastDate = '';
+  msgs.forEach(m => {
+    const isMine = m.sender_id === userId;
+    const msgDate = m.created_at ? new Date(m.created_at).toLocaleDateString() : '';
+    if (msgDate && msgDate !== lastDate) {
+      html += `<div class="msg-date-separator">${new Date(m.created_at).toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long' })}</div>`;
+      lastDate = msgDate;
+    }
+    const time = m.created_at ? new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+    const readIcon = m.read_at ? '<span class="msg-read read" title="Lu">✓✓</span>' : '<span class="msg-read" title="Non lu">✓</span>';
+    const bubbleClass = isMine ? 'outgoing' : (m.type === 'welcome' ? 'welcome' : 'incoming');
+    html += `<div class="msg-bubble ${bubbleClass}">
+      ${!isMine ? `<div class="msg-sender">${htmlEsc(m.sender_name || 'Inconnu')}</div>` : ''}
+      ${m.type === 'file' ? `<div class="msg-file">📎 <a href="${htmlEsc(m.file_url)}" target="_blank">${htmlEsc(m.content)}</a></div>` : `<div>${htmlEsc(m.content)}</div>`}
+      <div class="msg-time">${time} ${isMine ? readIcon : ''}</div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+async function sendMsg() {
+  const input = document.getElementById('msgInput');
+  const content = input.value.trim();
+  if (!content || !currentConvId) return;
+  input.value = '';
+  const userId = document.getElementById('mongoUserId')?.value || '';
+  const userName = document.getElementById('name')?.value || '';
+  try {
+    const msg = await apiMsg('POST', `/${currentConvId}`, {
+      content, sender_id: userId, sender_name: userName, type: 'text',
+    });
+    // Optimistic render
+    const container = document.getElementById('msgMessages');
+    const empty = container.querySelector('div[style*="padding:40px"]');
+    if (empty) container.innerHTML = '';
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    container.innerHTML += `<div class="msg-bubble outgoing">
+      <div>${htmlEsc(content)}</div>
+      <div class="msg-time">${time} <span class="msg-read">✓</span></div>
+    </div>`;
+    container.scrollTop = container.scrollHeight;
+    loadConversations();
+  } catch (e) { toast({ title: 'Erreur envoi', message: String(e), type: 'error' }); }
+}
+
+async function sendCanned(id) {
+  const responses = { delivery: 'Le délai de livraison est de 3 à 7 jours ouvrés selon votre localisation.', price: 'Le tarif est celui affiché sur l\'annonce. Nous avons des promotions régulières, n\'hésitez pas à suivre notre boutique.', address: 'Pourriez-vous me communiquer votre adresse complète pour établir le devis de livraison ?', stock: 'Oui, le produit est actuellement en stock. Je peux vous réserver un exemplaire.', payment: 'Nous acceptons Orange Money, M-Pesa et Airtel Money. Paiement sécurisé.' };
+  const content = responses[id];
+  if (!content || !currentConvId) return;
+  const userId = document.getElementById('mongoUserId')?.value || '';
+  const userName = document.getElementById('name')?.value || '';
+  try {
+    await apiMsg('POST', `/${currentConvId}`, { content, sender_id: userId, sender_name: userName, type: 'text' });
+    const container = document.getElementById('msgMessages');
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    container.innerHTML += `<div class="msg-bubble outgoing">
+      <div>${htmlEsc(content)}</div>
+      <div class="msg-time">${time} <span class="msg-read">✓</span></div>
+    </div>`;
+    container.scrollTop = container.scrollHeight;
+    loadConversations();
+    toast({ title: 'Réponse rapide envoyée', type: 'success' });
+  } catch (e) { toast({ title: 'Erreur', message: String(e), type: 'error' }); }
+}
+
+function pickFile() { document.getElementById('msgFileInput').click(); }
+
+async function uploadAndSendFile(input) {
+  const file = input.files?.[0];
+  if (!file || !currentConvId) return;
+  const formData = new FormData();
+  formData.append('file', file);
   try {
     const userId = document.getElementById('mongoUserId')?.value || '';
+    const res = await fetch(`${API_BASE}/api/upload`, { method: 'POST', headers: { 'X-User-Id': userId }, body: formData });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Upload échoué');
+    const fileUrl = data.url || `${API_BASE}/api/uploads/${data.filename}`;
     const userName = document.getElementById('name')?.value || '';
-    const data = await apiPost('/api/articles', {
-      title: document.getElementById('article_title').value.trim(),
-      content: document.getElementById('article_content').value.trim(),
-      author_id: userId,
-      author_name: userName,
-    }, true);
-    document.getElementById('article_id').value = data.id || data._id;
-    setOut(data);
-    toast({ title: 'Article publié', message: data.title, type: 'success' });
-  } catch (e) { setOut({ error: String(e) }); toast({ title: 'Erreur', message: String(e), type: 'error' });
-  } finally { setLoading(btn, false); }
+    await apiMsg('POST', `/${currentConvId}`, {
+      content: file.name, sender_id: userId, sender_name: userName, type: 'file', file_url: fileUrl, media_type: file.type,
+    });
+    const container = document.getElementById('msgMessages');
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    container.innerHTML += `<div class="msg-bubble outgoing">
+      <div class="msg-file">📎 <a href="${htmlEsc(fileUrl)}" target="_blank">${htmlEsc(file.name)}</a></div>
+      <div class="msg-time">${time} <span class="msg-read">✓</span></div>
+    </div>`;
+    container.scrollTop = container.scrollHeight;
+    loadConversations();
+  } catch (e) { toast({ title: 'Erreur fichier', message: String(e), type: 'error' }); }
+  input.value = '';
 }
 
-async function sendMessage() {
-  const btn = document.getElementById('btn-message');
-  setLoading(btn, true);
-  try {
-    const articleId = document.getElementById('article_id').value.trim();
-    if (!articleId) throw new Error('article_id manquant');
-    const senderId = document.getElementById('mongoUserId')?.value || '';
-    const senderName = document.getElementById('name')?.value || '';
-    const data = await apiPost(`/api/articles/${articleId}/messages`, {
-      content: document.getElementById('message_content').value.trim(),
-      sender_id: senderId,
-      sender_name: senderName,
-    }, true);
-    setOut(data);
-    toast({ title: 'Message envoyé', type: 'success' });
-  } catch (e) { setOut({ error: String(e) }); toast({ title: 'Erreur', message: String(e), type: 'error' });
-  } finally { setLoading(btn, false); }
+function filterConversations(query) {
+  document.querySelectorAll('.msg-conv-item').forEach(el => {
+    const name = el.querySelector('.msg-conv-name')?.textContent || '';
+    const preview = el.querySelector('.msg-conv-preview')?.textContent || '';
+    el.style.display = name.toLowerCase().includes(query.toLowerCase()) || preview.toLowerCase().includes(query.toLowerCase()) ? 'flex' : 'none';
+  });
 }
 
-async function loadInbox() {
-  const userId = document.getElementById('mongoUserId')?.value;
-  if (!userId) { toast({ title: 'Erreur', message: 'Connectez-vous d\'abord', type: 'error' }); return; }
-  try {
-    const data = await apiGet(`/api/articles/messages/inbox?user_id=${encodeURIComponent(userId)}`, true);
-    setOut(data);
-    toast({ title: 'Boîte réception', message: `${data.length} message(s)`, type: 'info' });
-  } catch (e) { setOut({ error: String(e) }); }
+function toggleChatInfo() {
+  toast({ title: currentConvPartner ? `ID: ${currentConvPartner}` : 'Info', message: 'Conversation active', type: 'info' });
 }
 
-async function loadOutbox() {
-  const userId = document.getElementById('mongoUserId')?.value;
-  if (!userId) { toast({ title: 'Erreur', message: 'Connectez-vous d\'abord', type: 'error' }); return; }
+function viewProductFromChat() {
+  const pc = document.getElementById('msgProductCard');
+  const pid = pc?.dataset?.productId;
+  if (pid) { document.getElementById('searchInput').value = pid; showSection('catalogue'); }
+}
+
+async function evaluateChat(rating) {
+  if (!currentConvId) return;
   try {
-    const data = await apiGet(`/api/articles/messages/outbox?user_id=${encodeURIComponent(userId)}`, true);
-    setOut(data);
-    toast({ title: 'Messages envoyés', message: `${data.length} message(s)`, type: 'info' });
-  } catch (e) { setOut({ error: String(e) }); }
+    await apiMsg('POST', `/${currentConvId}/evaluate`, { user_id: document.getElementById('mongoUserId')?.value, rating });
+    document.getElementById('msgEvaluate').style.display = 'none';
+    toast({ title: 'Merci !', message: `Note: ${rating}/5`, type: 'success' });
+  } catch (e) { toast({ title: 'Erreur', message: String(e), type: 'error' }); }
+}
+
+function updateMsgBadge(convs) {
+  const badge = document.getElementById('msgBadge');
+  if (!badge) return;
+  const total = (convs || []).reduce((s, c) => s + (c.unread || 0), 0);
+  if (total > 0) { badge.textContent = total; badge.style.display = 'inline'; }
+  else { badge.style.display = 'none'; }
+}
+
+function playMsgSound() {
+  try { new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAAC...').play().catch(() => {}); } catch {}
 }
 
 // ===== Products / Search =====
@@ -1049,6 +1288,7 @@ async function browserSearchProducts(page = 1) {
           <div class="productTitle" title="${name}">${name}</div>
           <div class="productPrice">${price} ${stock}</div>
           <button class="productBtn" onclick="fillCart('${id}')">Ajouter</button>
+          <button class="productBtn" style="background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.3);font-size:11px" onclick="contactSeller('${id}','${htmlEsc(name)}','${price}','${img}')">💬</button>
         </div>
       </div>`;
     }).join('');
@@ -1180,57 +1420,29 @@ async function loadPaymentHistory() {
   }
 }
 
-// ===== Real-time Messages =====
+// ===== Real-time Messages (SSE) =====
 let eventSource = null;
-
-async function sendArticleMessage(articleId, content) {
-  const senderId = document.getElementById('mongoUserId')?.value || '';
-  const senderName = document.getElementById('name')?.value || '';
-  if (!articleId || !content) { toast({ title: 'Erreur', message: 'article_id et content requis', type: 'error' }); return; }
-  try {
-    const data = await apiPost(`/api/articles/${articleId}/messages`, {
-      content, sender_id: senderId, sender_name: senderName,
-    }, true);
-    toast({ title: 'Message envoyé', type: 'success' });
-    return data;
-  } catch (e) {
-    toast({ title: 'Erreur', message: String(e), type: 'error' });
-  }
-}
-
-async function loadInbox() {
-  const userId = document.getElementById('mongoUserId')?.value;
-  if (!userId) { toast({ title: 'Erreur', message: 'Connectez-vous d\'abord', type: 'error' }); return; }
-  try {
-    const data = await apiGet(`/api/articles/messages/inbox?user_id=${encodeURIComponent(userId)}`, true);
-    setOut(data);
-    toast({ title: 'Boîte de réception', message: `${data.length} message(s)`, type: 'info' });
-  } catch (e) {
-    toast({ title: 'Erreur', message: String(e), type: 'error' });
-  }
-}
-
-async function loadOutbox() {
-  const userId = document.getElementById('mongoUserId')?.value;
-  if (!userId) { toast({ title: 'Erreur', message: 'Connectez-vous d\'abord', type: 'error' }); return; }
-  try {
-    const data = await apiGet(`/api/articles/messages/outbox?user_id=${encodeURIComponent(userId)}`, true);
-    setOut(data);
-    toast({ title: 'Messages envoyés', message: `${data.length} message(s)`, type: 'info' });
-  } catch (e) {
-    toast({ title: 'Erreur', message: String(e), type: 'error' });
-  }
-}
 
 function connectRealtimeMessages() {
   const userId = document.getElementById('mongoUserId')?.value;
   if (!userId) return;
   if (eventSource) eventSource.close();
-  eventSource = new EventSource(`${API_BASE}/api/articles/messages/stream?user_id=${encodeURIComponent(userId)}`);
+  eventSource = new EventSource(`${API_BASE}/api/messages/stream?user_id=${encodeURIComponent(userId)}`);
   eventSource.onmessage = (e) => {
     try {
       const msg = JSON.parse(e.data);
+      // Toast notification
       toast({ title: `📩 ${msg.sender_name || 'Nouveau message'}`, message: msg.content?.slice(0, 80), type: 'info' });
+      playMsgSound();
+      // Refresh conversations if on messaging page
+      if (document.querySelector('.section[data-section="messagerie"][data-active="true"]')) {
+        loadConversations();
+        if (currentConvId && (msg.conversation_id === currentConvId)) {
+          loadMessages(currentConvId);
+        }
+      }
+      // Update badge regardless
+      loadConversations();
     } catch {}
   };
   eventSource.onerror = () => {
@@ -1238,17 +1450,19 @@ function connectRealtimeMessages() {
   };
 }
 
-// ===== Override login to connect real-time =====
+// ===== Override login/register to connect real-time =====
 const _origLogin = login;
 login = async function() {
   await _origLogin.apply(this, arguments);
   connectRealtimeMessages();
+  loadConversations();
 };
 
 const _origRegister = register;
 register = async function() {
   await _origRegister.apply(this, arguments);
   connectRealtimeMessages();
+  loadConversations();
 };
 
 // ===== Load Homepage Products =====
@@ -1289,6 +1503,7 @@ async function loadHomepageProducts() {
           <div class="productTitle" title="${name}">${name}</div>
           <div class="productPrice">${price}</div>
           <button class="productBtn" onclick="fillCart('${id}')">Voir</button>
+          <button class="productBtn" style="background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.3);font-size:11px" onclick="contactSeller('${id}','${htmlEsc(name)}','${price}','${img}')">💬 Contacter</button>
         </div>
       </div>`;
     };
@@ -1325,6 +1540,7 @@ async function loadHomepageProducts() {
         <div class="productTitle">${p.name}</div>
         <div class="productPrice">${p.price} $</div>
         <button class="productBtn">Voir</button>
+        <button class="productBtn" style="background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.3);font-size:11px">💬 Contacter</button>
       </div>
     </div>`;
     ['topSalesGrid','popularGrid','newArrivalsGrid','featuredGrid'].forEach(id => {
