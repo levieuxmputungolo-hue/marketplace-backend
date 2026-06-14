@@ -1465,15 +1465,29 @@ register = async function() {
   loadConversations();
 };
 
-// ===== Load Homepage Products =====
+// ===== Load Homepage Products (Alibaba style) =====
 async function loadHomepageProducts() {
+  const renderAliCard = (p, badge) => {
+    const id = p._id || '';
+    const name = String(p.name || '').replace(/[<>]/g, '');
+    const price = p.price != null ? `${Number(p.price).toLocaleString()} $` : '—';
+    const img = p.image || '';
+    const hasFreeShipping = p.free_shipping || Math.random() > 0.5;
+    return `<div class="ali-prod-card">
+      ${img ? `<img class="thumb" src="${img}" alt="" loading="lazy" />` : `<div class="thumb" style="background:linear-gradient(135deg,#ff6a00,#ff8c38);display:flex;align-items:center;justify-content:center;font-size:40px;color:rgba(255,255,255,0.4)">📦</div>`}
+      <div class="body">
+        <div class="title" title="${name}">${name}</div>
+        <div class="price">${price}</div>
+        ${hasFreeShipping ? '<div class="badge">Livraison gratuite</div>' : ''}
+        ${badge ? `<div style="font-size:10px;color:#999;margin-top:3px">${badge}</div>` : ''}
+        <button style="width:100%;margin-top:6px;padding:4px 0;border-radius:6px;border:1px solid var(--alibaba);background:var(--alibaba);color:#fff;font-size:11px;font-weight:600;cursor:pointer" onclick="contactSeller('${id}','${htmlEsc(name)}','${price}','${img}')">💬 Contacter</button>
+      </div>
+    </div>`;
+  };
+
   try {
     const products = await mongoGet('/api/products/?limit=12');
     const list = Array.isArray(products) ? products : [];
-    const topGrid = document.getElementById('topSalesGrid');
-    const popularGrid = document.getElementById('popularGrid');
-    const newGrid = document.getElementById('newArrivalsGrid');
-    const featuredGrid = document.getElementById('featuredGrid');
     const statProducts = document.getElementById('statProducts');
     const statVendors = document.getElementById('statVendors');
     const statOrders = document.getElementById('statOrders');
@@ -1485,71 +1499,41 @@ async function loadHomepageProducts() {
     }
     if (statOrders) statOrders.textContent = String(Math.floor(Math.random() * 40) + 10);
 
-    const renderCard = (p, badge) => {
-      const id = p._id || '';
-      const name = String(p.name || '').replace(/[<>]/g, '');
-      const price = p.price != null ? `${Number(p.price).toLocaleString()} $` : '—';
-      const img = p.image || '';
-      const rating = p.rating || 4.5;
-      const stars = '★'.repeat(Math.floor(rating)) + (rating % 1 >= 0.5 ? '½' : '');
-      return `<div class="productCard flutter-fade-in">
-        <div class="productImg">${img ? `<img src="${img}" alt="" loading="lazy" />` : '<div class="imgPlaceholder"></div>'}</div>
-        <div class="productBody">
-          ${badge ? `<span class="badge-promo" style="margin-bottom:4px;display:inline-block">${badge}</span>` : ''}
-          <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px">
-            <span style="color:var(--star);font-size:11px">${stars}</span>
-            <span style="font-size:10px;color:rgba(255,255,255,0.3)">(${p.reviews_count || 0})</span>
-          </div>
-          <div class="productTitle" title="${name}">${name}</div>
-          <div class="productPrice">${price}</div>
-          <button class="productBtn" onclick="fillCart('${id}')">Voir</button>
-          <button class="productBtn" style="background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.3);font-size:11px" onclick="contactSeller('${id}','${htmlEsc(name)}','${price}','${img}')">💬 Contacter</button>
-        </div>
-      </div>`;
+    const fillRow = (id, items, badge) => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = items.length ? items.map(p => renderAliCard(p, badge)).join('') : '<div style="flex-shrink:0;width:100%;text-align:center;padding:20px;color:#999;font-size:13px">Aucun produit</div>';
     };
 
-    if (topGrid) {
-      const top = list.slice(0, 4);
-      topGrid.innerHTML = top.length ? top.map(p => renderCard(p, '🔥 Top')).join('') : '<div class="muted" style="grid-column:1/-1;text-align:center;padding:20px">Aucun produit</div>';
-    }
-    if (popularGrid) {
-      const pop = list.slice(2, 6);
-      popularGrid.innerHTML = pop.length ? pop.map(p => renderCard(p, '⭐ Populaire')).join('') : '<div class="muted" style="grid-column:1/-1;text-align:center;padding:20px">Aucun produit</div>';
-    }
-    if (newGrid) {
-      const sorted = [...list].sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
-      const news = sorted.slice(0, 4);
-      newGrid.innerHTML = news.length ? news.map(p => renderCard(p, '🆕 Nouveau')).join('') : '<div class="muted" style="grid-column:1/-1;text-align:center;padding:20px">Aucun produit</div>';
-    }
-    if (featuredGrid) {
-      const feat = list.slice(4, 8);
-      featuredGrid.innerHTML = feat.length ? feat.map(p => renderCard(p)).join('') : '<div class="muted" style="grid-column:1/-1;text-align:center;padding:20px">Aucun produit</div>';
-    }
+    fillRow('topSalesRow', list.slice(0, 6), '🔥 Top vente');
+    const sortedNew = [...list].sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+    fillRow('newArrivalsRow', sortedNew.slice(0, 6), '🆕 Nouveau');
+    const shuffled = [...list].sort(() => Math.random() - 0.5);
+    fillRow('recommendedRow', shuffled.slice(0, 6), '⭐ Recommandé');
+
+    // Catégories filter
+    document.querySelectorAll('#aliCats .chip').forEach(chip => {
+      chip.onclick = () => {
+        document.querySelectorAll('#aliCats .chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        const cat = chip.dataset.cat;
+        const filtered = cat ? list.filter(p => (p.category || '').toLowerCase() === cat.toLowerCase()) : list;
+        fillRow('topSalesRow', filtered.slice(0, 6), cat || '🔥 Top vente');
+        showSection('accueil');
+      };
+    });
   } catch (e) {
     const fallback = [
-      { name: 'iPhone 15 Pro Max', price: 1299, image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300&h=200&fit=crop', rating: 4.8, reviews_count: 234 },
-      { name: 'MacBook Air M3', price: 1499, image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=300&h=200&fit=crop', rating: 4.9, reviews_count: 189 },
-      { name: 'Nike Air Max 270', price: 150, image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=200&fit=crop', rating: 4.5, reviews_count: 432 },
-      { name: 'Casque Bose QC45', price: 329, image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=200&fit=crop', rating: 4.6, reviews_count: 298 },
+      { _id: 'f1', name: 'iPhone 15 Pro Max', price: 1299, image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300&h=300&fit=crop', free_shipping: true },
+      { _id: 'f2', name: 'MacBook Air M3', price: 1499, image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=300&h=300&fit=crop', free_shipping: false },
+      { _id: 'f3', name: 'Nike Air Max 270', price: 150, image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=300&fit=crop', free_shipping: true },
+      { _id: 'f4', name: 'Casque Bose QC45', price: 329, image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop', free_shipping: false },
+      { _id: 'f5', name: 'Montre Samsung Watch 6', price: 399, image: 'https://images.unsplash.com/photo-1546868871-af0de0ae72e6?w=300&h=300&fit=crop', free_shipping: true },
+      { _id: 'f6', name: 'Sac à dos Urban', price: 89, image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=300&h=300&fit=crop', free_shipping: true },
     ];
-    const fb = (p, badge) => `<div class="productCard flutter-fade-in">
-      <div class="productImg"><img src="${p.image}" alt="" loading="lazy" /></div>
-      <div class="productBody">
-        ${badge ? `<span class="badge-promo" style="margin-bottom:4px;display:inline-block">${badge}</span>` : ''}
-        <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px"><span style="color:var(--star);font-size:11px">${'★'.repeat(Math.floor(p.rating))}</span><span style="font-size:10px;color:rgba(255,255,255,0.3)">(${p.reviews_count})</span></div>
-        <div class="productTitle">${p.name}</div>
-        <div class="productPrice">${p.price} $</div>
-        <button class="productBtn">Voir</button>
-        <button class="productBtn" style="background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.3);font-size:11px">💬 Contacter</button>
-      </div>
-    </div>`;
-    ['topSalesGrid','popularGrid','newArrivalsGrid','featuredGrid'].forEach(id => {
+    ['topSalesRow','newArrivalsRow','recommendedRow'].forEach(id => {
       const el = document.getElementById(id);
-      if (el) el.innerHTML = fallback.map(p => fb(p, id === 'topSalesGrid' ? '🔥 Top' : id === 'popularGrid' ? '⭐ Populaire' : id === 'newArrivalsGrid' ? '🆕 Nouveau' : '')).join('');
+      if (el) el.innerHTML = fallback.map(p => renderAliCard(p)).join('');
     });
-    if (document.getElementById('statProducts')) document.getElementById('statProducts').textContent = '4+';
-    if (document.getElementById('statVendors')) document.getElementById('statVendors').textContent = '8';
-    if (document.getElementById('statOrders')) document.getElementById('statOrders').textContent = '45';
   }
 }
 
@@ -1558,6 +1542,16 @@ setTimeout(() => {
   browserSearchProducts();
   browserLoadCategories();
   loadHomepageProducts();
+  // Alibaba search bar → Enter navigates to catalogue
+  document.getElementById('globalSearch')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const val = e.target.value.trim();
+      const catSearch = document.getElementById('browserSearch');
+      if (catSearch) catSearch.value = val;
+      showSection('catalogue');
+      browserSearchProducts();
+    }
+  });
 }, 500);
 
 // ===== Notifications =====
