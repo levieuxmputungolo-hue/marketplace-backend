@@ -39,19 +39,19 @@
     }
 
     * { box-sizing: border-box; }
+    body { background: #f5f5f5; margin: 0; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
 
     .wrap {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 0 12px 60px;
+      padding: 0 0 60px;
     }
 
     /* ─── TOP BAR — ALIBABA STYLE ─── */
     .ali-top {
       display: flex; align-items: center; gap: 10px;
-      padding: 10px 14px;
+      padding: 10px 16px;
       background: var(--alibaba);
-      position: sticky; top: 0; z-index: 100;
     }
     .ali-top .search-wrap {
       flex: 1; display: flex; align-items: center;
@@ -64,106 +64,74 @@
       color: #fff; font-size: 14px; padding: 8px 0; font-family: inherit;
     }
     .ali-top .search-wrap input::placeholder { color: rgba(255,255,255,0.6); }
-    .ali-top .cart-ico {
-      width: 36px; height: 36px; border-radius: 50%;
-      background: rgba(255,255,255,0.15);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px; color: #fff; cursor: pointer; flex-shrink: 0;
-      transition: background 0.2s; border: none;
-    }
-    .ali-top .cart-ico:hover { background: rgba(255,255,255,0.25); }
-    .ali-cart-badge {
-      position: absolute; top: -2px; right: -4px;
-      background: #ff4d4f; color: #fff; font-size: 10px; font-weight: 700;
-      min-width: 16px; height: 16px; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      padding: 0 4px;
-    }
-    .ali-top .cart-btn { position: relative; }
 
     /* ─── NAV ─── */
     .alibaba-nav {
-      display: flex; gap: 2px; flex-wrap: wrap; margin: 0 0 12px;
-      padding: 4px 16px; background: rgba(255, 255, 255, 0.02);
-      border-bottom: 1px solid rgba(255, 106, 0, 0.08);
+      display: flex; gap: 2px; flex-wrap: wrap; margin: 0;
+      padding: 6px 12px 8px; background: #fff;
+      border-bottom: 1px solid #f0f0f0;
     }
     .alibaba-nav .navBtn {
-      flex: 0 1 auto; padding: 8px 14px; border-radius: 10px;
+      flex: 0 1 auto; padding: 8px 12px; border-radius: 8px;
       border: none; background: transparent;
-      color: rgba(255, 255, 255, 0.45);
-      font-weight: 700; font-size: 13px; cursor: pointer;
+      color: #666;
+      font-weight: 600; font-size: 12px; cursor: pointer;
       transition: all 0.2s; font-family: inherit; text-align: center;
       white-space: nowrap;
     }
-    .alibaba-nav .navBtn:hover { color: #fff; background: rgba(255, 106, 0, 0.08); }
+    .alibaba-nav .navBtn:hover { color: var(--alibaba); background: rgba(255, 106, 0, 0.06); }
     .alibaba-nav .navBtn[data-active="true"] {
-      color: #fff;
-      background: linear-gradient(135deg, rgba(255, 106, 0, 0.2), rgba(255, 106, 0, 0.1));
-      box-shadow: 0 0 0 1px rgba(255, 106, 0, 0.4), 0 4px 16px rgba(255, 106, 0, 0.12);
+      color: var(--alibaba);
+      background: rgba(255, 106, 0, 0.1);
     }
 
     /* ─── ALIBABA MOBILE HOME ─── */
     .ali-container { max-width: 430px; margin: 0 auto; }
     .ali-grid4 {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;
-      padding: 14px 10px 10px; background: #fff;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+      padding: 20px 16px 16px; background: #fff;
     }
     .ali-grid4 .item {
-      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
       cursor: pointer; padding: 4px 0;
     }
     .ali-grid4 .item .circle {
-      width: 48px; height: 48px; border-radius: 50%;
+      width: 52px; height: 52px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-size: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      font-size: 22px;
     }
-    .ali-grid4 .item .label { font-size: 11px; color: #333; font-weight: 500; }
+    .ali-grid4 .item .label { font-size: 12px; color: #333; font-weight: 500; }
     .ali-cats {
-      display: flex; gap: 0; overflow-x: auto; padding: 8px 10px;
-      background: #fff; border-top: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0;
+      display: flex; gap: 8px; overflow-x: auto; padding: 12px 16px 16px;
+      background: #fff;
       -webkit-overflow-scrolling: touch; scrollbar-width: none;
     }
     .ali-cats::-webkit-scrollbar { display: none; }
     .ali-cats .chip {
-      flex-shrink: 0; padding: 6px 14px; border-radius: 16px;
-      font-size: 12px; font-weight: 600; color: #555; cursor: pointer;
-      transition: all 0.2s; white-space: nowrap; border: 1px solid transparent;
+      flex-shrink: 0; padding: 6px 16px; border-radius: 18px;
+      font-size: 13px; font-weight: 500; color: #555; cursor: pointer;
+      transition: all 0.2s; white-space: nowrap; border: 1px solid #eee;
     }
-    .ali-cats .chip.active { background: var(--alibaba); color: #fff; }
-    .ali-cats .chip:not(.active):hover { background: #f5f5f5; border-color: #ddd; }
-    .ali-products { padding: 8px 10px; background: #f5f5f5; }
-    .ali-prod-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; -webkit-overflow-scrolling: touch; }
-    .ali-prod-row::-webkit-scrollbar { display: none; }
+    .ali-cats .chip.active { background: var(--alibaba); color: #fff; border-color: var(--alibaba); }
+    .ali-products { padding: 0 16px 24px; }
+    .ali-prod-row { display: flex; gap: 12px; }
     .ali-prod-card {
-      flex-shrink: 0; width: 150px; background: #fff; border-radius: 10px;
-      overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      flex: 1; max-width: calc(50% - 6px); background: #fff; border-radius: 12px;
+      overflow: hidden; border: 1px solid #f0f0f0;
     }
-    .ali-prod-card .thumb { width: 150px; height: 150px; display: block; background: #f9f9f9; overflow: hidden; }
+    .ali-prod-card .thumb { width: 100%; aspect-ratio: 1/1; display: block; background: #f9f9f9; overflow: hidden; }
     .ali-prod-card .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .ali-prod-card .body { padding: 8px 10px 10px; }
+    .ali-prod-card .body { padding: 10px 12px 14px; }
     .ali-prod-card .title {
-      font-size: 12px; color: #333; font-weight: 500;
+      font-size: 13px; color: #222; font-weight: 500; line-height: 1.3;
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-      overflow: hidden; line-height: 1.3; min-height: 30px;
+      overflow: hidden; min-height: 32px;
     }
-    .ali-prod-card .price { font-size: 15px; color: #ff0033; font-weight: 700; margin-top: 4px; }
-    .ali-prod-card .badge {
-      display: inline-block; font-size: 10px; color: #ff0033; font-weight: 600;
-      background: rgba(255,0,51,0.06); border: 1px solid rgba(255,0,51,0.12);
-      border-radius: 3px; padding: 0 4px; margin-top: 4px;
-    }
+    .ali-prod-card .price { font-size: 16px; color: #ff0033; font-weight: 700; margin-top: 4px; }
     .ali-section-title {
-      font-size: 15px; font-weight: 700; color: #333;
-      padding: 12px 10px 6px; background: #f5f5f5; margin: 0;
+      font-size: 17px; font-weight: 700; color: #222;
+      padding: 0 16px 12px; background: #fff; margin: 0;
     }
-    .ali-banner {
-      margin: 0 10px; border-radius: 10px; overflow: hidden;
-      background: linear-gradient(135deg, #ff6a00, #ff8c38);
-      color: #fff; padding: 16px 18px; text-align: center;
-    }
-    .ali-banner h2 { margin: 0; font-size: 18px; font-weight: 800; }
-    .ali-banner p { margin: 4px 0 0; font-size: 12px; opacity: 0.85; }
-    .ali-section-spacer { height: 8px; background: #f5f5f5; }
 
     /* ─── SECTIONS ─── */
     .section { display: none; }
@@ -171,21 +139,11 @@
     .section .card { margin-top: 0; }
 
     .card {
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
-      border: 1px solid rgba(255, 106, 0, 0.15); border-radius: 18px;
-      padding: 16px; box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+      background: #fff;
+      border: 1px solid #eee; border-radius: 14px;
+      padding: 16px; box-shadow: none;
       position: relative; overflow: hidden;
-      transition: box-shadow 0.3s cubic-bezier(0.2, 0, 0, 1), transform 0.3s cubic-bezier(0.2, 0, 0, 1);
     }
-    .card:hover {
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
-    }
-    .card:before {
-      content: ""; position: absolute; inset: -2px;
-      background: radial-gradient(600px 240px at 0% 0%, rgba(255, 106, 0, 0.2), transparent 55%);
-      opacity: 0.5; pointer-events: none;
-    }
-    .card > * { position: relative; }
 
     /* ─── MESSAGERIE — STYLE ALIBABA TRADEMANAGER ─── */
     .msg-container{display:flex;height:calc(100vh - 120px);min-height:520px;gap:0;border-radius:12px;overflow:hidden;background:#fff;border:1px solid #e8e8e8;box-shadow:0 2px 20px rgba(0,0,0,.06)}
@@ -263,9 +221,9 @@
 
     /* ─── ALIBABA PANELS ─── */
     .al-panel {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 106, 0, 0.1);
-      border-radius: 14px; padding: 14px; margin-bottom: 12px;
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 12px; padding: 14px; margin-bottom: 12px;
     }
     .al-panel:last-child { margin-bottom: 0; }
 
@@ -408,7 +366,7 @@
       margin: 0 0 8px; font-size: 15px; font-weight: 900;
     }
 
-    .muted { color: rgba(255, 255, 255, 0.4); margin-top: 6px; font-size: 13px; }
+    .muted { color: #999; margin-top: 6px; font-size: 13px; }
     .mt-1 { margin-top: 8px; }
     .mt-2 { margin-top: 14px; }
 
@@ -761,51 +719,37 @@
 </head>
 <body>
   <div class="wrap">
-    <!-- Top Bar: Alibaba style -->
+    <!-- Ligne 1 : Barre de recherche orange -->
     <div class="ali-top">
       <div class="search-wrap">
         <span class="s-ico">🔍</span>
-        <input id="globalSearch" type="text" placeholder="Rechercher sur easy-market" />
+        <input id="globalSearch" type="text" placeholder="Rechercher..." />
       </div>
-      <button class="cart-btn" onclick="showSection('panier')" type="button">
-        <div class="cart-ico">🛒</div>
-        <span class="ali-cart-badge" id="aliCartBadge" style="display:none">0</span>
-      </button>
     </div>
 
-    <!-- Navigation with emoji icons -->
+    <!-- Navigation minimaliste -->
     <div class="alibaba-nav" role="tablist">
       <button class="navBtn" data-target="accueil" data-active="true" type="button">🏠 Accueil</button>
       <button class="navBtn" data-target="catalogue" type="button">🛍️ Catalogue</button>
-      <button class="navBtn" data-target="panier" type="button">🛒 Panier</button>
-      <button class="navBtn" data-target="localisation" type="button">📍 Localisation</button>
-      <button class="navBtn" data-target="auth" type="button">👤 Compte</button>
-      <button class="navBtn" data-target="notifications" type="button">🔔 Notif.</button>
       <button class="navBtn" data-target="messagerie" type="button" id="messagingNavBtn">💬 Messages <span id="msgBadge" style="display:none;background:#ef4444;color:#fff;border-radius:10px;padding:1px 7px;font-size:11px;margin-left:3px">0</span></button>
-      <button class="navBtn" data-target="mongo" type="button" style="background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(59,130,246,0.05));border-color:rgba(59,130,246,0.3)">📁 Catégories</button>
-      <button class="navBtn" data-target="flutter-pro" type="button" style="background:linear-gradient(135deg,rgba(255,106,0,0.15),rgba(255,106,0,0.05));border-color:rgba(255,106,0,0.3)">⚡ App</button>
+      <button class="navBtn" data-target="auth" type="button">👤 Compte</button>
+      <button class="navBtn" data-target="panier" type="button">🛒 Panier</button>
     </div>
 
     <!-- ════════════════════════════════════════════════════════ -->
-    <!-- ACCUEIL — ALIBABA MOBILE STYLE                        -->
+    <!-- ACCUEIL — ALIBABA MINIMAL & AÉRÉ                      -->
     <!-- ════════════════════════════════════════════════════════ -->
     <section class="section ali-container" data-section="accueil" data-active="true">
 
-      <!-- Banner -->
-      <div class="ali-banner">
-        <h2>🇨🇩 easy-market</h2>
-        <p>Achetez et vendez en RDC — Livraison partout</p>
-      </div>
-
-      <!-- 4 icônes rondes -->
+      <!-- Ligne 2 : 4 icônes seulement -->
       <div class="ali-grid4">
-        <div class="item" onclick="showSection('catalogue')"><div class="circle" style="background:rgba(255,106,0,0.1)">📋</div><span class="label">Commandes</span></div>
-        <div class="item" onclick="showSection('messagerie')"><div class="circle" style="background:rgba(34,197,94,0.1)">💬</div><span class="label">Messages</span></div>
-        <div class="item" onclick="showSection('localisation');setTimeout(fabLocate,300)"><div class="circle" style="background:rgba(59,130,246,0.1)">📍</div><span class="label">GPS</span></div>
-        <div class="item" onclick="showSection('auth')"><div class="circle" style="background:rgba(251,191,36,0.1)">👛</div><span class="label">Portefeuille</span></div>
+        <div class="item"><div class="circle" style="background:rgba(255,106,0,0.1)">📋</div><span class="label">Commandes</span></div>
+        <div class="item"><div class="circle" style="background:rgba(34,197,94,0.1)">💬</div><span class="label">Messages</span></div>
+        <div class="item"><div class="circle" style="background:rgba(251,191,36,0.1)">👛</div><span class="label">Portefeuille</span></div>
+        <div class="item"><div class="circle" style="background:rgba(255,106,0,0.08)">❤️</div><span class="label">Favoris</span></div>
       </div>
 
-      <!-- Catégories horizontales -->
+      <!-- Ligne 3 : Catégories horizontales -->
       <div class="ali-cats" id="aliCats">
         <span class="chip active" data-cat="">Toutes</span>
         <span class="chip" data-cat="Électronique">Électronique</span>
@@ -814,50 +758,14 @@
         <span class="chip" data-cat="Sport">Sport</span>
       </div>
 
-      <!-- Section produits horizontale -->
+      <!-- Ligne 4 : Titre Top ventes -->
       <div class="ali-section-title">🔥 Top ventes</div>
+
+      <!-- Ligne 5 : 2 produits côte à côte -->
       <div class="ali-products"><div class="ali-prod-row" id="topSalesRow"></div></div>
 
-      <div class="ali-section-title">⭐ Recommandé</div>
-      <div class="ali-products"><div class="ali-prod-row" id="recommendedRow"></div></div>
-
-      <div class="ali-section-title">🆕 Nouveautés</div>
-      <div class="ali-products"><div class="ali-prod-row" id="newArrivalsRow"></div></div>
-
-      <div class="ali-section-title">🎯 Notre sélection</div>
-      <div class="ali-products"><div class="ali-prod-row" id="featuredRow"></div></div>
-
-      <!-- Stats complètes -->
-      <div class="ali-section-spacer"></div>
-      <div style="display:flex;gap:0;background:#fff;text-align:center;font-size:12px">
-        <div style="flex:1;padding:14px 8px;border-right:1px solid #f0f0f0">
-          <div style="font-size:22px;margin-bottom:2px">📦</div>
-          <strong id="statProducts" style="color:var(--alibaba);font-size:16px">0</strong>
-          <div style="color:#999;margin-top:2px">Produits</div>
-        </div>
-        <div style="flex:1;padding:14px 8px;border-right:1px solid #f0f0f0">
-          <div style="font-size:22px;margin-bottom:2px">👥</div>
-          <strong id="statVendors" style="color:var(--alibaba);font-size:16px">0</strong>
-          <div style="color:#999;margin-top:2px">Vendeurs</div>
-        </div>
-        <div style="flex:1;padding:14px 8px">
-          <div style="font-size:22px;margin-bottom:2px">📝</div>
-          <strong id="statOrders" style="color:var(--alibaba);font-size:16px">0</strong>
-          <div style="color:#999;margin-top:2px">Commandes</div>
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <div class="ali-section-spacer"></div>
-      <div style="background:#fff;padding:16px 10px;text-align:center;font-size:12px;color:#999">
-        <div style="display:flex;gap:12px;justify-content:center;margin-bottom:8px;flex-wrap:wrap">
-          <a href="guide/index.html" style="color:var(--alibaba);text-decoration:none">📖 Guide</a>
-          <a href="#" onclick="event.preventDefault();toast({title:'Contact',message:'contact@easy-market.cd',type:'info'})" style="color:var(--alibaba);text-decoration:none">📧 Contact</a>
-          <a href="#" onclick="event.preventDefault();toast({title:'CGU',message:'Conditions générales',type:'info'})" style="color:var(--alibaba);text-decoration:none">📜 CGU</a>
-          <a href="#" onclick="event.preventDefault();toast({title:'À propos',message:'easy-market v2.1 — Marketplace RDC',type:'info'})" style="color:var(--alibaba);text-decoration:none">ℹ️ À propos</a>
-        </div>
-        <div style="font-size:10px;color:#bbb">© 2024 easy-market — Tous droits réservés</div>
-      </div>
+      <!-- Petit espace en bas -->
+      <div style="height:24px"></div>
     </section>
 
     <!-- ════════════════════════════════════════════════════════ -->
@@ -1542,8 +1450,7 @@
   <canvas id="marketBg"></canvas>
 
   <style>
-    #marketBg{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;pointer-events:none}
-    body > *:not(#marketBg){position:relative;z-index:1}
+    #marketBg{display:none}
     #btnFullscreen{position:fixed;top:14px;right:14px;z-index:100;width:40px;height:40px;border-radius:12px;border:1px solid rgba(255,106,0,.2);background:rgba(0,0,0,.5);backdrop-filter:blur(8px);color:rgba(255,255,255,.7);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s}
     #btnFullscreen:hover{background:rgba(255,106,0,.2);color:#fff;border-color:rgba(255,106,0,.4);transform:scale(1.05)}
     .gps-fab{position:fixed;bottom:24px;right:24px;z-index:100;width:52px;height:52px;border-radius:16px;border:1px solid rgba(255,106,0,.25);background:linear-gradient(135deg,rgba(255,106,0,.2),rgba(255,106,0,.08));backdrop-filter:blur(12px);color:rgba(255,255,255,.8);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s;box-shadow:0 8px 32px rgba(255,106,0,.15)}
