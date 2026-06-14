@@ -997,34 +997,19 @@
           <div id="pmt_result" class="mt-1 muted" style="font-size:12px"></div>
         </div>
 
-        <!-- Article -->
-        <div class="al-panel">
+        <!-- Messagerie -->
+        <div class="al-panel" style="border-color:rgba(34,197,94,0.2);background:rgba(34,197,94,0.03)">
           <div class="al-panel-header">
-            <div class="al-icon">📝</div>
-            <h3>Article (vendeur)</h3>
+            <div class="al-icon" style="background:rgba(34,197,94,0.1);border-color:rgba(34,197,94,0.2)">💬</div>
+            <h3>Messagerie</h3>
+            <span class="al-badge" style="color:#22c55e;background:rgba(34,197,94,0.08)">Nouveau</span>
           </div>
-          <div class="row">
-            <div><label>Titre</label><input id="article_title" placeholder="Titre" /></div>
-            <div><label>Contenu</label><input id="article_content" placeholder="Description" /></div>
-          </div>
-          <button class="btn btn-primary mt-1" id="btn-article" onclick="createArticle()"><span class="spinner"></span><span class="btn-text">Publier</span></button>
-        </div>
-
-        <!-- Message -->
-        <div class="al-panel">
-          <div class="al-panel-header">
-            <div class="al-icon">✉️</div>
-            <h3>Message (client)</h3>
-          </div>
-          <div class="row">
-            <div><label>Article ID</label><input id="article_id" readonly placeholder="ID" /></div>
-            <div><label>Message</label><input id="message_content" placeholder="Bonjour..." /></div>
-          </div>
-          <button class="btn btn-primary mt-1" id="btn-message" onclick="sendMessage()"><span class="spinner"></span><span class="btn-text">Envoyer</span></button>
-          <div class="flex flex-gap mt-2">
-            <button class="btn btn-secondary btn-sm" onclick="loadInbox()">📥 Inbox</button>
-            <button class="btn btn-secondary btn-sm" onclick="loadOutbox()">📤 Outbox</button>
-          </div>
+          <p class="muted" style="font-size:13px;margin:0 0 10px">
+            Échangez directement avec les vendeurs. Messages en temps réel, pièces jointes, statut de lecture.
+          </p>
+          <button class="btn btn-primary" onclick="showSection('messagerie')" style="background:linear-gradient(135deg,#22c55e,#16a34a);border-color:#22c55e">
+            💬 Ouvrir la messagerie
+          </button>
         </div>
 
         <!-- Token -->
