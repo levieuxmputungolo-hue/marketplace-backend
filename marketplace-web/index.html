@@ -145,48 +145,19 @@
       position: relative; overflow: hidden;
     }
 
-    /* ─── MESSAGERIE — STYLE ALIBABA TRADEMANAGER ─── */
-    .msg-container{display:flex;height:calc(100vh - 120px);min-height:520px;gap:0;border-radius:12px;overflow:hidden;background:#fff;border:1px solid #e8e8e8;box-shadow:0 2px 20px rgba(0,0,0,.06)}
-    .msg-sidebar{width:320px;min-width:280px;display:flex;flex-direction:column;border-right:1px solid #e8e8e8;background:#f8f9fb}
-    .msg-sidebar-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #e8e8e8;background:#fff}
-    .msg-sidebar-header h3{margin:0;font-size:15px;font-weight:700;color:#222}
-    .msg-search-box{padding:10px 12px;background:#f8f9fb}
-    .msg-search-box input{width:100%;padding:7px 12px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#333;font-size:13px;outline:none;transition:border-color .2s;box-sizing:border-box}
-    .msg-search-box input:focus{border-color:#ff6a00}
-    .msg-conv-list{flex:1;overflow-y:auto;padding:4px 0;background:#f8f9fb}
-    .msg-conv-item{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;cursor:pointer;transition:background .15s;border-bottom:1px solid #f0f0f0;position:relative}
-    .msg-conv-item:hover{background:#f0f2f5}
-    .msg-conv-item.active{background:#e6f7ff;border-left:3px solid #ff6a00}
-    .msg-conv-item.unread{background:#fff;border-left:3px solid #ff6a00}
-    .msg-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#ff6a00,#ff8c38);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0;position:relative}
-    .msg-avatar .online-dot{width:10px;height:10px;border-radius:50%;background:#52c41a;position:absolute;bottom:0;right:0;border:2px solid #fff}
-    .msg-avatar .offline-dot{width:10px;height:10px;border-radius:50%;background:#bfbfbf;position:absolute;bottom:0;right:0;border:2px solid #fff}
-    .msg-conv-info{flex:1;min-width:0;padding-top:2px}
+    /* ─── MESSAGERIE — DYNAMIC RENDER (utilisé par app.js) ─── */
+    .msg-conv-item{display:flex;align-items:flex-start;gap:10px;padding:12px 15px;cursor:pointer;transition:background .15s;border-bottom:1px solid #f0f0f0}
+    .msg-conv-item:hover{background:#fafafa}
+    .msg-conv-item.active{background:#fff4e8;border-left:3px solid #ff6b00}
+    .msg-conv-item.unread{background:#fff;border-left:3px solid #ff6b00;font-weight:600}
+    .msg-avatar{width:42px;height:42px;border-radius:50%;background:#ff6b00;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0}
+    .msg-conv-info{flex:1;min-width:0}
     .msg-conv-name{font-size:13px;font-weight:600;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .msg-conv-preview{font-size:12px;color:#999;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px;line-height:1.3}
-    .msg-conv-meta{text-align:right;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+    .msg-conv-preview{font-size:12px;color:#999;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+    .msg-conv-meta{text-align:right;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:3px}
     .msg-conv-time{font-size:11px;color:#bbb}
     .msg-conv-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;border-radius:9px;background:#ff4d4f;color:#fff;font-size:11px;font-weight:600;padding:0 6px}
-    .msg-sidebar-footer{padding:10px 16px;border-top:1px solid #e8e8e8;font-size:12px;color:#bbb;text-align:center;background:#fff}
-    .msg-chat{flex:1;display:flex;flex-direction:column;position:relative;min-width:0;background:#fff}
-    .msg-chat-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#ccc}
-    .msg-chat-active{flex:1;display:flex;flex-direction:column;height:100%}
-    .msg-chat-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid #e8e8e8;background:#fff;min-height:56px}
-    .msg-chat-partner{display:flex;align-items:center;gap:10px}
-    .msg-partner-name{font-size:14px;font-weight:600;color:#333}
-    .msg-partner-status{font-size:11px;color:#52c41a}
-    .msg-chat-actions{display:flex;gap:6px}
-    .msg-btn-icon{width:32px;height:32px;border-radius:8px;border:1px solid #e8e8e8;background:#fff;color:#666;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
-    .msg-btn-icon:hover{background:#f5f5f5;border-color:#d9d9d9;color:#333}
-    .msg-btn-sm{font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid #d9d9d9;background:#fff;color:#666;cursor:pointer;transition:all .15s;white-space:nowrap}
-    .msg-btn-sm:hover{border-color:#ff6a00;color:#ff6a00}
-    .msg-product-card{display:flex;align-items:center;gap:12px;padding:10px 16px;background:#fffbe6;border-bottom:1px solid #ffe58f}
-    .msg-product-card img{width:52px;height:52px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid #f0f0f0}
-    .msg-product-info{flex:1;min-width:0}
-    .msg-product-name{font-size:12px;font-weight:600;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
-    .msg-product-price{font-size:14px;color:#ff6a00;font-weight:700}
-    .msg-messages{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:8px;background:#f5f6f8}
-    .msg-bubble{max-width:70%;padding:8px 14px;border-radius:12px;font-size:13px;line-height:1.5;word-wrap:break-word;position:relative}
+    .msg-bubble{max-width:70%;padding:8px 14px;border-radius:12px;font-size:13px;line-height:1.5;word-wrap:break-word}
     .msg-bubble.outgoing{background:linear-gradient(135deg,#ffe6d5,#fff0e6);border:1px solid #ffd6b3;border-bottom-right-radius:4px;align-self:flex-end;color:#333}
     .msg-bubble.incoming{background:#fff;border:1px solid #e8e8e8;border-bottom-left-radius:4px;align-self:flex-start;color:#333}
     .msg-bubble .msg-time{font-size:10px;color:#bbb;margin-top:4px;display:flex;align-items:center;gap:4px;justify-content:flex-end}
@@ -197,27 +168,7 @@
     .msg-bubble .msg-sender{font-size:11px;font-weight:600;color:#ff6a00;margin-bottom:3px}
     .msg-bubble.incoming .msg-sender{color:#1890ff}
     .msg-bubble .msg-file{display:flex;align-items:center;gap:6px;padding:4px 0;color:#1890ff;text-decoration:none;font-size:12px}
-    .msg-bubble .msg-file:hover{text-decoration:underline;color:#096dd9}
-    .msg-bubble.welcome{background:#f6ffed;border:1px solid #b7eb8f;align-self:flex-start;color:#333}
-    .msg-bubble.welcome .msg-time{color:#999}
-    .msg-quick-replies{display:flex;gap:6px;padding:8px 16px;overflow-x:auto;border-top:1px solid #f0f0f0;background:#fafafa}
-    .msg-quick-replies .msg-btn-sm{font-size:11px;padding:5px 12px;border-radius:14px;background:#f5f5f5;border:1px solid #e8e8e8;color:#666;cursor:pointer;white-space:nowrap}
-    .msg-quick-replies .msg-btn-sm:hover{background:#fff7e6;border-color:#ffd591;color:#ff6a00}
-    .msg-input-area{display:flex;align-items:center;gap:8px;padding:10px 16px;border-top:1px solid #e8e8e8;background:#fff}
-    .msg-input-area input{flex:1;padding:9px 14px;border-radius:20px;border:1px solid #ddd;background:#f5f5f5;color:#333;font-size:13px;outline:none;transition:all .2s}
-    .msg-input-area input:focus{border-color:#ff6a00;background:#fff;box-shadow:0 0 0 2px rgba(255,106,0,.08)}
-    .msg-btn-send{padding:8px 22px;border-radius:20px;border:none;background:linear-gradient(135deg,#ff6a00,#ff8c38);color:#fff;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
-    .msg-btn-send:hover{background:#ff6a00;box-shadow:0 2px 8px rgba(255,106,0,.3)}
-    .msg-evaluate{display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 16px;border-top:1px solid #f0f0f0;font-size:12px;color:#999;background:#fafafa}
-    .msg-stars{display:flex;gap:2px;cursor:pointer;font-size:20px;color:#ddd}
-    .msg-stars span{transition:transform .15s}
-    .msg-stars span:hover{transform:scale(1.3);color:#faad14}
     .msg-date-separator{text-align:center;font-size:11px;color:#bbb;padding:10px 0;font-weight:500}
-    .msg-chat .msg-typing{padding:4px 16px;font-size:11px;color:#999;font-style:italic}
-    /* Scrollbar */
-    .msg-conv-list::-webkit-scrollbar,.msg-messages::-webkit-scrollbar{width:5px}
-    .msg-conv-list::-webkit-scrollbar-thumb,.msg-messages::-webkit-scrollbar-thumb{background:#ddd;border-radius:3px}
-    .msg-conv-list::-webkit-scrollbar-track,.msg-messages::-webkit-scrollbar-track{background:transparent}
 
     /* ─── ALIBABA PANELS ─── */
     .al-panel {
@@ -1354,83 +1305,81 @@
     <!-- MESSAGERIE                                              -->
     <!-- ════════════════════════════════════════════════════════ -->
     <section class="section" data-section="messagerie">
-      <div class="msg-container">
-        <!-- Left: Conversation List -->
-        <div class="msg-sidebar" id="msgSidebar">
-          <div class="msg-sidebar-header">
-            <h3>💬 Messages</h3>
-            <div style="display:flex;gap:6px">
-              <button class="msg-btn-icon" onclick="loadConversations()" title="Rafraîchir">🔄</button>
-            </div>
+      <!-- Top nav messaging -->
+      <div style="background:#fff;border-bottom:1px solid #e0e0e0;padding:10px 20px;display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:18px;font-weight:700;color:#ff6b00">💬 Messages</div>
+        <div style="display:flex;gap:16px;font-size:13px">
+          <span style="cursor:pointer;color:#ff6b00;font-weight:600" onclick="loadConversations()">🔄</span>
+        </div>
+      </div>
+      <!-- Deux colonnes -->
+      <div style="display:flex;max-width:1400px;margin:0 auto;height:calc(100vh - 130px);background:#fff;border-radius:0 0 12px 12px;overflow:hidden">
+        <!-- Colonne gauche : liste conversations -->
+        <div style="width:320px;border-right:1px solid #e0e0e0;display:flex;flex-direction:column;flex-shrink:0">
+          <div style="padding:12px 15px;border-bottom:1px solid #f0f0f0">
+            <input type="text" id="msgSearchInput" placeholder="Rechercher une conversation..." oninput="filterConversations(this.value)" style="width:100%;padding:10px 15px;border:1px solid #e0e0e0;border-radius:25px;font-size:13px;background:#f9f9f9;outline:none" />
           </div>
-          <div class="msg-search-box">
-            <input type="text" id="msgSearchInput" placeholder="Rechercher…" oninput="filterConversations(this.value)" />
-          </div>
-          <div class="msg-conv-list" id="convList"></div>
-          <div class="msg-sidebar-footer">
+          <div style="flex:1;overflow-y:auto" id="convList"></div>
+          <div style="padding:10px 15px;border-top:1px solid #f0f0f0;font-size:12px;color:#999;text-align:center">
             <span id="convCount">0 conversations</span>
           </div>
         </div>
-        <!-- Right: Chat Area -->
-        <div class="msg-chat" id="msgChat">
+        <!-- Colonne droite : chat -->
+        <div style="flex:1;display:flex;flex-direction:column;background:#f5f6f8;min-width:0">
           <!-- Empty state -->
-          <div class="msg-chat-empty" id="chatEmpty">
-            <div style="font-size:64px;margin-bottom:16px">💬</div>
-            <h3 style="margin:0 0 8px">Vos messages</h3>
-            <p style="color:rgba(255,255,255,0.4);font-size:14px">
-              Sélectionnez une conversation pour commencer à discuter
-            </p>
+          <div id="chatEmpty" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#ccc">
+            <div style="font-size:60px;margin-bottom:12px">💬</div>
+            <div style="font-size:16px;font-weight:600;color:#999">Vos messages</div>
+            <div style="font-size:13px;color:#bbb;margin-top:4px">Sélectionnez une conversation</div>
           </div>
-          <!-- Active chat (hidden by default) -->
-          <div class="msg-chat-active" id="chatActive" style="display:none">
-            <div class="msg-chat-header" id="chatHeader">
-              <div class="msg-chat-partner">
-                <div class="msg-avatar" id="chatPartnerAvatar">👤</div>
+          <!-- Active chat -->
+          <div id="chatActive" style="display:none;flex-direction:column;height:100%">
+            <!-- Header -->
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid #e0e0e0;background:#fff;min-height:56px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:40px;height:40px;border-radius:50%;background:#ff6b00;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px" id="chatPartnerAvatar">👤</div>
                 <div>
-                  <div class="msg-partner-name" id="chatPartnerName">—</div>
-                  <div class="msg-partner-status" id="chatPartnerStatus">hors ligne</div>
+                  <div style="font-size:14px;font-weight:600;color:#333" id="chatPartnerName">—</div>
+                  <div style="font-size:11px;color:#52c41a" id="chatPartnerStatus">hors ligne</div>
                 </div>
               </div>
-              <div class="msg-chat-actions">
-                <button class="msg-btn-icon" onclick="toggleChatInfo()" title="Infos">ℹ️</button>
-              </div>
             </div>
-            <!-- Product context card (hidden by default) -->
-            <div class="msg-product-card" id="msgProductCard" style="display:none">
-              <img id="msgProductImg" src="" alt="" onerror="this.style.display='none'" />
-              <div class="msg-product-info">
-                <div class="msg-product-name" id="msgProductName">—</div>
-                <div class="msg-product-price" id="msgProductPrice">—</div>
+            <!-- Product card -->
+            <div id="msgProductCard" style="display:none;padding:10px 18px;background:#fffbe6;border-bottom:1px solid #ffe58f;font-size:13px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <img id="msgProductImg" src="" style="width:48px;height:48px;border-radius:6px;object-fit:cover;border:1px solid #f0f0f0" onerror="this.style.display='none'" />
+                <div style="flex:1;min-width:0">
+                  <div style="font-weight:600;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="msgProductName">—</div>
+                  <div style="font-size:14px;color:#ff6b00;font-weight:700" id="msgProductPrice">—</div>
+                </div>
+                <button style="padding:5px 12px;border-radius:6px;border:1px solid #d9d9d9;background:#fff;color:#666;font-size:11px;cursor:pointer;white-space:nowrap" onclick="viewProductFromChat()">Voir l'offre</button>
               </div>
-              <button class="msg-btn-sm" onclick="viewProductFromChat()">Voir l'offre</button>
             </div>
             <!-- Messages -->
-            <div class="msg-messages" id="msgMessages"></div>
-            <!-- Quick replies (seller) -->
-            <div class="msg-quick-replies" id="msgQuickReplies" style="display:none">
-              <button class="msg-btn-sm" onclick="sendCanned('delivery')">📦 Délai</button>
-              <button class="msg-btn-sm" onclick="sendCanned('price')">💰 Tarif</button>
-              <button class="msg-btn-sm" onclick="sendCanned('address')">📍 Adresse</button>
-              <button class="msg-btn-sm" onclick="sendCanned('stock')">📋 Stock</button>
-              <button class="msg-btn-sm" onclick="sendCanned('payment')">💳 Paiement</button>
+            <div style="flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:8px" id="msgMessages"></div>
+            <!-- Quick replies -->
+            <div id="msgQuickReplies" style="display:none;padding:8px 16px;overflow-x:auto;border-top:1px solid #f0f0f0;background:#fafafa;white-space:nowrap">
+              <button style="display:inline-block;padding:5px 12px;border-radius:14px;border:1px solid #e8e8e8;background:#f5f5f5;color:#666;font-size:11px;cursor:pointer;margin-right:6px;white-space:nowrap" onclick="sendCanned('delivery')">📦 Délai</button>
+              <button style="display:inline-block;padding:5px 12px;border-radius:14px;border:1px solid #e8e8e8;background:#f5f5f5;color:#666;font-size:11px;cursor:pointer;margin-right:6px;white-space:nowrap" onclick="sendCanned('price')">💰 Tarif</button>
+              <button style="display:inline-block;padding:5px 12px;border-radius:14px;border:1px solid #e8e8e8;background:#f5f5f5;color:#666;font-size:11px;cursor:pointer;margin-right:6px;white-space:nowrap" onclick="sendCanned('address')">📍 Adresse</button>
+              <button style="display:inline-block;padding:5px 12px;border-radius:14px;border:1px solid #e8e8e8;background:#f5f5f5;color:#666;font-size:11px;cursor:pointer;margin-right:6px;white-space:nowrap" onclick="sendCanned('stock')">📋 Stock</button>
+              <button style="display:inline-block;padding:5px 12px;border-radius:14px;border:1px solid #e8e8e8;background:#f5f5f5;color:#666;font-size:11px;cursor:pointer;margin-right:6px;white-space:nowrap" onclick="sendCanned('payment')">💳 Paiement</button>
             </div>
-            <!-- Input area -->
-            <div class="msg-input-area">
-              <button class="msg-btn-icon" onclick="pickFile()" title="Joindre un fichier">📎</button>
-              <input type="text" id="msgInput" placeholder="Écrivez votre message…" onkeydown="if(event.key==='Enter')sendMsg()" />
-              <button class="msg-btn-send" id="btnSendMsg" onclick="sendMsg()">Envoyer</button>
+            <!-- Input -->
+            <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;border-top:1px solid #e0e0e0;background:#fff">
+              <button style="width:34px;height:34px;border-radius:50%;border:1px solid #e0e0e0;background:#fff;color:#666;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0" onclick="pickFile()" title="Joindre">📎</button>
+              <input type="text" id="msgInput" placeholder="Écrivez votre message…" onkeydown="if(event.key==='Enter')sendMsg()" style="flex:1;padding:9px 14px;border-radius:20px;border:1px solid #ddd;background:#f5f5f5;font-size:13px;outline:none" />
+              <button style="padding:8px 20px;border-radius:20px;border:none;background:#ff6b00;color:#fff;font-size:13px;font-weight:600;cursor:pointer;flex-shrink:0" onclick="sendMsg()">Envoyer</button>
             </div>
             <input type="file" id="msgFileInput" style="display:none" accept="image/*,.pdf,.doc,.docx" onchange="uploadAndSendFile(this)" />
             <!-- Evaluation -->
-            <div class="msg-evaluate" id="msgEvaluate" style="display:none">
-              <span>Ce vendeur a-t-il répondu rapidement ?</span>
-              <div class="msg-stars">
-                <span onclick="evaluateChat(1)">⭐</span>
-                <span onclick="evaluateChat(2)">⭐</span>
-                <span onclick="evaluateChat(3)">⭐</span>
-                <span onclick="evaluateChat(4)">⭐</span>
-                <span onclick="evaluateChat(5)">⭐</span>
-              </div>
+            <div id="msgEvaluate" style="display:none;padding:8px 16px;border-top:1px solid #f0f0f0;font-size:12px;color:#999;background:#fafafa;text-align:center">
+              <span>Ce vendeur a-t-il répondu rapidement ? </span>
+              <span style="cursor:pointer;font-size:18px" onclick="evaluateChat(1)">⭐</span>
+              <span style="cursor:pointer;font-size:18px" onclick="evaluateChat(2)">⭐</span>
+              <span style="cursor:pointer;font-size:18px" onclick="evaluateChat(3)">⭐</span>
+              <span style="cursor:pointer;font-size:18px" onclick="evaluateChat(4)">⭐</span>
+              <span style="cursor:pointer;font-size:18px" onclick="evaluateChat(5)">⭐</span>
             </div>
           </div>
         </div>
