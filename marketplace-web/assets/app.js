@@ -514,8 +514,17 @@ function toIntOrNull(v) {
 function fillCart(productId) {
   const el = document.getElementById('cartProductId');
   if (el) el.value = String(productId);
+  updateAliCartBadge();
   showSection('panier');
   toast({ title: 'Produit sélectionné', message: `ID: ${productId}`, type: 'info' });
+}
+
+function updateAliCartBadge() {
+  const badge = document.getElementById('aliCartBadge');
+  if (!badge) return;
+  const qty = document.getElementById('cartQty')?.value ? parseInt(document.getElementById('cartQty').value) : 0;
+  if (qty > 0) { badge.textContent = String(qty); badge.style.display = 'flex'; }
+  else badge.style.display = 'none';
 }
 
 async function doSearchProducts() {
@@ -1474,13 +1483,15 @@ async function loadHomepageProducts() {
     const img = p.image || '';
     const hasFreeShipping = p.free_shipping || Math.random() > 0.5;
     return `<div class="ali-prod-card">
-      ${img ? `<img class="thumb" src="${img}" alt="" loading="lazy" />` : `<div class="thumb" style="background:linear-gradient(135deg,#ff6a00,#ff8c38);display:flex;align-items:center;justify-content:center;font-size:40px;color:rgba(255,255,255,0.4)">📦</div>`}
+      <div class="thumb">
+        ${img ? `<img class="thumb" src="${img}" alt="" loading="lazy" />` : `<div style="width:150px;height:150px;background:linear-gradient(135deg,#ff6a00,#ff8c38);display:flex;align-items:center;justify-content:center;font-size:40px;color:rgba(255,255,255,0.4)">📦</div>`}
+      </div>
       <div class="body">
         <div class="title" title="${name}">${name}</div>
         <div class="price">${price}</div>
         ${hasFreeShipping ? '<div class="badge">Livraison gratuite</div>' : ''}
         ${badge ? `<div style="font-size:10px;color:#999;margin-top:3px">${badge}</div>` : ''}
-        <button style="width:100%;margin-top:6px;padding:4px 0;border-radius:6px;border:1px solid var(--alibaba);background:var(--alibaba);color:#fff;font-size:11px;font-weight:600;cursor:pointer" onclick="contactSeller('${id}','${htmlEsc(name)}','${price}','${img}')">💬 Contacter</button>
+        <button style="width:100%;margin-top:6px;padding:4px 0;border-radius:6px;border:1px solid var(--alibaba);background:var(--alibaba);color:#fff;font-size:11px;font-weight:600;cursor:pointer" onclick="contactSeller('${id}','${name.replace(/'/g,"\\'")}','${price.replace(/'/g,"\\'")}','${img.replace(/'/g,"\\'")}')">💬 Contacter</button>
       </div>
     </div>`;
   };
@@ -1552,6 +1563,9 @@ setTimeout(() => {
       browserSearchProducts();
     }
   });
+  // Cart qty change → update badge
+  document.getElementById('cartQty')?.addEventListener('change', updateAliCartBadge);
+  document.getElementById('cartQty')?.addEventListener('input', updateAliCartBadge);
 }, 500);
 
 // ===== Notifications =====
