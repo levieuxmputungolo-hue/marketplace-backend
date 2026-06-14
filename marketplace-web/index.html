@@ -33,82 +33,71 @@
       --navy: #0f0f1a;
       --navy2: #1a1a2e;
       --navy3: #16213e;
+      --good: #22c55e;
+      --info: #3b82f6;
+      --star: #fbbf24;
     }
 
     * { box-sizing: border-box; }
 
     .wrap {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 12px 12px 60px;
+      padding: 0 12px 60px;
     }
 
-    /* ─── HEADER ─── */
-    .alibaba-header {
-      background: linear-gradient(135deg, rgba(255, 106, 0, 0.12), rgba(255, 106, 0, 0.04));
-      border: 1px solid rgba(255, 106, 0, 0.25);
-      border-radius: 18px;
-      padding: 12px 16px;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-      box-shadow: 0 8px 32px rgba(255, 106, 0, 0.08);
+    /* ─── TOP BAR ─── */
+    .top-bar {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 16px; margin-bottom: 0;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,106,0,0.1);
     }
-
-    .alibaba-brand { display: flex; align-items: center; gap: 10px; }
-
-    .alibaba-logo {
-      width: 36px; height: 36px;
-      border-radius: 12px;
+    .top-bar-brand { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .top-bar-logo {
+      width: 34px; height: 34px; border-radius: 10px;
       background: linear-gradient(135deg, var(--alibaba), var(--alibaba-dark));
       display: flex; align-items: center; justify-content: center;
       font-weight: 900; font-size: 14px; color: #fff;
-      box-shadow: 0 4px 16px var(--alibaba-glow);
     }
+    .top-bar-title { font-size: 18px; font-weight: 900; color: #fff; margin: 0; white-space: nowrap; }
+    .top-bar-title span { color: var(--alibaba); }
 
-    .alibaba-title { font-size: 20px; font-weight: 900; letter-spacing: -0.3px; color: #fff; margin: 0; }
-    .alibaba-title span { color: var(--alibaba); }
-
-    .alibaba-search {
-      flex: 1; min-width: 180px; max-width: 400px; display: flex; gap: 0;
+    .top-search {
+      flex: 1; max-width: 600px; margin: 0 auto; display: flex; gap: 0;
     }
-
-    .alibaba-search input {
-      flex: 1; margin: 0; padding: 9px 14px;
+    .top-search input {
+      flex: 1; margin: 0; padding: 10px 16px;
       border-radius: 12px 0 0 12px;
-      border: 2px solid rgba(255, 106, 0, 0.35); border-right: none;
-      background: rgba(255, 255, 255, 0.06); color: #fff; font-size: 13px;
+      border: 2px solid rgba(255, 106, 0, 0.3); border-right: none;
+      background: rgba(255, 255, 255, 0.06); color: #fff; font-size: 14px;
       outline: none; transition: border-color 0.2s;
     }
-    .alibaba-search input:focus { border-color: var(--alibaba); box-shadow: 0 0 0 3px var(--alibaba-glow); }
-    .alibaba-search input::placeholder { color: rgba(255, 255, 255, 0.35); }
-    .alibaba-search button {
-      margin: 0; width: auto; padding: 9px 16px;
+    .top-search input:focus { border-color: var(--alibaba); box-shadow: 0 0 0 3px var(--alibaba-glow); }
+    .top-search input::placeholder { color: rgba(255, 255, 255, 0.35); }
+    .top-search button {
+      margin: 0; padding: 10px 20px;
       border-radius: 0 12px 12px 0;
       border: 2px solid var(--alibaba);
       background: linear-gradient(135deg, var(--alibaba), var(--alibaba-dark));
       color: #fff; font-weight: 800; font-size: 14px; cursor: pointer;
       transition: all 0.2s; flex-shrink: 0;
     }
-    .alibaba-search button:hover { background: linear-gradient(135deg, var(--alibaba-light), var(--alibaba)); box-shadow: 0 4px 20px var(--alibaba-glow); }
-
-    .hero-actions { display: flex; align-items: center; gap: 8px; }
+    .top-search button:hover { background: linear-gradient(135deg, var(--alibaba-light), var(--alibaba)); box-shadow: 0 4px 20px var(--alibaba-glow); }
 
     /* ─── NAV ─── */
     .alibaba-nav {
-      display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 12px;
-      padding: 4px; background: rgba(255, 255, 255, 0.03);
-      border-radius: 14px; border: 1px solid rgba(255, 106, 0, 0.12);
+      display: flex; gap: 2px; flex-wrap: wrap; margin: 0 0 12px;
+      padding: 4px 16px; background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid rgba(255, 106, 0, 0.08);
     }
     .alibaba-nav .navBtn {
-      flex: 1; min-width: 70px; padding: 9px 10px; border-radius: 12px;
+      flex: 0 1 auto; padding: 8px 14px; border-radius: 10px;
       border: none; background: transparent;
       color: rgba(255, 255, 255, 0.45);
-      font-weight: 700; font-size: 12px; cursor: pointer;
+      font-weight: 700; font-size: 13px; cursor: pointer;
       transition: all 0.2s; font-family: inherit; text-align: center;
+      white-space: nowrap;
     }
     .alibaba-nav .navBtn:hover { color: #fff; background: rgba(255, 106, 0, 0.08); }
     .alibaba-nav .navBtn[data-active="true"] {
@@ -165,7 +154,63 @@
       color: var(--alibaba-light); font-weight: 700;
     }
 
-    /* ─── STATS ─── */
+    /* ─── STATS BAND ─── */
+    .stats-band {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+      background: linear-gradient(135deg, rgba(255,106,0,0.08), rgba(255,106,0,0.02));
+      border-bottom: 1px solid rgba(255,106,0,0.08);
+      border-top: 1px solid rgba(255,106,0,0.08);
+    }
+    .stat-item {
+      padding: 18px 10px; text-align: center;
+      border-right: 1px solid rgba(255,106,0,0.06);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-icon { font-size: 24px; margin-bottom: 4px; }
+    .stat-number { font-size: 26px; font-weight: 900; color: var(--alibaba-light); line-height: 1.1; }
+    .stat-label { font-size: 12px; color: rgba(255, 255, 255, 0.45); margin-top: 2px; font-weight: 600; }
+
+    /* ─── SECTION HEADERS ─── */
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .section-header-left {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .section-icon { font-size: 18px; }
+    .section-header-left h3 {
+      margin: 0; font-size: 15px; font-weight: 800;
+    }
+    .badge-promo {
+      font-size: 10px; padding: 2px 8px; border-radius: 999px;
+      background: rgba(255,106,0,0.12); color: var(--alibaba-light);
+      border: 1px solid rgba(255,106,0,0.2); font-weight: 700;
+    }
+
+    /* ─── PRODUCT GRID (homepage) ─── */
+    .product-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    }
+    @media (max-width: 860px) { .product-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px) { .product-grid { grid-template-columns: 1fr; } }
+
+    /* ─── HOME FOOTER ─── */
+    .home-footer {
+      background: rgba(255,255,255,0.02);
+      border-top: 1px solid rgba(255,106,0,0.08);
+      padding: 16px; text-align: center; margin-top: 8px;
+    }
+    .footer-links {
+      display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+    }
+    .footer-links a {
+      color: rgba(255,255,255,0.4); font-size: 12px; font-weight: 600;
+      text-decoration: none; transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--alibaba-light); }
+
+    /* ─── OLD STATS (keep for compat) ─── */
     .al-stats {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
       margin-top: 6px;
@@ -518,18 +563,18 @@
 
     /* ─── RESPONSIVE GENERAL ─── */
     @media (max-width: 768px) {
-      .wrap { padding: 10px 10px 60px; }
-      .alibaba-header { padding: 10px 12px; }
-      .alibaba-title { font-size: 17px; }
-      .alibaba-logo { width: 32px; height: 32px; font-size: 12px; }
-      .alibaba-search { max-width: 100%; }
-      .alibaba-search input { font-size: 12px; padding: 7px 10px; }
-      .alibaba-search button { font-size: 12px; padding: 7px 12px; }
-      .alibaba-nav .navBtn { font-size: 11px; padding: 7px 6px; min-width: 55px; }
+      .wrap { padding: 0 8px 60px; }
+      .top-bar { flex-wrap: wrap; gap: 8px; padding: 8px 12px; }
+      .top-bar-title { font-size: 15px; }
+      .top-bar-logo { width: 28px; height: 28px; font-size: 11px; }
+      .top-search { max-width: 100%; min-width: 100%; }
+      .top-search input { font-size: 13px; padding: 8px 12px; }
+      .top-search button { font-size: 13px; padding: 8px 14px; }
+      .alibaba-nav { padding: 4px 8px; gap: 2px; }
+      .alibaba-nav .navBtn { font-size: 11px; padding: 7px 8px; min-width: 50px; }
       .card { padding: 12px; border-radius: 14px; }
-      .al-stats { gap: 6px; }
-      .al-stat { padding: 10px 6px; }
-      .al-stat .num { font-size: 18px; }
+      .stat-number { font-size: 22px; }
+      .stat-item { padding: 14px 8px; }
       .al-cats { gap: 6px; }
       .al-notif-filter span { font-size: 11px; padding: 4px 10px; }
       #map { height: 250px; }
@@ -537,9 +582,12 @@
     }
 
     @media (max-width: 600px) {
-      .alibaba-header { gap: 8px; }
-      .hero-actions .badge { font-size: 10px; padding: 4px 8px; }
-      .hero-actions .badge .dot { width: 5px; height: 5px; }
+      .top-bar { padding: 6px 10px; }
+      .top-bar-title { font-size: 14px; }
+      .stats-band { gap: 0; }
+      .stat-number { font-size: 18px; }
+      .stat-icon { font-size: 20px; }
+      .stat-item { padding: 12px 6px; }
       .al-stats { grid-template-columns: repeat(2, 1fr); }
       .al-cats { grid-template-columns: repeat(3, 1fr); }
       .al-cat { padding: 10px 4px; }
@@ -557,12 +605,11 @@
     }
 
     @media (max-width: 420px) {
-      .wrap { padding: 8px 8px 50px; }
-      .alibaba-nav .navBtn { font-size: 10px; padding: 6px 4px; min-width: 44px; }
-      .al-stats { grid-template-columns: repeat(2, 1fr); gap: 4px; }
-      .al-stat { padding: 8px 4px; border-radius: 10px; }
-      .al-stat .num { font-size: 16px; }
-      .al-stat .lbl { font-size: 9px; }
+      .wrap { padding: 0 6px 50px; }
+      .alibaba-nav .navBtn { font-size: 10px; padding: 6px 4px; min-width: 40px; }
+      .stat-number { font-size: 16px; }
+      .stat-item { padding: 10px 4px; }
+      .stat-icon { font-size: 16px; }
       .al-cats { grid-template-columns: repeat(2, 1fr); gap: 4px; }
       .card { padding: 10px; border-radius: 12px; }
       .row { gap: 6px; }
@@ -572,7 +619,8 @@
     }
 
     @media (min-width: 1200px) {
-      .wrap { max-width: 1200px; padding: 16px 24px 60px; }
+      .wrap { max-width: 1200px; }
+      .product-grid { grid-template-columns: repeat(4, 1fr); }
       .productsGrid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
       #map { height: 380px; }
     }
@@ -580,116 +628,121 @@
 </head>
 <body>
   <div class="wrap">
-    <!-- Header -->
-    <div class="alibaba-header">
-      <div class="alibaba-brand">
-        <div class="alibaba-logo">E</div>
-        <h1 class="alibaba-title">easy <span>market</span></h1>
+    <!-- Top Bar: Logo + Search -->
+    <div class="top-bar">
+      <div class="top-bar-brand">
+        <div class="top-bar-logo">E</div>
+        <h1 class="top-bar-title">easy <span>market</span></h1>
       </div>
-      <div class="alibaba-search">
-        <input id="globalSearch" type="text" placeholder="Rechercher produits, vendeurs..." />
-        <button onclick="doSearchProducts()">🔍</button>
-      </div>
-      <div class="hero-actions">
-        <div class="badge" style="margin:0"><span class="dot"></span>Navigation</div>
+      <div class="top-search">
+        <input id="globalSearch" type="text" placeholder="Que cherchez-vous ?" />
+        <button onclick="showSection('catalogue');var v=document.getElementById('globalSearch').value;var s=document.getElementById('browserSearch');if(s)s.value=v;browserSearchProducts()">Rechercher</button>
       </div>
     </div>
 
-    <!-- Navigation -->
+    <!-- Navigation with emoji icons -->
     <div class="alibaba-nav" role="tablist">
-      <button class="navBtn" data-target="accueil" data-active="true" type="button">Accueil</button>
-      <button class="navBtn" data-target="auth" type="button">Compte</button>
-      <button class="navBtn" data-target="notifications" type="button">Notifications</button>
+      <button class="navBtn" data-target="accueil" data-active="true" type="button">🏠 Accueil</button>
+      <button class="navBtn" data-target="catalogue" type="button">🛍️ Catalogue</button>
+      <button class="navBtn" data-target="panier" type="button">🛒 Panier</button>
       <button class="navBtn" data-target="localisation" type="button">📍 Localisation</button>
-      <button class="navBtn" data-target="catalogue" type="button">Catalogue</button>
-      <button class="navBtn" data-target="panier" type="button">Panier</button>
-      <button class="navBtn" data-target="mongo" type="button" style="background:linear-gradient(135deg,rgba(34,197,94,0.15),rgba(34,197,94,0.05));border-color:rgba(34,197,94,0.3)">🍃 MongoDB</button>
-      <button class="navBtn" data-target="flutter-pro" type="button" style="background:linear-gradient(135deg,rgba(255,106,0,0.15),rgba(255,106,0,0.05));border-color:rgba(255,106,0,0.3)">⚡ Flutter Pro</button>
+      <button class="navBtn" data-target="auth" type="button">👤 Compte</button>
+      <button class="navBtn" data-target="notifications" type="button">🔔 Notif.</button>
+      <button class="navBtn" data-target="mongo" type="button" style="background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(59,130,246,0.05));border-color:rgba(59,130,246,0.3)">📁 Catégories</button>
+      <button class="navBtn" data-target="flutter-pro" type="button" style="background:linear-gradient(135deg,rgba(255,106,0,0.15),rgba(255,106,0,0.05));border-color:rgba(255,106,0,0.3)">⚡ App</button>
     </div>
 
     <!-- ════════════════════════════════════════════════════════ -->
-    <!-- ACCUEIL  (Alibaba Homepage)                          -->
+    <!-- ACCUEIL — Homepage redesigned                         -->
     <!-- ════════════════════════════════════════════════════════ -->
     <section class="section" data-section="accueil" data-active="true">
-      <div class="card">
-        <!-- Hero Banner -->
-        <div style="background:linear-gradient(135deg,rgba(255,106,0,0.12),rgba(255,106,0,0.03));border-radius:16px;padding:20px 18px;margin-bottom:14px;text-align:center;border:1px solid rgba(255,106,0,0.1);">
-          <div style="font-size:36px;margin-bottom:6px">🛒</div>
-          <h2 style="margin:0;font-size:20px">easy-market</h2>
-          <p style="color:rgba(255,255,255,0.45);margin:4px 0 0;font-size:13px">Plateforme marketplace connectée</p>
+      <div class="card" style="padding:0;overflow:hidden">
+        <!-- Hero Section -->
+        <div style="background:linear-gradient(135deg,rgba(255,106,0,0.1),rgba(255,106,0,0.02));padding:24px 20px;text-align:center;border-bottom:1px solid rgba(255,106,0,0.08)">
+          <div style="font-size:40px;margin-bottom:8px">🛒</div>
+          <h2 style="margin:0;font-size:24px;font-weight:900">Bienvenue sur easy-market</h2>
+          <p style="color:rgba(255,255,255,0.45);margin:6px 0 0;font-size:14px">Achetez et vendez en toute simplicité en RDC</p>
         </div>
 
-        <!-- Statistiques -->
-        <div class="al-stats">
-          <div class="al-stat"><div class="num">12</div><div class="lbl">Produits</div></div>
-          <div class="al-stat"><div class="num">8</div><div class="lbl">Vendeurs</div></div>
-          <div class="al-stat"><div class="num">45</div><div class="lbl">Commandes</div></div>
-        </div>
-
-        <!-- Catégories rapides -->
-        <div class="al-cats">
-          <div class="al-cat" onclick="showSection('catalogue')"><div class="ico">🛍️</div><div class="nm">Catalogue</div></div>
-          <div class="al-cat" onclick="showSection('panier')"><div class="ico">🛒</div><div class="nm">Panier</div></div>
-          <div class="al-cat" onclick="showSection('localisation')"><div class="ico">📍</div><div class="nm">Localisation</div></div>
-          <div class="al-cat" onclick="showSection('auth')"><div class="ico">👤</div><div class="nm">Mon Compte</div></div>
-        </div>
-
-        <!-- Top ventes -->
-        <div class="divider"></div>
-        <div class="al-panel-header">
-          <div class="al-icon">🔥</div>
-          <h3>Top ventes</h3>
-          <span class="al-badge">Populaire</span>
-        </div>
-        <div class="productsGrid" id="topSalesGrid">
-          <div class="productCard flutter-fade-in" style="border-color:rgba(255,106,0,0.35)">
-            <div class="productImg"><img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=200&fit=crop" alt="" loading="lazy" /></div>
-            <div class="productBody">
-              <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px">
-                <span style="color:#fbbf24;font-size:12px">★★★★★</span>
-                <span style="font-size:11px;color:rgba(255,255,255,0.3)">(128)</span>
-              </div>
-              <div class="productTitle">Nike Air Max</div>
-              <div class="productPrice">120 $</div>
-              <button class="productBtn flutter-ripple" onclick="fillCart(1)">Ajouter</button>
-            </div>
+        <!-- Stats Band -->
+        <div class="stats-band">
+          <div class="stat-item">
+            <div class="stat-icon">📦</div>
+            <div class="stat-number" id="statProducts">0</div>
+            <div class="stat-label">Produits</div>
           </div>
-          <div class="productCard flutter-fade-in" style="border-color:rgba(255,106,0,0.35)">
-            <div class="productImg"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=200&fit=crop" alt="" loading="lazy" /></div>
-            <div class="productBody">
-              <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px">
-                <span style="color:#fbbf24;font-size:12px">★★★★½</span>
-                <span style="font-size:11px;color:rgba(255,255,255,0.3)">(96)</span>
-              </div>
-              <div class="productTitle">Casque Bose QC45</div>
-              <div class="productPrice">299 $</div>
-              <button class="productBtn flutter-ripple" onclick="fillCart(2)">Ajouter</button>
-            </div>
+          <div class="stat-item">
+            <div class="stat-icon">👥</div>
+            <div class="stat-number" id="statVendors">0</div>
+            <div class="stat-label">Vendeurs</div>
           </div>
-          <div class="productCard flutter-fade-in" style="border-color:rgba(255,106,0,0.35)">
-            <div class="productImg"><img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=300&h=200&fit=crop" alt="" loading="lazy" /></div>
-            <div class="productBody">
-              <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px">
-                <span style="color:#fbbf24;font-size:12px">★★★★☆</span>
-                <span style="font-size:11px;color:rgba(255,255,255,0.3)">(72)</span>
-              </div>
-              <div class="productTitle">Air Jordan 1</div>
-              <div class="productPrice">180 $</div>
-              <button class="productBtn flutter-ripple" onclick="fillCart(6)">Ajouter</button>
-            </div>
+          <div class="stat-item">
+            <div class="stat-icon">📝</div>
+            <div class="stat-number" id="statOrders">0</div>
+            <div class="stat-label">Commandes</div>
           </div>
         </div>
 
-        <div class="divider"></div>
+        <!-- Section: 🔥 Top ventes -->
+        <div style="padding:16px 16px 0">
+          <div class="section-header">
+            <div class="section-header-left">
+              <span class="section-icon">🔥</span>
+              <h3>Top ventes</h3>
+              <span class="badge-promo">Populaire</span>
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="showSection('catalogue')">Voir tout →</button>
+          </div>
+          <div class="product-grid" id="topSalesGrid"></div>
+        </div>
 
-        <!-- Astuces -->
-        <div style="background:rgba(255,106,0,0.06);border-radius:12px;padding:12px;border:1px solid rgba(255,106,0,0.08)">
-          <p style="margin:0;font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6">
-            💡 Astuce : dans <strong style="color:var(--alibaba-light)">Catalogue</strong>, cliquez sur <em style="color:var(--alibaba-light)">Ajouter</em> pour pré-remplir votre produit dans <strong style="color:var(--alibaba-light)">Panier</strong>.
-            <br>Paiement simulé via <code style="background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:6px">/subscriptions/webhook</code>
-          </p>
-          <div style="margin-top:10px;border-top:1px solid rgba(255,106,0,0.1);padding-top:10px;text-align:center">
-            <a href="guide/index.html" style="color:var(--alibaba-light);font-size:12px;font-weight:700;text-decoration:none">📖 Guide d'utilisation complet →</a>
+        <!-- Section: ⭐ Populaires -->
+        <div style="padding:16px 16px 0">
+          <div class="section-header">
+            <div class="section-header-left">
+              <span class="section-icon">⭐</span>
+              <h3>Populaires</h3>
+              <span class="badge-promo" style="background:rgba(251,191,36,0.12);color:var(--star);border-color:rgba(251,191,36,0.25)">Top</span>
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="showSection('catalogue')">Voir tout →</button>
+          </div>
+          <div class="product-grid" id="popularGrid"></div>
+        </div>
+
+        <!-- Section: 🆕 Nouveautés -->
+        <div style="padding:16px 16px 0">
+          <div class="section-header">
+            <div class="section-header-left">
+              <span class="section-icon">🆕</span>
+              <h3>Nouveautés</h3>
+              <span class="badge-promo" style="background:rgba(34,197,94,0.12);color:var(--good);border-color:rgba(34,197,94,0.25)">Nouveau</span>
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="showSection('catalogue')">Voir tout →</button>
+          </div>
+          <div class="product-grid" id="newArrivalsGrid"></div>
+        </div>
+
+        <!-- Section: 🎯 Notre sélection -->
+        <div style="padding:16px">
+          <div class="section-header">
+            <div class="section-header-left">
+              <span class="section-icon">🎯</span>
+              <h3>Notre sélection pour vous</h3>
+            </div>
+          </div>
+          <div class="product-grid" id="featuredGrid"></div>
+        </div>
+
+        <!-- Footer -->
+        <div class="home-footer">
+          <div class="footer-links">
+            <a href="guide/index.html">📖 Guide</a>
+            <a href="#" onclick="event.preventDefault();toast({title:'Contact',message:'contact@easy-market.cd',type:'info'})">📧 Contact</a>
+            <a href="#" onclick="event.preventDefault();toast({title:'CGU',message:'Conditions générales d\'utilisation',type:'info'})">📜 CGU</a>
+            <a href="#" onclick="event.preventDefault();toast({title:'À propos',message:'easy-market v2.1 — Marketplace RDC',type:'info'})">ℹ️ À propos</a>
+          </div>
+          <div style="margin-top:8px;font-size:11px;color:rgba(255,255,255,0.2)">
+            © 2024 easy-market — Tous droits réservés
           </div>
         </div>
       </div>
@@ -833,7 +886,40 @@
             <div><label>Description</label><input id="prod_desc" placeholder="256 Go, neuf" /></div>
             <div><label>URL image</label><input id="prod_image" placeholder="https://..." /></div>
           </div>
+          <div>
+            <label>Upload image</label>
+            <input type="file" id="prodFileInput" accept="image/*" style="margin-top:4px" onchange="uploadProdImage(event)" />
+            <div id="prodUploadPreview" class="muted" style="font-size:11px;margin-top:4px"></div>
+          </div>
           <button class="btn btn-primary mt-1" id="btn-create-product" onclick="createProduct()"><span class="spinner"></span><span class="btn-text">Publier</span></button>
+        </div>
+
+        <!-- Paiement Mobile -->
+        <div class="al-panel" style="border-color:rgba(255,106,0,0.25)">
+          <div class="al-panel-header">
+            <div class="al-icon" style="background:rgba(255,106,0,0.2)">📱</div>
+            <h3>Paiement Mobile</h3>
+            <span class="al-badge" style="color:var(--alibaba-light)">Orange/M-Pesa/Airtel</span>
+          </div>
+          <div class="row">
+            <div><label>Montant ($)</label><input id="pmt_amount" type="number" placeholder="10" /></div>
+            <div><label>Téléphone</label><input id="pmt_phone" placeholder="+243XXXXXXXXX" /></div>
+          </div>
+          <div class="row">
+            <div><label>Opérateur</label>
+              <select id="pmt_operator">
+                <option value="orange_money">Orange Money</option>
+                <option value="mpesa">M-Pesa</option>
+                <option value="airtel_money">Airtel Money</option>
+              </select>
+            </div>
+            <div><label>Description</label><input id="pmt_desc" placeholder="Paiement easy-market" /></div>
+          </div>
+          <div class="flex flex-gap mt-1">
+            <button class="btn btn-primary btn-sm" onclick="doMobilePayment()">💳 Payer</button>
+            <button class="btn btn-secondary btn-sm" onclick="loadPaymentHistory()">📋 Historique</button>
+          </div>
+          <div id="pmt_result" class="mt-1 muted" style="font-size:12px"></div>
         </div>
 
         <!-- Article -->
@@ -867,14 +953,15 @@
         </div>
 
         <!-- Token -->
-        <div class="al-panel">
-          <div class="al-panel-header">
-            <div class="al-icon">🔐</div>
-            <h3>Token</h3>
+          <div class="al-panel">
+            <div class="al-panel-header">
+              <div class="al-icon">🔐</div>
+              <h3>Token</h3>
+            </div>
+            <input id="token" readonly />
+            <input id="mongoUserId" type="hidden" />
+            <pre id="out" class="mt-1"></pre>
           </div>
-          <input id="token" readonly />
-          <pre id="out" class="mt-1"></pre>
-        </div>
       </div>
     </section>
 
@@ -992,187 +1079,190 @@
     </section>
 
     <!-- ════════════════════════════════════════════════════════ -->
-    <!-- CATALOGUE  (Alibaba Product Listing)                  -->
+    <!-- CATALOGUE  (Product Browser v2)                       -->
     <!-- ════════════════════════════════════════════════════════ -->
     <section class="section" data-section="catalogue">
       <div class="card">
         <div class="al-panel-header">
           <div class="al-icon">🛍️</div>
-          <h3>Catalogue produits</h3>
-          <span class="status-badge active" id="catalogCount">15 produits</span>
+          <h3>Product Browser</h3>
+          <span class="status-badge active" id="catalogCount">0 produits</span>
         </div>
 
-        <!-- Search & Filter Bar -->
         <div class="al-panel">
           <div class="al-search-bar">
-            <div><label>Recherche</label><input id="search_q" placeholder="iphone, chaussures..." /></div>
-            <div><label>Vendeur ID</label><input id="search_vendor" placeholder="ex: 1" /></div>
-            <div style="display:flex;align-items:flex-end;gap:6px">
-              <button class="btn btn-primary btn-sm" onclick="doSearchProducts()" style="flex:1">🔍 Rechercher</button>
-              <button class="btn btn-secondary btn-sm" id="btn-seed" onclick="seedCatalog()"><span class="spinner"></span><span class="btn-text">Remplir</span></button>
+            <div><label>Recherche</label><input id="browserSearch" placeholder="iphone, chaussures..." oninput="debounceSearch()" /></div>
+            <div><label>Catégorie</label>
+              <select id="browserCategory" onchange="browserSearchProducts()">
+                <option value="">Toutes</option>
+              </select>
             </div>
+            <div><label>Prix max</label><input id="browserMaxPrice" type="number" placeholder="1000" oninput="debounceSearch()" /></div>
           </div>
-          <div class="al-search-bar-2 mt-1">
-            <div><label>Prix min ($)</label><input id="search_min_price" placeholder="10" /></div>
-            <div><label>Prix max ($)</label><input id="search_max_price" placeholder="1000" /></div>
+          <div class="flex flex-gap mt-1" style="align-items:center;justify-content:space-between">
+            <span style="font-size:11px;color:rgba(255,255,255,0.35)" id="browserResultCount"></span>
+            <div class="flex flex-gap">
+              <button class="btn btn-secondary btn-sm" onclick="browserSearchProducts()">🔍</button>
+              <button class="btn btn-primary btn-sm" onclick="showAddProductPanel()">+ Produit</button>
+            </div>
           </div>
         </div>
 
-        <!-- Tri rapide -->
-        <div class="al-notif-filter" style="margin-top:8px;margin-bottom:0">
-          <span class="active" onclick="sortProducts('all',this)">Tous</span>
-          <span onclick="sortProducts('popular',this)">🔥 Populaires</span>
-          <span onclick="sortProducts('bestseller',this)">⭐ Meilleures ventes</span>
-          <span onclick="sortProducts('price-asc',this)">💰 Prix ↑</span>
-          <span onclick="sortProducts('price-desc',this)">💰 Prix ↓</span>
+        <div class="al-notif-filter">
+          <span class="active" data-sort="" onclick="browserSetSort('',this)">Tous</span>
+          <span data-sort="price-asc" onclick="browserSetSort('price-asc',this)">💰 Prix ↑</span>
+          <span data-sort="price-desc" onclick="browserSetSort('price-desc',this)">💰 Prix ↓</span>
+          <span data-sort="name" onclick="browserSetSort('name',this)">📄 A-Z</span>
         </div>
 
-        <div class="productsGrid mt-2" id="products_out" aria-live="polite">
-          <div class="productCard flutter-fade-in">
-            <div class="productImg"><img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=200&fit=crop" alt="" loading="lazy" /></div>
-            <div class="productBody">
-              <div class="productTitle">Nike Air Max</div>
-              <div class="productPrice">120 $</div>
-              <button class="productBtn flutter-ripple" onclick="fillCart(1)">Ajouter</button>
+        <div class="productsGrid mt-2" id="browserGrid" aria-live="polite">
+          <div class="skeleton" style="height:200px;border-radius:12px;grid-column:1/-1"></div>
+        </div>
+
+        <div class="flex flex-gap mt-2" style="justify-content:center" id="browserPagination"></div>
+
+        <!-- Add product modal (inline) -->
+        <div id="browserAddPanel" class="al-panel mt-2" style="display:none;border-color:rgba(34,197,94,0.3)">
+          <div class="al-panel-header">
+            <div class="al-icon" style="background:rgba(34,197,94,0.1)">➕</div>
+            <h3>Ajouter un produit</h3>
+            <span class="al-badge" style="color:#22c55e">Vendeur</span>
+          </div>
+          <div class="row">
+            <div><label>Nom *</label><input id="browserNewName" placeholder="iPhone 15" /></div>
+            <div><label>Prix *</label><input id="browserNewPrice" type="number" placeholder="999" /></div>
+          </div>
+          <div class="row">
+            <div><label>Description</label><input id="browserNewDesc" placeholder="256 Go, neuf" /></div>
+            <div><label>Catégorie</label><input id="browserNewCategory" placeholder="Smartphones" /></div>
+          </div>
+          <div class="row">
+            <div><label>Stock</label><input id="browserNewStock" type="number" value="10" /></div>
+            <div><label>Image URL ou Upload</label><input id="browserNewImage" placeholder="https://..." /></div>
+          </div>
+          <div class="row">
+            <div style="grid-column:1/-1">
+              <label>Uploader une image</label>
+              <div id="dropZone" style="border:2px dashed rgba(255,106,0,0.3);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all 0.2s;background:rgba(255,106,0,0.03);margin-top:4px"
+                   ondrop="handleDrop(event)" ondragover="event.preventDefault()" ondragleave="this.style.borderColor='rgba(255,106,0,0.3)';this.style.background='rgba(255,106,0,0.03)'"
+                   onclick="document.getElementById('fileInput').click()">
+                <div id="dropZoneText" style="color:rgba(255,255,255,0.4);font-size:13px">📸 Glissez une image ici ou cliquez pour sélectionner</div>
+                <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFileSelect(event)" />
+                <div id="uploadPreview" style="display:none;margin-top:8px"></div>
+              </div>
             </div>
           </div>
-          <div class="productCard flutter-fade-in">
-            <div class="productImg"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=200&fit=crop" alt="" loading="lazy" /></div>
-            <div class="productBody">
-              <div class="productTitle">Casque Bose QC45</div>
-              <div class="productPrice">299 $</div>
-              <button class="productBtn flutter-ripple" onclick="fillCart(2)">Ajouter</button>
-            </div>
-          </div>
-          <div class="productCard flutter-fade-in">
-            <div class="productImg"><img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=200&fit=crop" alt="" loading="lazy" /></div>
-            <div class="productBody">
-              <div class="productTitle">Montre connectée</div>
-              <div class="productPrice">89 $</div>
-              <button class="productBtn flutter-ripple" onclick="fillCart(3)">Ajouter</button>
-            </div>
-          </div>
-          <div class="productCard flutter-fade-in">
-            <div class="productImg"><img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=300&h=200&fit=crop" alt="" loading="lazy" /></div>
-            <div class="productBody">
-              <div class="productTitle">Appareil photo Sony</div>
-              <div class="productPrice">450 $</div>
-              <button class="productBtn flutter-ripple" onclick="fillCart(4)">Ajouter</button>
-            </div>
-          </div>
-          <div class="productCard flutter-fade-in">
-            <div class="productImg"><img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=300&h=200&fit=crop" alt="" loading="lazy" /></div>
-            <div class="productBody">
-              <div class="productTitle">Parfum Chanel</div>
-              <div class="productPrice">95 $</div>
-              <button class="productBtn flutter-ripple" onclick="fillCart(5)">Ajouter</button>
-            </div>
-          </div>
-          <div class="productCard flutter-fade-in">
-            <div class="productImg"><img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=300&h=200&fit=crop" alt="" loading="lazy" /></div>
-            <div class="productBody">
-              <div class="productTitle">Air Jordan 1</div>
-              <div class="productPrice">180 $</div>
-              <button class="productBtn flutter-ripple" onclick="fillCart(6)">Ajouter</button>
-            </div>
+          <div class="flex flex-gap mt-1">
+            <button class="btn btn-primary" onclick="browserCreateProduct()" style="background:linear-gradient(135deg,#22c55e,#16a34a);border-color:#22c55e">Publier</button>
+            <button class="btn btn-ghost" onclick="document.getElementById('browserAddPanel').style.display='none'">Annuler</button>
           </div>
         </div>
       </div>
     </section>
 
     <!-- ════════════════════════════════════════════════════════ -->
-    <!-- PANIER  (Alibaba Shopping Cart)                      -->
+    <!-- PANIER  (MongoDB Cart + Orders)                      -->
     <!-- ════════════════════════════════════════════════════════ -->
     <section class="section" data-section="panier">
       <div class="card">
-        <!-- Cart Header -->
-        <div class="cartHeader">
-          <div class="cartTitle">
-            <div class="cartIcon"><img src="./assets/cart-icon.svg" alt="" style="width:20px;height:20px" /></div>
-            <div>
-              <h3 style="margin:0;font-size:15px;font-weight:900">Panier</h3>
-              <div class="muted" id="cartMeta" style="margin-top:2px;font-size:12px">Ajoute des articles</div>
-            </div>
-          </div>
-          <div class="qtyPill"><span>Qté</span><strong id="cartQtyBadge">0</strong></div>
+        <div class="al-panel-header" style="margin-bottom:0">
+          <div class="al-icon" style="background:rgba(34,197,94,0.1)">🛒</div>
+          <h3>Panier MongoDB</h3>
+          <span class="al-badge" style="color:#22c55e" id="cartBadgeCount">0</span>
         </div>
 
-        <!-- Add Item -->
+        <!-- User selector -->
         <div class="al-panel">
-          <div class="row">
-            <div><label>Date</label><input id="order_date" type="date" /></div>
-            <div><label>Produit ID</label><input id="cart_product_id" placeholder="id" /></div>
+          <label>ID Utilisateur *</label>
+          <div class="flex flex-gap">
+            <input id="cartUserId" placeholder="Colle ton _id après connexion" />
+            <input id="cartUserEmail" placeholder="Ou ton email" style="flex:1" />
           </div>
+          <button class="btn btn-secondary btn-sm mt-1" onclick="loadMongoCart()">Charger mon panier</button>
+        </div>
+
+        <!-- Add to cart -->
+        <div class="al-panel" style="border-color:rgba(34,197,94,0.12)">
           <div class="row">
-            <div><label>Quantité</label><input id="cart_qty" value="1" /></div>
-            <div style="display:flex;align-items:flex-end;gap:8px">
-              <button class="btn btn-primary" id="btn-cart-add" onclick="cartAdd()" style="flex:1"><span class="spinner"></span><span class="btn-text">Ajouter</span></button>
-              <button class="btn btn-ghost btn-sm" onclick="loadCart()">Voir</button>
-            </div>
+            <div><label>Produit ID</label><input id="cartProductId" placeholder="Colle l'ID du produit" /></div>
+            <div><label>Quantité</label><input id="cartQty" type="number" value="1" min="1" /></div>
           </div>
+          <div class="flex flex-gap mt-1">
+            <button class="btn btn-primary btn-sm" id="btnCartAdd" onclick="mongoCartAdd()" style="background:linear-gradient(135deg,#22c55e,#16a34a);border-color:#22c55e">➕ Ajouter</button>
+            <button class="btn btn-ghost btn-sm" onclick="mongoCartClear()">🗑️ Vider</button>
+          </div>
+        </div>
+
+        <!-- Cart items -->
+        <div id="cartItemsContainer">
+          <div class="muted" style="text-align:center;padding:20px">Connecte-toi et ajoute des articles</div>
         </div>
 
         <!-- Checkout -->
-        <button class="btn btn-primary btn-block" id="btn-checkout" onclick="checkout()"><span class="spinner"></span><span class="btn-text">🛒 Checkout</span></button>
+        <button class="btn btn-primary btn-block mt-2" id="btnCheckout" onclick="mongoCheckout()" style="background:linear-gradient(135deg,#22c55e,#16a34a);border-color:#22c55e;display:none">🛒 Checkout →</button>
 
-        <!-- Cart Items -->
-        <div class="cartList mt-2" id="cart_list" aria-live="polite"></div>
-        <pre id="cart_out" style="display:none" class="mt-2"></pre>
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <!-- Orders history -->
+        <div class="al-panel-header">
+          <div class="al-icon" style="background:rgba(59,130,246,0.1)">📋</div>
+          <h3>Mes commandes</h3>
+          <button class="btn btn-ghost btn-sm" onclick="loadMongoOrders()">↻</button>
+        </div>
+        <div id="ordersContainer">
+          <div class="muted" style="text-align:center;padding:16px">Connecte-toi pour voir tes commandes</div>
+        </div>
       </div>
     </section>
 
     <!-- ════════════════════════════════════════════════════════ -->
-    <!-- MONGODB  (Mongo-Powered Marketplace)                  -->
+    <!-- CATEGORIES  (CRUD Management)                         -->
     <!-- ════════════════════════════════════════════════════════ -->
     <section class="section" data-section="mongo">
       <div class="card">
         <div class="al-panel-header">
-          <div class="al-icon" style="background:rgba(34,197,94,0.1);border-color:rgba(34,197,94,0.2)">🍃</div>
-          <h3>Marketplace MongoDB</h3>
-          <span class="al-badge" style="color:#22c55e;background:rgba(34,197,94,0.08)">Nouveau</span>
+          <div class="al-icon" style="background:rgba(59,130,246,0.1)">📁</div>
+          <h3>Gestion des Catégories</h3>
+          <span class="status-badge active" id="catTotalCount">0</span>
         </div>
 
-        <!-- Connexion/Inscription -->
-        <div class="al-panel" style="border-color:rgba(34,197,94,0.15)">
-          <div class="al-panel-header">
-            <div class="al-icon" style="background:rgba(34,197,94,0.1)">🔑</div>
-            <h3>Connexion MongoDB</h3>
+        <!-- Add category -->
+        <div class="al-panel" style="border-color:rgba(59,130,246,0.15)">
+          <div class="row">
+            <div><label>Nom *</label><input id="catNewName" placeholder="Smartphones" /></div>
+            <div><label>Description</label><input id="catNewDesc" placeholder="Téléphones et accessoires" /></div>
           </div>
           <div class="row">
-            <div><label>Email</label><input id="mongoEmail" placeholder="demo@marketplace.com" /></div>
-            <div><label>Mot de passe</label><input id="mongoPassword" type="password" placeholder="demo123" /></div>
-          </div>
-          <div class="row">
-            <div><label>Nom (inscription)</label><input id="mongoName" placeholder="Votre nom" /></div>
+            <div><label>Image URL</label><input id="catNewImage" placeholder="https://..." /></div>
             <div style="display:flex;align-items:flex-end;gap:6px">
-              <button class="btn btn-primary btn-sm" onclick="loginMongo()" style="background:linear-gradient(135deg,#22c55e,#16a34a);border-color:#22c55e">Connexion</button>
-              <button class="btn btn-secondary btn-sm" onclick="registerMongo()">Inscription</button>
+              <button class="btn btn-primary btn-sm" onclick="catCreate()" style="background:linear-gradient(135deg,#3b82f6,#2563eb);border-color:#3b82f6">➕ Ajouter</button>
+              <button class="btn btn-secondary btn-sm" onclick="catLoadAll()">↻</button>
             </div>
           </div>
-          <div id="mongoUserInfo" class="muted mt-1" style="font-size:12px"></div>
-          <input id="mongoUserId" type="hidden" />
         </div>
 
-        <!-- Catégories -->
+        <!-- Category list -->
         <div class="al-panel">
-          <div class="al-panel-header">
-            <div class="al-icon" style="background:rgba(34,197,94,0.1)">📁</div>
-            <h3>Catégories</h3>
-            <span class="al-badge" id="mongoCatCount"></span>
-          </div>
-          <div class="al-cats" id="mongoCategories">
+          <div class="al-cats" id="catGrid">
             <div class="al-cat"><div class="ico">⏳</div><div class="nm">Chargement...</div></div>
           </div>
         </div>
 
-        <!-- Produits -->
-        <div class="al-panel">
+        <!-- Edit category (inline) -->
+        <div id="catEditPanel" class="al-panel" style="display:none;border-color:rgba(245,158,11,0.3)">
           <div class="al-panel-header">
-            <div class="al-icon" style="background:rgba(34,197,94,0.1)">📦</div>
-            <h3 id="mongoSectionTitle">Produits</h3>
+            <div class="al-icon" style="background:rgba(245,158,11,0.1)">✏️</div>
+            <h3>Modifier catégorie</h3>
           </div>
-          <div class="productsGrid" id="mongoProducts">
-            <div class="productCard"><div class="productBody"><div class="muted">Connectez-vous pour voir les produits</div></div></div>
+          <input id="catEditId" type="hidden" />
+          <div class="row">
+            <div><label>Nom</label><input id="catEditName" /></div>
+            <div><label>Description</label><input id="catEditDesc" /></div>
+          </div>
+          <div class="flex flex-gap mt-1">
+            <button class="btn btn-primary btn-sm" onclick="catUpdate()" style="background:linear-gradient(135deg,#f59e0b,#d97706);border-color:#f59e0b">💾 Enregistrer</button>
+            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('catEditPanel').style.display='none'">Annuler</button>
           </div>
         </div>
 
@@ -1360,12 +1450,16 @@
 
     document.getElementById('globalSearch').addEventListener('keydown', function(e) {
       if (e.key === 'Enter') {
-        var q = document.getElementById('search_q');
-        if (q) q.value = this.value;
         showSection('catalogue');
-        doSearchProducts();
+        var searchInput = document.getElementById('browserSearch');
+        if (searchInput) searchInput.value = this.value;
+        browserSearchProducts();
       }
     });
+    // Load homepage products
+    setTimeout(function() {
+      if (typeof loadHomepageProducts === 'function') loadHomepageProducts();
+    }, 800);
   </script>
 
   <script>

@@ -34,6 +34,36 @@ def create_category(data: dict):
     return doc
 
 
+@router.get("/{category_id}")
+def get_category(category_id: str):
+    doc = categories_col.find_one({"_id": ObjectId(category_id)})
+    if not doc:
+        raise HTTPException(404, "Category not found")
+    doc["_id"] = str(doc["_id"])
+    return doc
+
+
+@router.put("/{category_id}")
+def update_category(category_id: str, data: dict):
+    existing = categories_col.find_one({"_id": ObjectId(category_id)})
+    if not existing:
+        raise HTTPException(404, "Category not found")
+    allowed = ["name", "description", "image"]
+    update = {}
+    for k in allowed:
+        if k in data and data[k] is not None:
+            update[k] = data[k]
+    if not update:
+        raise HTTPException(400, "No valid fields")
+    if "name" in update:
+        update["slug"] = update["name"].lower().replace(" ", "-")
+    update["updated_at"] = datetime.utcnow().isoformat()
+    categories_col.update_one({"_id": ObjectId(category_id)}, {"$set": update})
+    doc = categories_col.find_one({"_id": ObjectId(category_id)})
+    doc["_id"] = str(doc["_id"])
+    return doc
+
+
 @router.delete("/{category_id}")
 def delete_category(category_id: str):
     result = categories_col.delete_one({"_id": ObjectId(category_id)})

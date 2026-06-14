@@ -3,6 +3,5 @@ __pycache__/
 data/
 .env
 venv/
-*.egg-info/
-dist/
-build/
+.venv/
+uploads/

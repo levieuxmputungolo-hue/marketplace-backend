@@ -68,6 +68,20 @@ def create_order(data: dict):
     return doc
 
 
+@router.put("/{order_id}")
+def update_order(order_id: str, data: dict):
+    existing = orders_col.find_one({"_id": ObjectId(order_id)})
+    if not existing:
+        raise HTTPException(404, "Order not found")
+    allowed = ["status", "payment_status", "shipping_address", "notes", "buyer_name", "seller_id"]
+    update = {k: v for k, v in data.items() if k in allowed and v is not None}
+    if not update:
+        raise HTTPException(400, "No valid fields")
+    update["updated_at"] = datetime.utcnow().isoformat()
+    orders_col.update_one({"_id": ObjectId(order_id)}, {"$set": update})
+    return {"ok": True, "status": update.get("status", existing.get("status"))}
+
+
 @router.put("/{order_id}/status")
 def update_order_status(order_id: str, data: dict):
     status = data.get("status")

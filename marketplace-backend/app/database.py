@@ -9,8 +9,12 @@ if MONGO_URI:
     from pymongo import MongoClient
 
     client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
-    client.admin.command("ping")  # verify connection
-    db = client.get_database()
+    client.admin.command("ping")
+    # Use 'marketplace' database - append if not in URI
+    if "/?" in MONGO_URI or MONGO_URI.rstrip("/").endswith(".mongodb.net"):
+        db = client["marketplace"]
+    else:
+        db = client.get_database()
 else:
     from mongita import MongitaClientDisk
 

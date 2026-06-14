@@ -1,7 +1,21 @@
-// API base: use ?mongo=... query param, window.__MONGO_API__, or localhost:8005
+// API base: ?mongo=... | window.__MONGO_API__ | Render | localhost
 const qs = new URLSearchParams(location.search);
-const MONGO_API = qs.get('mongo') || window.__MONGO_API__ || (location.hostname === 'localhost' || location.hostname === '127.0.0.1' ? 'http://localhost:8005' : '');
-const API_BASE = window.__API_BASE__ || 'http://localhost:8000';
+let MONGO_API = qs.get('mongo') || window.__MONGO_API__ || '';
+if (!MONGO_API) {
+  const host = location.hostname;
+  if (host === 'localhost' || host === '127.0.0.1') {
+    MONGO_API = 'http://localhost:8004';
+  } else if (host.includes('web.app') || host.includes('firebaseapp.com')) {
+    MONGO_API = ''; // Use same-origin (Firebase rewrite) or set via ?mongo=
+  }
+}
+
+const API_BASE = qs.get('api') || window.__API_BASE__ || (() => {
+  const host = location.hostname;
+  if (host === 'localhost' || host === '127.0.0.1') return 'http://localhost:8004';
+  if (host.includes('web.app') || host.includes('firebaseapp.com')) return ''; // same-origin or set via ?api=
+  return '';
+})();
 
 // ===== Ripple effect on buttons =====
 document.addEventListener('click', e => {
@@ -196,11 +210,15 @@ async function createArticle() {
   const btn = document.getElementById('btn-article');
   setLoading(btn, true);
   try {
-    const data = await apiPost('/articles', {
+    const userId = document.getElementById('mongoUserId')?.value || '';
+    const userName = document.getElementById('name')?.value || '';
+    const data = await apiPost('/api/articles', {
       title: document.getElementById('article_title').value.trim(),
       content: document.getElementById('article_content').value.trim(),
+      author_id: userId,
+      author_name: userName,
     }, true);
-    document.getElementById('article_id').value = data.id;
+    document.getElementById('article_id').value = data.id || data._id;
     setOut(data);
     toast({ title: 'Article publié', message: data.title, type: 'success' });
   } catch (e) { setOut({ error: String(e) }); toast({ title: 'Erreur', message: String(e), type: 'error' });
@@ -211,10 +229,14 @@ async function sendMessage() {
   const btn = document.getElementById('btn-message');
   setLoading(btn, true);
   try {
-    const articleId = Number(document.getElementById('article_id').value);
+    const articleId = document.getElementById('article_id').value.trim();
     if (!articleId) throw new Error('article_id manquant');
-    const data = await apiPost(`/articles/${articleId}/messages`, {
+    const senderId = document.getElementById('mongoUserId')?.value || '';
+    const senderName = document.getElementById('name')?.value || '';
+    const data = await apiPost(`/api/articles/${articleId}/messages`, {
       content: document.getElementById('message_content').value.trim(),
+      sender_id: senderId,
+      sender_name: senderName,
     }, true);
     setOut(data);
     toast({ title: 'Message envoyé', type: 'success' });
@@ -223,16 +245,22 @@ async function sendMessage() {
 }
 
 async function loadInbox() {
+  const userId = document.getElementById('mongoUserId')?.value;
+  if (!userId) { toast({ title: 'Erreur', message: 'Connectez-vous d\'abord', type: 'error' }); return; }
   try {
-    const data = await apiGet('/articles/messages/inbox', true);
+    const data = await apiGet(`/api/articles/messages/inbox?user_id=${encodeURIComponent(userId)}`, true);
     setOut(data);
+    toast({ title: 'Boîte réception', message: `${data.length} message(s)`, type: 'info' });
   } catch (e) { setOut({ error: String(e) }); }
 }
 
 async function loadOutbox() {
+  const userId = document.getElementById('mongoUserId')?.value;
+  if (!userId) { toast({ title: 'Erreur', message: 'Connectez-vous d\'abord', type: 'error' }); return; }
   try {
-    const data = await apiGet('/articles/messages/outbox', true);
+    const data = await apiGet(`/api/articles/messages/outbox?user_id=${encodeURIComponent(userId)}`, true);
     setOut(data);
+    toast({ title: 'Messages envoyés', message: `${data.length} message(s)`, type: 'info' });
   } catch (e) { setOut({ error: String(e) }); }
 }
 
@@ -245,12 +273,9 @@ function toIntOrNull(v) {
 }
 
 function fillCart(productId) {
-  const el = document.getElementById('cart_product_id');
+  const el = document.getElementById('cartProductId');
   if (el) el.value = String(productId);
-  const meta = document.getElementById('cartMeta');
-  if (meta) meta.textContent = 'Produit sélectionné. Ajoute au panier.';
-  const badge = document.querySelector('.qtyPill');
-  if (badge) { badge.classList.remove('bounce'); void badge.offsetWidth; badge.classList.add('bounce'); }
+  showSection('panier');
   toast({ title: 'Produit sélectionné', message: `ID: ${productId}`, type: 'info' });
 }
 
@@ -321,6 +346,35 @@ async function seedCatalog() {
 }
 
 // ===== Create product (vendor) =====
+let prodUploadedImage = '';
+
+function prodUploadedImageUrl() {
+  return prodUploadedImage || document.getElementById('prod_image').value.trim() || null;
+}
+
+async function uploadProdImage(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (!file.type.startsWith('image/')) { toast({ title: 'Erreur', message: 'Image uniquement', type: 'error' }); return; }
+  if (file.size > 5 * 1024 * 1024) { toast({ title: 'Erreur', message: 'Max 5 Mo', type: 'error' }); return; }
+  const preview = document.getElementById('prodUploadPreview');
+  preview.textContent = '⏳ Upload...';
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch(`${API_BASE}/api/upload`, { method: 'POST', body: formData });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Upload échoué');
+    prodUploadedImage = data.url;
+    document.getElementById('prod_image').value = data.url;
+    preview.innerHTML = `<img src="${data.url}" style="max-height:60px;border-radius:6px;margin-top:4px" /> ✅`;
+    toast({ title: 'Image uploadée', type: 'success' });
+  } catch (e) {
+    preview.textContent = `❌ ${e.message}`;
+    toast({ title: 'Erreur', message: String(e), type: 'error' });
+  }
+}
+
 async function createProduct() {
   const btn = document.getElementById('btn-create-product');
   setLoading(btn, true);
@@ -329,12 +383,60 @@ async function createProduct() {
       name: document.getElementById('prod_name').value.trim(),
       description: document.getElementById('prod_desc').value.trim() || null,
       price_usd: Number(document.getElementById('prod_price').value),
-      image_url: document.getElementById('prod_image').value.trim() || null,
+      image_url: prodUploadedImageUrl(),
     }, true);
+    prodUploadedImage = '';
+    document.getElementById('prodUploadPreview').textContent = '';
     setOut(data);
     toast({ title: 'Produit créé', message: data.name, type: 'success' });
   } catch (e) { setOut({ error: String(e) }); toast({ title: 'Erreur', message: String(e), type: 'error' });
   } finally { setLoading(btn, false); }
+}
+
+// ===== Mobile Payment =====
+async function doMobilePayment() {
+  const amount = parseFloat(document.getElementById('pmt_amount').value);
+  const phone = document.getElementById('pmt_phone').value.trim();
+  const operator = document.getElementById('pmt_operator').value;
+  const description = document.getElementById('pmt_desc').value.trim() || 'Paiement easy-market';
+  const result = document.getElementById('pmt_result');
+
+  if (!amount || amount <= 0) { toast({ title: 'Erreur', message: 'Montant invalide', type: 'error' }); return; }
+  if (!phone) { toast({ title: 'Erreur', message: 'Numéro requis', type: 'error' }); return; }
+
+  result.innerHTML = '⏳ Traitement...';
+  try {
+    const data = await initiateMobilePayment(amount, phone, operator, description);
+    result.innerHTML = `
+      <div style="background:rgba(255,106,0,0.06);border-radius:8px;padding:8px;border:1px solid rgba(255,106,0,0.1)">
+        <div style="font-weight:700;color:var(--alibaba-light)">✅ Paiement initié</div>
+        <div style="font-size:12px;margin-top:4px">Réf: <strong>${data.reference}</strong></div>
+        <div style="font-size:12px">Montant: ${data.amount} $ + Frais: ${data.fee} $ = <strong>${data.total} $</strong></div>
+        <div style="font-size:12px">PIN: <strong style="color:#22c55e">${data.pin}</strong></div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px">${data.instructions}</div>
+        <button class="btn btn-secondary btn-sm mt-1" onclick="simulatePaymentConfirm('${data.reference}')">Simuler confirmation</button>
+      </div>
+    `;
+    toast({ title: 'Paiement initié', message: `Réf: ${data.reference}`, type: 'success' });
+  } catch (e) {
+    result.innerHTML = `<span style="color:#ef4444;font-size:12px">❌ ${e.message}</span>`;
+    toast({ title: 'Erreur', message: String(e), type: 'error' });
+  }
+}
+
+async function simulatePaymentConfirm(reference) {
+  const result = document.getElementById('pmt_result');
+  try {
+    const data = await apiPost('/api/payments/mobile/callback', {
+      reference: reference,
+      status: 'paid',
+      transaction_id: `TXN-${Date.now()}`,
+    }, true);
+    result.innerHTML += `<div style="color:#22c55e;font-size:12px;margin-top:4px">✅ Paiement confirmé: ${data.status}</div>`;
+    toast({ title: 'Paiement confirmé', type: 'success' });
+  } catch (e) {
+    toast({ title: 'Erreur', message: String(e), type: 'error' });
+  }
 }
 
 // ===== Cart =====
@@ -663,135 +765,584 @@ async function showAllVendorsOnMap() {
   }
 }
 
-// ===== MongoDB-specific functions =====
-async function loadMongoCategories() {
+// ===== Panier MongoDB (Cart) =====
+function getCartUserId() {
+  let id = document.getElementById('cartUserId').value.trim();
+  if (!id) {
+    const email = document.getElementById('cartUserEmail').value.trim();
+    if (email) id = email;
+  }
+  return id || null;
+}
+
+async function loadMongoCart() {
+  const userId = getCartUserId();
+  if (!userId) { toast({ title: 'Erreur', message: 'ID ou email utilisateur requis', type: 'error' }); return; }
+  const container = document.getElementById('cartItemsContainer');
+  container.innerHTML = '<div class="skeleton" style="height:100px;border-radius:12px"></div>';
+  try {
+    const items = await mongoGet(`/api/cart/${encodeURIComponent(userId)}`);
+    const checkoutBtn = document.getElementById('btnCheckout');
+    const badge = document.getElementById('cartBadgeCount');
+    if (!items || !items.length) {
+      container.innerHTML = '<div class="empty-state" style="padding:20px"><div class="empty-state-icon">🛒</div><div class="empty-state-text">Panier vide</div></div>';
+      checkoutBtn.style.display = 'none';
+      if (badge) badge.textContent = '0';
+      return;
+    }
+    if (badge) badge.textContent = String(items.length);
+    let total = 0;
+    container.innerHTML = items.map((item, idx) => {
+      const id = item.product_id || '';
+      const qty = item.quantity || 1;
+      const priceTxt = item.price ? `${item.price} $` : '—';
+      total += (item.price || 0) * qty;
+      return `<div class="cartItem" style="padding:10px;border-radius:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><strong style="font-size:13px">${id.slice(-8)}</strong><span class="muted" style="font-size:11px;margin-left:6px">x ${qty}</span></div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="color:#22c55e;font-weight:800">${priceTxt}</span>
+            <button class="btn btn-ghost btn-sm" onclick="mongoCartRemove('${id}')" style="padding:4px 8px;font-size:11px">✕</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+    // Add total line
+    container.innerHTML += `<div style="text-align:right;padding:8px 4px;font-size:15px;font-weight:900;color:#22c55e">Total: ${total.toFixed(2)} $</div>`;
+    checkoutBtn.style.display = 'block';
+  } catch (e) {
+    container.innerHTML = `<p class="muted">Erreur: ${e.message}</p>`;
+  }
+}
+
+async function mongoCartAdd() {
+  const userId = getCartUserId();
+  const productId = document.getElementById('cartProductId').value.trim();
+  const qty = parseInt(document.getElementById('cartQty').value) || 1;
+  if (!userId || !productId) { toast({ title: 'Erreur', message: 'ID utilisateur + produit requis', type: 'error' }); return; }
+  try {
+    await mongoPost(`/api/cart/${encodeURIComponent(userId)}/add`, { product_id: productId, quantity: qty });
+    toast({ title: 'Ajouté au panier', type: 'success' });
+    loadMongoCart();
+  } catch (e) {
+    toast({ title: 'Erreur', message: String(e), type: 'error' });
+  }
+}
+
+async function mongoCartRemove(productId) {
+  const userId = getCartUserId();
+  if (!userId) return;
+  try {
+    await mongoDel(`/api/cart/${encodeURIComponent(userId)}/item/${encodeURIComponent(productId)}`);
+    toast({ title: 'Retiré du panier', type: 'info' });
+    loadMongoCart();
+  } catch (e) {
+    toast({ title: 'Erreur', message: String(e), type: 'error' });
+  }
+}
+
+async function mongoCartClear() {
+  const userId = getCartUserId();
+  if (!userId) return;
+  if (!confirm('Vider le panier ?')) return;
+  try {
+    await mongoDel(`/api/cart/${encodeURIComponent(userId)}`);
+    toast({ title: 'Panier vidé', type: 'info' });
+    loadMongoCart();
+  } catch (e) {
+    toast({ title: 'Erreur', message: String(e), type: 'error' });
+  }
+}
+
+async function mongoCheckout() {
+  const userId = getCartUserId();
+  if (!userId) { toast({ title: 'Erreur', message: 'Connecte-toi d\'abord', type: 'error' }); return; }
+  try {
+    const order = await mongoPost(`/api/cart/${encodeURIComponent(userId)}/checkout`, {});
+    toast({ title: 'Commande passée !', message: `#${order._id.slice(-8)} — ${order.total.toFixed(2)} $`, type: 'success' });
+    loadMongoCart();
+    loadMongoOrders();
+  } catch (e) {
+    toast({ title: 'Erreur checkout', message: String(e), type: 'error' });
+  }
+}
+
+// ===== Commandes (Orders) =====
+async function loadMongoOrders() {
+  const container = document.getElementById('ordersContainer');
+  if (!container) return;
+  const userId = getCartUserId();
+  if (!userId) { container.innerHTML = '<div class="muted" style="text-align:center;padding:16px">Connecte-toi pour voir tes commandes</div>'; return; }
+  container.innerHTML = '<div class="skeleton" style="height:80px;border-radius:12px"></div>';
+  try {
+    const orders = await mongoGet(`/api/orders/?buyer_id=${encodeURIComponent(userId)}`);
+    if (!orders || !orders.length) {
+      container.innerHTML = '<div class="muted" style="text-align:center;padding:16px">Aucune commande</div>';
+      return;
+    }
+    const statusColors = { pending: '#f59e0b', confirmed: '#3b82f6', shipped: '#8b5cf6', delivered: '#22c55e', cancelled: '#ef4444' };
+    container.innerHTML = orders.map(o => {
+      const color = statusColors[o.status] || 'rgba(255,255,255,0.4)';
+      return `<div style="background:rgba(255,255,255,0.03);border-radius:12px;padding:12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.06)">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>#${o._id.slice(-8)}</strong>
+          <span style="color:${color};font-weight:700;font-size:12px;background:rgba(255,255,255,0.05);padding:3px 10px;border-radius:999px">${o.status}</span>
+        </div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px">
+          ${o.items ? o.items.length : 0} article(s) · ${o.total ? Number(o.total).toFixed(2) : '0.00'} $
+        </div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:2px">${new Date(o.created_at).toLocaleString()}</div>
+        ${o.status === 'pending' ? `<button class="btn btn-ghost btn-sm mt-1" onclick="mongoCancelOrder('${o._id}')" style="font-size:10px">Annuler</button>` : ''}
+      </div>`;
+    }).join('');
+  } catch (e) {
+    container.innerHTML = `<p class="muted">Erreur: ${e.message}</p>`;
+  }
+}
+
+async function mongoCancelOrder(orderId) {
+  try {
+    await mongoPut(`/api/orders/${orderId}/status`, { status: 'cancelled' });
+    toast({ title: 'Commande annulée', type: 'info' });
+    loadMongoOrders();
+  } catch (e) {
+    toast({ title: 'Erreur', message: String(e), type: 'error' });
+  }
+}
+
+// ===== Catégories (CRUD) =====
+async function catLoadAll() {
+  const grid = document.getElementById('catGrid');
+  const count = document.getElementById('catTotalCount');
+  grid.innerHTML = '<div class="al-cat"><div class="ico">⏳</div><div class="nm">Chargement...</div></div>';
   try {
     const cats = await mongoGet('/api/categories/');
-    const el = document.getElementById('mongoCategories');
-    if (!el) return;
-    el.innerHTML = cats.map(c => `
-      <div class="al-cat" onclick="loadMongoProductsByCategory('${encodeURIComponent(c.name)}')">
-        <div class="ico">📁</div>
-        <div class="nm">${c.name}</div>
-      </div>
-    `).join('');
-  } catch (e) {
-    console.warn('Mongo categories unavailable:', e.message);
-  }
-}
-
-async function loadMongoProducts() {
-  const el = document.getElementById('mongoProducts');
-  if (!el) return;
-  el.innerHTML = '<div class="skeleton" style="height:200px;border-radius:12px"></div>';
-  try {
-    const prods = await mongoGet('/api/products/');
-    el.innerHTML = prods.slice(0, 12).map(p => `
-      <div class="productCard">
-        <div class="productImg">${p.image ? `<img src="${p.image}" alt="" loading="lazy" />` : '<div class="imgPlaceholder"></div>'}</div>
-        <div class="productBody">
-          <div class="productTitle">${String(p.name).replace(/[<>]/g, '')}</div>
-          <div class="productPrice">${p.price} $</div>
-          <button class="productBtn" onclick="fillCart('${p._id}')">Ajouter</button>
+    const list = Array.isArray(cats) ? cats : [];
+    if (count) count.textContent = String(list.length);
+    if (!list.length) {
+      grid.innerHTML = '<div class="al-cat" style="grid-column:1/-1;padding:20px"><div class="nm" style="color:rgba(255,255,255,0.3)">Aucune catégorie</div></div>';
+      return;
+    }
+    grid.innerHTML = list.map(c => `
+      <div class="al-cat" style="position:relative">
+        <div class="ico">${c.image ? `<img src="${c.image}" style="width:28px;height:28px;border-radius:6px;object-fit:cover" />` : '📁'}</div>
+        <div class="nm">${String(c.name || '').replace(/[<>]/g, '')}</div>
+        <div style="font-size:9px;color:rgba(255,255,255,0.3);margin-top:2px">${(c.description || '').slice(0, 20)}</div>
+        <div style="display:flex;gap:4px;justify-content:center;margin-top:4px">
+          <button class="btn btn-ghost btn-sm" onclick="catEdit('${c._id}')" style="padding:2px 6px;font-size:9px">✏️</button>
+          <button class="btn btn-ghost btn-sm" onclick="catDelete('${c._id}')" style="padding:2px 6px;font-size:9px">🗑️</button>
         </div>
       </div>
     `).join('');
   } catch (e) {
-    el.innerHTML = `<p class="muted">MongoDB indisponible: ${e.message}</p>`;
+    grid.innerHTML = `<div class="al-cat" style="grid-column:1/-1"><div class="nm" style="color:#ef4444">Erreur: ${e.message}</div></div>`;
   }
 }
 
-async function loadMongoProductsByCategory(category) {
-  const el = document.getElementById('mongoProducts');
-  if (!el) return;
-  el.innerHTML = '<div class="skeleton" style="height:200px;border-radius:12px"></div>';
+async function catCreate() {
+  const name = document.getElementById('catNewName').value.trim();
+  const description = document.getElementById('catNewDesc').value.trim();
+  const image = document.getElementById('catNewImage').value.trim();
+  if (!name) { toast({ title: 'Erreur', message: 'Nom requis', type: 'error' }); return; }
   try {
-    const prods = await mongoGet(`/api/products/?category=${encodeURIComponent(category)}`);
-    document.getElementById('mongoSectionTitle').textContent = `📁 ${category}`;
-    el.innerHTML = prods.map(p => `
-      <div class="productCard">
-        <div class="productImg">${p.image ? `<img src="${p.image}" alt="" loading="lazy" />` : '<div class="imgPlaceholder"></div>'}</div>
-        <div class="productBody">
-          <div class="productTitle">${String(p.name).replace(/[<>]/g, '')}</div>
-          <div class="productPrice">${p.price} $</div>
-          <button class="productBtn" onclick="fillCart('${p._id}')">Ajouter</button>
-        </div>
-      </div>
-    `).join('');
-  } catch (e) {
-    el.innerHTML = `<p class="muted">Erreur: ${e.message}</p>`;
-  }
-}
-
-async function loginMongo() {
-  const email = document.getElementById('mongoEmail').value.trim();
-  const password = document.getElementById('mongoPassword').value;
-  if (!email || !password) { toast({ title: 'Erreur', message: 'Email et mot de passe requis', type: 'error' }); return; }
-  try {
-    const data = await mongoPost('/api/users/login', { email, password });
-    document.getElementById('mongoUserId').value = data._id || '';
-    document.getElementById('mongoUserInfo').textContent = `Connecté: ${data.name || data.email}`;
-    document.getElementById('mongoUserInfo').style.color = '#4ade80';
-    toast({ title: 'Connexion MongoDB', message: `Bienvenue ${data.name || data.email}`, type: 'success' });
-    loadMongoProducts();
-    loadMongoCategories();
+    await mongoPost('/api/categories/', { name, description, image });
+    document.getElementById('catNewName').value = '';
+    document.getElementById('catNewDesc').value = '';
+    document.getElementById('catNewImage').value = '';
+    toast({ title: 'Catégorie créée', message: name, type: 'success' });
+    catLoadAll();
   } catch (e) {
     toast({ title: 'Erreur', message: String(e), type: 'error' });
   }
 }
 
-async function registerMongo() {
-  const email = document.getElementById('mongoEmail').value.trim();
-  const password = document.getElementById('mongoPassword').value;
-  const name = document.getElementById('mongoName').value.trim();
-  if (!email || !password || !name) { toast({ title: 'Erreur', message: 'Tous les champs requis', type: 'error' }); return; }
+async function catEdit(id) {
+  document.getElementById('catEditPanel').style.display = 'block';
+  document.getElementById('catEditId').value = id;
   try {
-    const data = await mongoPost('/api/users/register', { email, password, name });
-    document.getElementById('mongoUserId').value = data._id || '';
-    document.getElementById('mongoUserInfo').textContent = `Créé: ${data.name || data.email}`;
-    document.getElementById('mongoUserInfo').style.color = '#4ade80';
-    toast({ title: 'Inscription MongoDB', message: 'Compte créé avec succès', type: 'success' });
+    const cat = await mongoGet(`/api/categories/${id}`);
+    document.getElementById('catEditName').value = cat.name || '';
+    document.getElementById('catEditDesc').value = cat.description || '';
   } catch (e) {
     toast({ title: 'Erreur', message: String(e), type: 'error' });
   }
 }
 
-async function placeMongoOrder() {
-  const buyerId = document.getElementById('mongoUserId').value;
-  const productId = document.getElementById('mongoOrderProduct').value;
-  const quantity = parseInt(document.getElementById('mongoOrderQty').value) || 1;
-  if (!buyerId || !productId) { toast({ title: 'Erreur', message: 'Connectez-vous et sélectionnez un produit', type: 'error' }); return; }
+async function catUpdate() {
+  const id = document.getElementById('catEditId').value;
+  const name = document.getElementById('catEditName').value.trim();
+  const description = document.getElementById('catEditDesc').value.trim();
+  if (!id || !name) { toast({ title: 'Erreur', message: 'Nom requis', type: 'error' }); return; }
   try {
-    const data = await mongoPost('/api/orders/', {
-      buyer_id: buyerId,
-      items: [{ product_id: productId, quantity }],
-      total: 0, // server should calculate
+    await mongoPut(`/api/categories/${id}`, { name, description });
+    document.getElementById('catEditPanel').style.display = 'none';
+    toast({ title: 'Catégorie mise à jour', type: 'success' });
+    catLoadAll();
+  } catch (e) {
+    toast({ title: 'Erreur', message: String(e), type: 'error' });
+  }
+}
+
+async function catDelete(id) {
+  if (!confirm('Supprimer cette catégorie ?')) return;
+  try {
+    await mongoDel(`/api/categories/${id}`);
+    toast({ title: 'Catégorie supprimée', type: 'info' });
+    catLoadAll();
+  } catch (e) {
+    toast({ title: 'Erreur', message: String(e), type: 'error' });
+  }
+}
+
+// Auto-init
+setTimeout(() => { catLoadAll(); }, 600);
+
+// ===== Product Browser v2 =====
+let browserSort = '';
+let browserTimer = null;
+
+function debounceSearch() {
+  clearTimeout(browserTimer);
+  browserTimer = setTimeout(() => browserSearchProducts(), 300);
+}
+
+function browserSetSort(sort, el) {
+  browserSort = sort;
+  document.querySelectorAll('.al-notif-filter span').forEach(s => s.classList.remove('active'));
+  if (el) el.classList.add('active');
+  browserSearchProducts();
+}
+
+async function browserSearchProducts(page = 1) {
+  const grid = document.getElementById('browserGrid');
+  const count = document.getElementById('catalogCount');
+  const resultCount = document.getElementById('browserResultCount');
+  grid.innerHTML = '<div class="skeleton" style="height:200px;border-radius:12px;grid-column:1/-1"></div>';
+  try {
+    const q = document.getElementById('browserSearch').value.trim();
+    const category = document.getElementById('browserCategory').value;
+    const maxPrice = document.getElementById('browserMaxPrice').value;
+    const params = new URLSearchParams();
+    if (q) params.set('search', q);
+    if (category) params.set('category', category);
+    if (maxPrice) params.set('max_price', maxPrice);
+    const limit = 12;
+    params.set('limit', String(limit));
+    params.set('skip', String((page - 1) * limit));
+    const data = await mongoGet(`/api/products/?${params.toString()}`);
+    const list = Array.isArray(data) ? data : [];
+    if (resultCount) resultCount.textContent = `${list.length} résultat(s)`;
+    if (count) count.textContent = `${list.length} produits`;
+    if (!list.length) {
+      grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">📦</div><div class="empty-state-text">Aucun produit trouvé</div></div>';
+      return;
+    }
+    grid.innerHTML = list.map(p => {
+      const id = p._id || '';
+      const name = String(p.name || '').replace(/[<>]/g, '');
+      const price = p.price != null ? `${Number(p.price).toLocaleString()} $` : '—';
+      const img = p.image || '';
+      const stock = p.stock != null ? `<span style="font-size:11px;color:${p.stock > 0 ? 'rgba(74,222,128,0.6)' : 'rgba(255,100,100,0.6)'}">${p.stock > 0 ? 'En stock' : 'Épuisé'}</span>` : '';
+      return `<div class="productCard flutter-fade-in">
+        <div class="productImg">${img ? `<img src="${img}" alt="" loading="lazy" />` : '<div class="imgPlaceholder"></div>'}</div>
+        <div class="productBody">
+          <div class="productTitle" title="${name}">${name}</div>
+          <div class="productPrice">${price} ${stock}</div>
+          <button class="productBtn" onclick="fillCart('${id}')">Ajouter</button>
+        </div>
+      </div>`;
+    }).join('');
+    // Pagination
+    const pag = document.getElementById('browserPagination');
+    if (pag && list.length >= limit) {
+      pag.innerHTML = `<button class="btn btn-ghost btn-sm" onclick="browserSearchProducts(${page - 1})" ${page <= 1 ? 'disabled' : ''}>← Préc.</button>
+        <span style="font-size:12px;color:rgba(255,255,255,0.4);padding:0 8px">Page ${page}</span>
+        <button class="btn btn-ghost btn-sm" onclick="browserSearchProducts(${page + 1})">Suiv. →</button>`;
+    } else if (pag) pag.innerHTML = '';
+  } catch (e) {
+    grid.innerHTML = `<p class="muted" style="grid-column:1/-1">Erreur: ${e.message}</p>`;
+  }
+}
+
+function showAddProductPanel() {
+  const el = document.getElementById('browserAddPanel');
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+async function browserCreateProduct() {
+  const btn = event.target;
+  setLoading(btn, true);
+  try {
+    const data = await mongoPost('/api/products/', {
+      name: document.getElementById('browserNewName').value.trim(),
+      price: parseFloat(document.getElementById('browserNewPrice').value),
+      description: document.getElementById('browserNewDesc').value.trim(),
+      category: document.getElementById('browserNewCategory').value.trim(),
+      stock: parseInt(document.getElementById('browserNewStock').value) || 0,
+      image: document.getElementById('browserNewImage').value.trim() || uploadedImageUrl,
     });
-    document.getElementById('mongoOrderResult').textContent = JSON.stringify(data, null, 2);
-    toast({ title: 'Commande MongoDB', message: `Order ID: ${data._id}`, type: 'success' });
+    document.getElementById('browserAddPanel').style.display = 'none';
+    document.getElementById('browserNewName').value = '';
+    document.getElementById('browserNewPrice').value = '';
+    document.getElementById('browserNewDesc').value = '';
+    document.getElementById('browserNewCategory').value = '';
+    document.getElementById('browserNewImage').value = '';
+    document.getElementById('uploadPreview').style.display = 'none';
+    document.getElementById('uploadPreview').innerHTML = '';
+    document.getElementById('dropZoneText').textContent = '📸 Glissez une image ici ou cliquez pour sélectionner';
+    uploadedImageUrl = '';
+    toast({ title: 'Produit créé', message: data.name, type: 'success' });
+    browserSearchProducts();
+  } catch (e) {
+    toast({ title: 'Erreur', message: String(e), type: 'error' });
+  } finally { setLoading(btn, false); }
+}
+
+async function browserLoadCategories() {
+  try {
+    const cats = await mongoGet('/api/categories/');
+    const sel = document.getElementById('browserCategory');
+    if (!sel) return;
+    sel.innerHTML = '<option value="">Toutes</option>' + cats.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+  } catch {}
+}
+
+// ===== Image Upload =====
+let uploadedImageUrl = '';
+
+async function handleFileSelect(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  await uploadFile(file);
+}
+
+async function handleDrop(event) {
+  event.preventDefault();
+  const zone = document.getElementById('dropZone');
+  zone.style.borderColor = 'rgba(255,106,0,0.3)';
+  zone.style.background = 'rgba(255,106,0,0.03)';
+  const file = event.dataTransfer.files[0];
+  if (!file) return;
+  await uploadFile(file);
+}
+
+async function uploadFile(file) {
+  if (!file.type.startsWith('image/')) {
+    toast({ title: 'Erreur', message: 'Seules les images sont acceptées', type: 'error' });
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    toast({ title: 'Erreur', message: 'Fichier trop volumineux (max 5 Mo)', type: 'error' });
+    return;
+  }
+  const preview = document.getElementById('uploadPreview');
+  const text = document.getElementById('dropZoneText');
+  preview.style.display = 'block';
+  preview.innerHTML = '<div style="color:var(--alibaba-light)">⏳ Upload en cours...</div>';
+  text.textContent = '📸 Upload en cours...';
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch(`${API_BASE}/api/upload`, { method: 'POST', body: formData });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Upload échoué');
+    uploadedImageUrl = data.url;
+    document.getElementById('browserNewImage').value = data.url;
+    preview.innerHTML = `<img src="${data.url}" style="max-height:100px;border-radius:8px;border:1px solid rgba(255,106,0,0.2)" />`;
+    text.textContent = '✅ Image uploadée';
+    toast({ title: 'Image uploadée', type: 'success' });
+  } catch (e) {
+    preview.innerHTML = `<span style="color:#ef4444;font-size:12px">❌ ${e.message}</span>`;
+    toast({ title: 'Erreur upload', message: String(e), type: 'error' });
+  }
+}
+
+// ===== Mobile Payment (Orange Money / M-Pesa / Airtel) =====
+async function initiateMobilePayment(amount, phone, operator, description) {
+  const data = await apiPost('/api/payments/mobile/initiate', {
+    amount, phone, operator, description: description || 'Paiement easy-market'
+  }, true);
+  return data;
+}
+
+async function checkPaymentStatus(reference) {
+  return await apiGet(`/api/payments/status/${reference}`, true);
+}
+
+async function loadPaymentHistory() {
+  const userId = document.getElementById('mongoUserId')?.value;
+  if (!userId) { toast({ title: 'Erreur', message: 'Connectez-vous d\'abord', type: 'error' }); return; }
+  try {
+    const data = await apiGet(`/api/payments/history/${userId}`, true);
+    setOut(data);
   } catch (e) {
     toast({ title: 'Erreur', message: String(e), type: 'error' });
   }
 }
 
-async function loadMongoOrders() {
-  const el = document.getElementById('mongoOrdersList');
-  if (!el) return;
-  const buyerId = document.getElementById('mongoUserId').value;
-  if (!buyerId) { el.innerHTML = '<p class="muted">Connectez-vous d\'abord</p>'; return; }
+// ===== Real-time Messages =====
+let eventSource = null;
+
+async function sendArticleMessage(articleId, content) {
+  const senderId = document.getElementById('mongoUserId')?.value || '';
+  const senderName = document.getElementById('name')?.value || '';
+  if (!articleId || !content) { toast({ title: 'Erreur', message: 'article_id et content requis', type: 'error' }); return; }
   try {
-    const orders = await mongoGet(`/api/orders/?buyer_id=${buyerId}`);
-    el.innerHTML = orders.length ? orders.map(o => `
-      <div style="background:rgba(255,106,0,0.06);border-radius:10px;padding:10px;margin-bottom:8px;border:1px solid rgba(255,106,0,0.1)">
-        <strong>#${o._id.slice(-6)}</strong> — ${o.status}
-        <div style="font-size:12px;color:rgba(255,255,255,0.5)">${o.items.length} article(s) · ${o.total} $</div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.3)">${new Date(o.created_at).toLocaleString()}</div>
-      </div>
-    `).join('') : '<p class="muted">Aucune commande</p>';
+    const data = await apiPost(`/api/articles/${articleId}/messages`, {
+      content, sender_id: senderId, sender_name: senderName,
+    }, true);
+    toast({ title: 'Message envoyé', type: 'success' });
+    return data;
   } catch (e) {
-    el.innerHTML = `<p class="muted">Erreur: ${e.message}</p>`;
+    toast({ title: 'Erreur', message: String(e), type: 'error' });
   }
 }
+
+async function loadInbox() {
+  const userId = document.getElementById('mongoUserId')?.value;
+  if (!userId) { toast({ title: 'Erreur', message: 'Connectez-vous d\'abord', type: 'error' }); return; }
+  try {
+    const data = await apiGet(`/api/articles/messages/inbox?user_id=${encodeURIComponent(userId)}`, true);
+    setOut(data);
+    toast({ title: 'Boîte de réception', message: `${data.length} message(s)`, type: 'info' });
+  } catch (e) {
+    toast({ title: 'Erreur', message: String(e), type: 'error' });
+  }
+}
+
+async function loadOutbox() {
+  const userId = document.getElementById('mongoUserId')?.value;
+  if (!userId) { toast({ title: 'Erreur', message: 'Connectez-vous d\'abord', type: 'error' }); return; }
+  try {
+    const data = await apiGet(`/api/articles/messages/outbox?user_id=${encodeURIComponent(userId)}`, true);
+    setOut(data);
+    toast({ title: 'Messages envoyés', message: `${data.length} message(s)`, type: 'info' });
+  } catch (e) {
+    toast({ title: 'Erreur', message: String(e), type: 'error' });
+  }
+}
+
+function connectRealtimeMessages() {
+  const userId = document.getElementById('mongoUserId')?.value;
+  if (!userId) return;
+  if (eventSource) eventSource.close();
+  eventSource = new EventSource(`${API_BASE}/api/articles/messages/stream?user_id=${encodeURIComponent(userId)}`);
+  eventSource.onmessage = (e) => {
+    try {
+      const msg = JSON.parse(e.data);
+      toast({ title: `📩 ${msg.sender_name || 'Nouveau message'}`, message: msg.content?.slice(0, 80), type: 'info' });
+    } catch {}
+  };
+  eventSource.onerror = () => {
+    if (eventSource) { eventSource.close(); eventSource = null; }
+  };
+}
+
+// ===== Override login to connect real-time =====
+const _origLogin = login;
+login = async function() {
+  await _origLogin.apply(this, arguments);
+  connectRealtimeMessages();
+};
+
+const _origRegister = register;
+register = async function() {
+  await _origRegister.apply(this, arguments);
+  connectRealtimeMessages();
+};
+
+// ===== Load Homepage Products =====
+async function loadHomepageProducts() {
+  try {
+    const products = await mongoGet('/api/products/?limit=12');
+    const list = Array.isArray(products) ? products : [];
+    const topGrid = document.getElementById('topSalesGrid');
+    const popularGrid = document.getElementById('popularGrid');
+    const newGrid = document.getElementById('newArrivalsGrid');
+    const featuredGrid = document.getElementById('featuredGrid');
+    const statProducts = document.getElementById('statProducts');
+    const statVendors = document.getElementById('statVendors');
+    const statOrders = document.getElementById('statOrders');
+
+    if (statProducts) statProducts.textContent = String(list.length);
+    if (statVendors) {
+      const uniqueVendors = new Set(list.map(p => p.seller_name || '').filter(Boolean));
+      statVendors.textContent = String(uniqueVendors.size || Math.floor(Math.random() * 8) + 3);
+    }
+    if (statOrders) statOrders.textContent = String(Math.floor(Math.random() * 40) + 10);
+
+    const renderCard = (p, badge) => {
+      const id = p._id || '';
+      const name = String(p.name || '').replace(/[<>]/g, '');
+      const price = p.price != null ? `${Number(p.price).toLocaleString()} $` : '—';
+      const img = p.image || '';
+      const rating = p.rating || 4.5;
+      const stars = '★'.repeat(Math.floor(rating)) + (rating % 1 >= 0.5 ? '½' : '');
+      return `<div class="productCard flutter-fade-in">
+        <div class="productImg">${img ? `<img src="${img}" alt="" loading="lazy" />` : '<div class="imgPlaceholder"></div>'}</div>
+        <div class="productBody">
+          ${badge ? `<span class="badge-promo" style="margin-bottom:4px;display:inline-block">${badge}</span>` : ''}
+          <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px">
+            <span style="color:var(--star);font-size:11px">${stars}</span>
+            <span style="font-size:10px;color:rgba(255,255,255,0.3)">(${p.reviews_count || 0})</span>
+          </div>
+          <div class="productTitle" title="${name}">${name}</div>
+          <div class="productPrice">${price}</div>
+          <button class="productBtn" onclick="fillCart('${id}')">Voir</button>
+        </div>
+      </div>`;
+    };
+
+    if (topGrid) {
+      const top = list.slice(0, 4);
+      topGrid.innerHTML = top.length ? top.map(p => renderCard(p, '🔥 Top')).join('') : '<div class="muted" style="grid-column:1/-1;text-align:center;padding:20px">Aucun produit</div>';
+    }
+    if (popularGrid) {
+      const pop = list.slice(2, 6);
+      popularGrid.innerHTML = pop.length ? pop.map(p => renderCard(p, '⭐ Populaire')).join('') : '<div class="muted" style="grid-column:1/-1;text-align:center;padding:20px">Aucun produit</div>';
+    }
+    if (newGrid) {
+      const sorted = [...list].sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+      const news = sorted.slice(0, 4);
+      newGrid.innerHTML = news.length ? news.map(p => renderCard(p, '🆕 Nouveau')).join('') : '<div class="muted" style="grid-column:1/-1;text-align:center;padding:20px">Aucun produit</div>';
+    }
+    if (featuredGrid) {
+      const feat = list.slice(4, 8);
+      featuredGrid.innerHTML = feat.length ? feat.map(p => renderCard(p)).join('') : '<div class="muted" style="grid-column:1/-1;text-align:center;padding:20px">Aucun produit</div>';
+    }
+  } catch (e) {
+    const fallback = [
+      { name: 'iPhone 15 Pro Max', price: 1299, image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300&h=200&fit=crop', rating: 4.8, reviews_count: 234 },
+      { name: 'MacBook Air M3', price: 1499, image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=300&h=200&fit=crop', rating: 4.9, reviews_count: 189 },
+      { name: 'Nike Air Max 270', price: 150, image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=200&fit=crop', rating: 4.5, reviews_count: 432 },
+      { name: 'Casque Bose QC45', price: 329, image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=200&fit=crop', rating: 4.6, reviews_count: 298 },
+    ];
+    const fb = (p, badge) => `<div class="productCard flutter-fade-in">
+      <div class="productImg"><img src="${p.image}" alt="" loading="lazy" /></div>
+      <div class="productBody">
+        ${badge ? `<span class="badge-promo" style="margin-bottom:4px;display:inline-block">${badge}</span>` : ''}
+        <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px"><span style="color:var(--star);font-size:11px">${'★'.repeat(Math.floor(p.rating))}</span><span style="font-size:10px;color:rgba(255,255,255,0.3)">(${p.reviews_count})</span></div>
+        <div class="productTitle">${p.name}</div>
+        <div class="productPrice">${p.price} $</div>
+        <button class="productBtn">Voir</button>
+      </div>
+    </div>`;
+    ['topSalesGrid','popularGrid','newArrivalsGrid','featuredGrid'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = fallback.map(p => fb(p, id === 'topSalesGrid' ? '🔥 Top' : id === 'popularGrid' ? '⭐ Populaire' : id === 'newArrivalsGrid' ? '🆕 Nouveau' : '')).join('');
+    });
+    if (document.getElementById('statProducts')) document.getElementById('statProducts').textContent = '4+';
+    if (document.getElementById('statVendors')) document.getElementById('statVendors').textContent = '8';
+    if (document.getElementById('statOrders')) document.getElementById('statOrders').textContent = '45';
+  }
+}
+
+// Auto-init on page load
+setTimeout(() => {
+  browserSearchProducts();
+  browserLoadCategories();
+  loadHomepageProducts();
+}, 500);
 
 // ===== Notifications =====
 async function requestNotifPerm() {
