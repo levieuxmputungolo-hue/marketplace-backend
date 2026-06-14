@@ -1546,6 +1546,12 @@ setTimeout(() => {
   // Cart qty change → update badge
   document.getElementById('cartQty')?.addEventListener('change', updateAliCartBadge);
   document.getElementById('cartQty')?.addEventListener('input', updateAliCartBadge);
+  // Init messagerie
+  if (document.getElementById('conversationsList')) {
+    renderConvList();
+    renderChatHeader();
+    renderMessages();
+  }
 }, 500);
 
 // ===== Notifications =====
@@ -1569,4 +1575,144 @@ async function sendTestNotification() {
     new Notification(title, { body, icon });
   }
   toast({ title: 'Notification envoyée', type: 'success' });
+}
+
+// ===== Messagerie Alibaba (U-Commerce) =====
+const conversations = {
+  seller1: {
+    id: 'seller1', name: 'TechStore Pro', avatar: 'T', avatarClass: 'msg-avatar-s1',
+    status: 'online', verified: true, lastMessage: 'iPhone 15 Pro Max en stock !', time: '12:45', unread: 2,
+    messages: [
+      { text: "Bonjour ! Je suis intéressé par l'iPhone 15 Pro Max", sender: 'buyer', time: '12:30' },
+      { text: 'Bonjour ! Oui il est en stock à 1299$', sender: 'seller', time: '12:32' },
+      { text: 'Livraison gratuite ?', sender: 'buyer', time: '12:38' },
+      { text: 'Oui livraison express gratuite en 48h', sender: 'seller', time: '12:40' },
+      { text: 'Parfait je prends !', sender: 'buyer', time: '12:45' }
+    ]
+  },
+  seller2: {
+    id: 'seller2', name: 'FashionHub', avatar: 'F', avatarClass: 'msg-avatar-s2',
+    status: 'offline', verified: true, lastMessage: 'Votre commande #2345 est expédiée', time: '10:30', unread: 0,
+    messages: [
+      { text: 'Votre commande #2345 a été expédiée', sender: 'seller', time: '10:30' },
+      { text: "Merci pour l'info !", sender: 'buyer', time: '10:32' }
+    ]
+  },
+  seller3: {
+    id: 'seller3', name: 'Maison & Deco', avatar: 'M', avatarClass: 'msg-avatar-s3',
+    status: 'online', verified: false, lastMessage: 'Merci pour votre achat !', time: 'Hier', unread: 0,
+    messages: [
+      { text: "Merci pour votre achat ! N'hésitez pas à laisser un avis", sender: 'seller', time: 'Hier' }
+    ]
+  },
+  seller4: {
+    id: 'seller4', name: 'ElectroDiscount', avatar: 'E', avatarClass: 'msg-avatar-s4',
+    status: 'online', verified: true, lastMessage: 'Promotion MacBook Air M3 -15%', time: '09:15', unread: 1,
+    messages: [
+      { text: 'Bonjour, promo sur le MacBook Air M3 ?', sender: 'buyer', time: '09:10' },
+      { text: 'Oui -15% soit 1274$ au lieu de 1499$', sender: 'seller', time: '09:15' }
+    ]
+  }
+};
+let currentConvId = 'seller1';
+
+function renderConvList() {
+  const container = document.getElementById('conversationsList');
+  if (!container) return;
+  const filt = document.querySelector('.conv-filt.active');
+  const showUnread = filt && filt.id === 'filtUnread';
+  container.innerHTML = '';
+  Object.values(conversations).forEach(conv => {
+    if (showUnread && conv.unread === 0) return;
+    const d = document.createElement('div');
+    d.className = 'msg-conv-item' + (currentConvId === conv.id ? ' active' : '') + (conv.unread > 0 ? ' unread' : '');
+    d.innerHTML = `<div class="avatar ${conv.avatarClass}" style="width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#fff;flex-shrink:0">${conv.avatar}</div>
+      <div class="msg-conv-info">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+          <span class="msg-conv-name">${conv.name}</span>
+          <span class="msg-conv-time">${conv.time}</span>
+        </div>
+        <div style="font-size:13px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${conv.lastMessage}</div>
+      </div>
+      ${conv.unread > 0 ? `<div class="msg-conv-badge">${conv.unread}</div>` : ''}`;
+    d.onclick = () => { currentConvId = conv.id; renderConvList(); renderChatHeader(); renderMessages(); conv.unread = 0; renderConvList(); };
+    container.appendChild(d);
+  });
+}
+
+function renderChatHeader() {
+  const conv = conversations[currentConvId];
+  const header = document.getElementById('chatHeader');
+  if (!header) return;
+  const statusHtml = conv.status === 'online'
+    ? '<span style="width:8px;height:8px;background:#00c853;border-radius:50%;display:inline-block"></span><span style="color:#00c853">En ligne</span>'
+    : '<span style="color:#999">Hors ligne</span>';
+  const verifiedHtml = conv.verified ? '<span style="background:#e6f7ff;color:#1890ff;font-size:11px;padding:2px 8px;border-radius:12px">Vendeur certifié</span>' : '';
+  header.innerHTML = `<div style="display:flex;align-items:center;gap:12px">
+      <div class="avatar ${conv.avatarClass}" style="width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#fff;flex-shrink:0">${conv.avatar}</div>
+      <div>
+        <h3 style="font-size:16px;font-weight:600;margin:0 0 4px">${conv.name} ${conv.verified ? '✓' : ''}</h3>
+        <div style="font-size:12px;display:flex;align-items:center;gap:6px">${statusHtml} ${verifiedHtml}</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#ff6a00;cursor:pointer">⭐ Voir profil</div>`;
+}
+
+function renderMessages() {
+  const conv = conversations[currentConvId];
+  const container = document.getElementById('messagesArea');
+  if (!container) return;
+  container.innerHTML = '';
+  conv.messages.forEach(msg => {
+    const g = document.createElement('div');
+    g.style.cssText = 'display:flex;flex-direction:column;max-width:70%';
+    if (msg.sender === 'seller') { g.style.alignItems = 'flex-start'; }
+    else { g.style.alignSelf = 'flex-end'; g.style.alignItems = 'flex-end'; }
+    g.innerHTML = `<div class="bubble ${msg.sender === 'seller' ? 'sg-bubble' : 'bg-bubble'}" style="padding:10px 16px;border-radius:18px;font-size:14px;line-height:1.5;word-wrap:break-word">${msg.text}</div>
+      <div style="font-size:10px;color:#aaa;margin-top:4px;margin-left:8px">${msg.time}</div>`;
+    container.appendChild(g);
+  });
+  container.scrollTop = container.scrollHeight;
+}
+
+function sendChatMsg() {
+  const input = document.getElementById('messageInput');
+  const text = input.value.trim();
+  if (!text) return;
+  const conv = conversations[currentConvId];
+  const now = new Date();
+  const timeStr = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  conv.messages.push({ text, sender: 'buyer', time: timeStr });
+  conv.lastMessage = text;
+  conv.time = timeStr;
+  renderMessages();
+  renderConvList();
+  input.value = '';
+  setTimeout(() => {
+    const reply = {
+      text: "Merci pour votre message ! Je vous réponds dans quelques instants. 📱",
+      sender: 'seller',
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+    conv.messages.push(reply);
+    conv.lastMessage = reply.text;
+    renderMessages();
+    renderConvList();
+  }, 1500);
+}
+
+function filterConvList(q) {
+  const items = document.querySelectorAll('#conversationsList .msg-conv-item');
+  const search = (q || '').toLowerCase();
+  items.forEach(item => {
+    const name = item.querySelector('.msg-conv-name');
+    item.style.display = name && name.textContent.toLowerCase().includes(search) ? '' : 'none';
+  });
+}
+
+function filterConv(type) {
+  document.querySelectorAll('.conv-filt').forEach(f => { f.style.color = '#666'; f.style.borderBottom = 'none'; });
+  const el = document.getElementById(type === 'all' ? 'filtAll' : 'filtUnread');
+  if (el) { el.style.color = '#ff6a00'; el.style.borderBottom = '2px solid #ff6a00'; }
+  renderConvList();
 }

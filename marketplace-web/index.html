@@ -170,6 +170,14 @@
     .msg-bubble .msg-file{display:flex;align-items:center;gap:6px;padding:4px 0;color:#1890ff;text-decoration:none;font-size:12px}
     .msg-date-separator{text-align:center;font-size:11px;color:#bbb;padding:10px 0;font-weight:500}
 
+    /* ─── MESSAGERIE — USER'S ALIBABA STYLE ─── */
+    .msg-avatar-s1{background:linear-gradient(135deg,#ff6a00,#ff8c00)}
+    .msg-avatar-s2{background:linear-gradient(135deg,#2196f3,#21cbf3)}
+    .msg-avatar-s3{background:linear-gradient(135deg,#4caf50,#8bc34a)}
+    .msg-avatar-s4{background:linear-gradient(135deg,#9c27b0,#ce93d8)}
+    .sg-bubble{background:#fff;color:#1a1a1a;border-radius:18px 18px 18px 4px;box-shadow:0 1px 1px rgba(0,0,0,0.05)}
+    .bg-bubble{background:#ff6a00;color:#fff;border-radius:18px 18px 4px 18px}
+
     /* ─── ALIBABA PANELS ─── */
     .al-panel {
       background: #fff;
@@ -1304,84 +1312,51 @@
     <!-- ════════════════════════════════════════════════════════ -->
     <!-- MESSAGERIE                                              -->
     <!-- ════════════════════════════════════════════════════════ -->
-    <section class="section" data-section="messagerie">
-      <!-- Top nav messaging -->
-      <div style="background:#fff;border-bottom:1px solid #e0e0e0;padding:10px 20px;display:flex;justify-content:space-between;align-items:center">
-        <div style="font-size:18px;font-weight:700;color:#ff6b00">💬 Messages</div>
-        <div style="display:flex;gap:16px;font-size:13px">
-          <span style="cursor:pointer;color:#ff6b00;font-weight:600" onclick="loadConversations()">🔄</span>
+    <section class="section" data-section="messagerie" style="height:calc(100vh - 110px);background:#fff">
+      <!-- Header Alibaba -->
+      <div style="background:#fff;padding:12px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e8e8e8;box-shadow:0 1px 4px rgba(0,0,0,0.05)">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:28px">🛍️</span>
+          <span style="font-size:20px;font-weight:700;background:linear-gradient(135deg,#ff6a00,#ff8c00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">U-Commerce</span>
+        </div>
+        <div style="display:flex;gap:24px;align-items:center;font-size:14px">
+          <span style="cursor:pointer;color:#666" onclick="showSection('accueil')">Accueil</span>
+          <span style="cursor:pointer;color:#666" onclick="showSection('catalogue')">Catalogue</span>
+          <span style="cursor:pointer;color:#ff6a00;font-weight:600">Messages</span>
+          <span style="cursor:pointer;color:#666" onclick="showSection('panier')">Commandes</span>
+          <span style="cursor:pointer;color:#666" onclick="showSection('auth')">Compte</span>
         </div>
       </div>
-      <!-- Deux colonnes -->
-      <div style="display:flex;max-width:1400px;margin:0 auto;height:calc(100vh - 130px);background:#fff;border-radius:0 0 12px 12px;overflow:hidden">
-        <!-- Colonne gauche : liste conversations -->
-        <div style="width:320px;border-right:1px solid #e0e0e0;display:flex;flex-direction:column;flex-shrink:0">
-          <div style="padding:12px 15px;border-bottom:1px solid #f0f0f0">
-            <input type="text" id="msgSearchInput" placeholder="Rechercher une conversation..." oninput="filterConversations(this.value)" style="width:100%;padding:10px 15px;border:1px solid #e0e0e0;border-radius:25px;font-size:13px;background:#f9f9f9;outline:none" />
+
+      <!-- Layout 2 colonnes -->
+      <div style="display:flex;height:calc(100vh - 168px);max-width:1600px;margin:0 auto">
+        <!-- Colonne gauche : conversations -->
+        <div style="width:360px;background:#fff;border-right:1px solid #e8e8e8;display:flex;flex-direction:column;flex-shrink:0">
+          <div style="padding:16px 20px;border-bottom:1px solid #f0f0f0">
+            <div style="display:flex;align-items:center;background:#f5f5f5;border-radius:8px;padding:8px 16px;gap:8px">
+              <span style="color:#999">🔍</span>
+              <input type="text" id="msgSearchConv" placeholder="Chercher une conversation..." style="flex:1;border:none;background:transparent;outline:none;font-size:14px" oninput="filterConvList(this.value)" />
+            </div>
           </div>
-          <div style="flex:1;overflow-y:auto" id="convList"></div>
-          <div style="padding:10px 15px;border-top:1px solid #f0f0f0;font-size:12px;color:#999;text-align:center">
-            <span id="convCount">0 conversations</span>
+          <div style="display:flex;padding:12px 20px;gap:16px;border-bottom:1px solid #f0f0f0;font-size:14px">
+            <span style="color:#ff6a00;border-bottom:2px solid #ff6a00;padding-bottom:8px;cursor:pointer" onclick="filterConv('all')" id="filtAll" class="conv-filt active">Tous</span>
+            <span style="color:#666;padding-bottom:8px;cursor:pointer" onclick="filterConv('unread')" id="filtUnread" class="conv-filt">Non lus</span>
           </div>
+          <div style="flex:1;overflow-y:auto" id="conversationsList"></div>
         </div>
         <!-- Colonne droite : chat -->
-        <div style="flex:1;display:flex;flex-direction:column;background:#f5f6f8;min-width:0">
-          <!-- Empty state -->
-          <div id="chatEmpty" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#ccc">
-            <div style="font-size:60px;margin-bottom:12px">💬</div>
-            <div style="font-size:16px;font-weight:600;color:#999">Vos messages</div>
-            <div style="font-size:13px;color:#bbb;margin-top:4px">Sélectionnez une conversation</div>
+        <div style="flex:1;display:flex;flex-direction:column;background:#f8f9fa;min-width:0">
+          <!-- En-tête chat -->
+          <div style="background:#fff;padding:16px 24px;border-bottom:1px solid #e8e8e8;display:flex;justify-content:space-between;align-items:center" id="chatHeader"></div>
+          <!-- Messages -->
+          <div style="flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:16px" id="messagesArea"></div>
+          <!-- Zone de saisie -->
+          <div style="background:#fff;padding:16px 24px;border-top:1px solid #e8e8e8;display:flex;gap:12px;align-items:center">
+            <button style="background:none;border:none;font-size:22px;cursor:pointer;color:#888;padding:8px" onclick="pickFile()">📎</button>
+            <input type="text" id="messageInput" placeholder="Écrivez votre message..." style="flex:1;padding:12px 16px;border:1px solid #e0e0e0;border-radius:24px;font-size:14px;outline:none" />
+            <button style="background:#ff6a00;color:#fff;border:none;padding:10px 28px;border-radius:24px;font-weight:600;cursor:pointer" onclick="sendChatMsg()">Envoyer</button>
           </div>
-          <!-- Active chat -->
-          <div id="chatActive" style="display:none;flex-direction:column;height:100%">
-            <!-- Header -->
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid #e0e0e0;background:#fff;min-height:56px">
-              <div style="display:flex;align-items:center;gap:10px">
-                <div style="width:40px;height:40px;border-radius:50%;background:#ff6b00;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px" id="chatPartnerAvatar">👤</div>
-                <div>
-                  <div style="font-size:14px;font-weight:600;color:#333" id="chatPartnerName">—</div>
-                  <div style="font-size:11px;color:#52c41a" id="chatPartnerStatus">hors ligne</div>
-                </div>
-              </div>
-            </div>
-            <!-- Product card -->
-            <div id="msgProductCard" style="display:none;padding:10px 18px;background:#fffbe6;border-bottom:1px solid #ffe58f;font-size:13px">
-              <div style="display:flex;align-items:center;gap:10px">
-                <img id="msgProductImg" src="" style="width:48px;height:48px;border-radius:6px;object-fit:cover;border:1px solid #f0f0f0" onerror="this.style.display='none'" />
-                <div style="flex:1;min-width:0">
-                  <div style="font-weight:600;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="msgProductName">—</div>
-                  <div style="font-size:14px;color:#ff6b00;font-weight:700" id="msgProductPrice">—</div>
-                </div>
-                <button style="padding:5px 12px;border-radius:6px;border:1px solid #d9d9d9;background:#fff;color:#666;font-size:11px;cursor:pointer;white-space:nowrap" onclick="viewProductFromChat()">Voir l'offre</button>
-              </div>
-            </div>
-            <!-- Messages -->
-            <div style="flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:8px" id="msgMessages"></div>
-            <!-- Quick replies -->
-            <div id="msgQuickReplies" style="display:none;padding:8px 16px;overflow-x:auto;border-top:1px solid #f0f0f0;background:#fafafa;white-space:nowrap">
-              <button style="display:inline-block;padding:5px 12px;border-radius:14px;border:1px solid #e8e8e8;background:#f5f5f5;color:#666;font-size:11px;cursor:pointer;margin-right:6px;white-space:nowrap" onclick="sendCanned('delivery')">📦 Délai</button>
-              <button style="display:inline-block;padding:5px 12px;border-radius:14px;border:1px solid #e8e8e8;background:#f5f5f5;color:#666;font-size:11px;cursor:pointer;margin-right:6px;white-space:nowrap" onclick="sendCanned('price')">💰 Tarif</button>
-              <button style="display:inline-block;padding:5px 12px;border-radius:14px;border:1px solid #e8e8e8;background:#f5f5f5;color:#666;font-size:11px;cursor:pointer;margin-right:6px;white-space:nowrap" onclick="sendCanned('address')">📍 Adresse</button>
-              <button style="display:inline-block;padding:5px 12px;border-radius:14px;border:1px solid #e8e8e8;background:#f5f5f5;color:#666;font-size:11px;cursor:pointer;margin-right:6px;white-space:nowrap" onclick="sendCanned('stock')">📋 Stock</button>
-              <button style="display:inline-block;padding:5px 12px;border-radius:14px;border:1px solid #e8e8e8;background:#f5f5f5;color:#666;font-size:11px;cursor:pointer;margin-right:6px;white-space:nowrap" onclick="sendCanned('payment')">💳 Paiement</button>
-            </div>
-            <!-- Input -->
-            <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;border-top:1px solid #e0e0e0;background:#fff">
-              <button style="width:34px;height:34px;border-radius:50%;border:1px solid #e0e0e0;background:#fff;color:#666;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0" onclick="pickFile()" title="Joindre">📎</button>
-              <input type="text" id="msgInput" placeholder="Écrivez votre message…" onkeydown="if(event.key==='Enter')sendMsg()" style="flex:1;padding:9px 14px;border-radius:20px;border:1px solid #ddd;background:#f5f5f5;font-size:13px;outline:none" />
-              <button style="padding:8px 20px;border-radius:20px;border:none;background:#ff6b00;color:#fff;font-size:13px;font-weight:600;cursor:pointer;flex-shrink:0" onclick="sendMsg()">Envoyer</button>
-            </div>
-            <input type="file" id="msgFileInput" style="display:none" accept="image/*,.pdf,.doc,.docx" onchange="uploadAndSendFile(this)" />
-            <!-- Evaluation -->
-            <div id="msgEvaluate" style="display:none;padding:8px 16px;border-top:1px solid #f0f0f0;font-size:12px;color:#999;background:#fafafa;text-align:center">
-              <span>Ce vendeur a-t-il répondu rapidement ? </span>
-              <span style="cursor:pointer;font-size:18px" onclick="evaluateChat(1)">⭐</span>
-              <span style="cursor:pointer;font-size:18px" onclick="evaluateChat(2)">⭐</span>
-              <span style="cursor:pointer;font-size:18px" onclick="evaluateChat(3)">⭐</span>
-              <span style="cursor:pointer;font-size:18px" onclick="evaluateChat(4)">⭐</span>
-              <span style="cursor:pointer;font-size:18px" onclick="evaluateChat(5)">⭐</span>
-            </div>
-          </div>
+          <input type="file" id="msgFileInput" style="display:none" accept="image/*,.pdf,.doc,.docx" onchange="uploadAndSendFile(this)" />
         </div>
       </div>
     </section>
@@ -1418,8 +1393,13 @@
       sections.forEach(s => s.setAttribute('data-active', s.getAttribute('data-section') === target ? 'true' : 'false'));
       navBtns.forEach(b => b.setAttribute('data-active', b.getAttribute('data-target') === target ? 'true' : 'false'));
       if (target === 'panier') initDate();
-      if (target === 'messagerie' && document.getElementById('mongoUserId')?.value) {
-        if (typeof loadConversations === 'function') loadConversations();
+      if (target === 'messagerie') {
+        if (typeof renderConvList === 'function') {
+          renderConvList();
+          renderChatHeader();
+          renderMessages();
+          document.getElementById('messageInput')?.addEventListener('keypress', function(e) { if (e.key === 'Enter') sendChatMsg(); });
+        }
       }
     }
 
